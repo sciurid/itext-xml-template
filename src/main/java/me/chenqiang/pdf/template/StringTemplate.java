@@ -2,7 +2,7 @@ package me.chenqiang.pdf.template;
 
 import com.itextpdf.layout.element.Paragraph;
 
-public class StringTemplate implements ComponentTemplate<Paragraph>{
+public class StringTemplate implements ComponentInContainer<Paragraph>{
 	private String content;
 	
 	public StringTemplate(String content) {

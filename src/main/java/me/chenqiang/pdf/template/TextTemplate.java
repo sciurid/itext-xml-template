@@ -5,7 +5,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 
 public class TextTemplate extends StyledTemplate<Text, TextTemplate> 
-implements ComponentTemplate<Paragraph>{
+implements ComponentInContainer<Paragraph>{
 	private StringBuilder content;
 	
 	public TextTemplate() {

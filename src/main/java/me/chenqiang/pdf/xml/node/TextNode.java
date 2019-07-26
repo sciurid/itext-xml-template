@@ -44,8 +44,14 @@ public class TextNode implements ElementHandler{
 			Consumer<Text> modifier = 
 					this.attrFactory.<Text>getElementPropertyContainerAttribute(
 							attr.getName(), attr.getValue());
+			if(modifier == null) {
+				modifier = this.attrFactory.getTextAttribute(attr.getName(), attr.getValue());
+			}
 			if(modifier != null) {
 				tplText.set(modifier);
+			}
+			else {
+				LOGGER.error("Not recognized attribute: {}", attr.getName());
 			}
 		}
 		

@@ -14,10 +14,10 @@ import org.slf4j.LoggerFactory;
 import me.chenqiang.pdf.template.DocumentFactory;
 import me.chenqiang.pdf.template.DocumentTemplate;
 import me.chenqiang.pdf.utils.ResourceContext;
-import me.chenqiang.pdf.xml.FontDefinition;
 import me.chenqiang.pdf.xml.SimpleLoggingHanlder;
 import me.chenqiang.pdf.xml.StyleAttributeFactory;
 import me.chenqiang.pdf.xml.node.DocumentNode;
+import me.chenqiang.pdf.xml.node.FontDefinition;
 
 public class SAXReaderTest {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SAXReaderTest.class);

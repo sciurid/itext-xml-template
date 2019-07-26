@@ -46,8 +46,14 @@ public class ParagraphNode implements ElementHandler{
 			Consumer<Paragraph> modifier = 
 					this.attrFactory.<Paragraph>getElementPropertyContainerAttribute(
 							attr.getName(), attr.getValue());
+			if(modifier == null) {
+				modifier = this.attrFactory.getParagraphAttribute(attr.getName(), attr.getValue());
+			}
 			if(modifier != null) {
 				this.tplPara.set(modifier);
+			}
+			else {
+				LOGGER.error("Not recognized attribute: {}", attr.getName());
 			}
 		}
 		

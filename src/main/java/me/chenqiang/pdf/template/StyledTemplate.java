@@ -25,6 +25,12 @@ public abstract class StyledTemplate<T extends ElementPropertyContainer<T>, S ex
 		return (S)this;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public S inherit(List<? extends Consumer<? super T>> attributes) {
+		this.modifiers.addAll(0, attributes);
+		return (S)this;
+	}
+	
 	public void apply(T element) {
 		modifiers.forEach(attribute -> attribute.accept(element));
 	}

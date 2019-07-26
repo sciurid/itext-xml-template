@@ -27,7 +27,7 @@ implements DocumentComponentTemplate {
 		doc.add(para);			
 	}
 	
-	public void insertAt(ComponentTemplate<Paragraph> component, int index) {
+	public void insertAt(ComponentInContainer<Paragraph> component, int index) {
 		this.components.add(index, component);
 	}
 

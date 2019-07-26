@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/document-definition"
+	xmlns:tns="http://www.example.org/document-definition" elementFormDefault="qualified">
+	<element name="root">
+		<complexType>
+			<sequence>
+				<element name="font" minOccurs="0" maxOccurs="unbounded">
+					<complexType>
+						<attribute name="name" type="string" use="required" />
+						<attribute name="type" type="string" use="required" />
+						<attribute name="path" type="string" use="required" />
+						<attribute name="ttc-index" type="integer" use="optional" />
+					</complexType>
+				</element>
+				<element name="document" minOccurs="1" maxOccurs="unbounded">
+					<complexType>
+						<choice maxOccurs="unbounded">
+							<element name="paragraph" type="tns:paragraphType" />
+						</choice>
+					</complexType>
+				</element>
+			</sequence>
+		</complexType>
+	</element>
+
+	<complexType name="paragraphType" mixed="true">
+		<sequence>		
+			<element name="text" type="string"></element>
+		</sequence>
+		<attributeGroup ref="tns:common-styles" />
+	</complexType>
+	<attributeGroup name="common-styles">
+		<attribute name="font-family" type="string" use="optional" />
+		<attribute name="font-size" type="float" use="optional" />
+		<attribute name="font-variant" type="string" use="optional" />
+		<attribute name="text-align" use="optional">
+			<simpleType>
+				<restriction base="string">
+					<enumeration value="center" />
+					<enumeration value="left" />
+					<enumeration value="right" />
+					<enumeration value="justified" />
+					<enumeration value="justified-all" />
+				</restriction>
+			</simpleType>
+		</attribute>
+	</attributeGroup>
+</schema>
