@@ -3,7 +3,6 @@ package me.chenqiang.pdf.xml.node;
 
 import java.util.function.Consumer;
 
-import org.dom4j.ElementHandler;
 import org.dom4j.ElementPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,30 +10,24 @@ import org.slf4j.LoggerFactory;
 import me.chenqiang.pdf.template.DocumentTemplate;
 import me.chenqiang.pdf.xml.StyleAttributeFactory;
 
-public class DocumentNode implements ElementHandler {
+public class DocumentNode extends TemplateElementNode<DocumentTemplate> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DocumentNode.class);
-	private StyleAttributeFactory attrFactory;
-	private int count;
-	
 	protected DocumentTemplate tplDoc;		
-	protected Consumer<DocumentTemplate> consumer;
 
 	public DocumentNode(StyleAttributeFactory attrFactory, Consumer<DocumentTemplate> consumer) {
-		this.attrFactory = attrFactory;
-		this.consumer = consumer;
+		super(attrFactory, consumer);
 	}
 
 	@Override
 	public void onStart(ElementPath elementPath) {
-		LOGGER.debug("[START] {} - {}", elementPath.getPath(), this.count);
+		super.onStart(elementPath);
 		this.tplDoc = new DocumentTemplate();
-		elementPath.addHandler("paragraph", new ParagraphNode(this.tplDoc, this.attrFactory));		
+		elementPath.addHandler("paragraph", new ParagraphNode(this.attrFactory, this.tplDoc));		
 	}
 
 	@Override
-	public void onEnd(ElementPath elementPath) {
-		this.consumer.accept(this.tplDoc);
-		LOGGER.debug("[END] {} - {}", elementPath.getPath(), this.count++);
+	protected DocumentTemplate produce(ElementPath elementPath) {
+		return this.tplDoc;
 	}
-
+	
 }

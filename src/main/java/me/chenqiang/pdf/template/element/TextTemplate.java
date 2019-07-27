@@ -1,11 +1,13 @@
-package me.chenqiang.pdf.template;
+package me.chenqiang.pdf.template.element;
 
 
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 
-public class TextTemplate extends StyledTemplate<Text, TextTemplate> 
-implements ComponentInContainer<Paragraph>{
+import me.chenqiang.pdf.template.BasicElementTemplate;
+
+public class TextTemplate extends BasicElementTemplate<Text, TextTemplate>
+implements ParagraphComponent{
 	private StringBuilder content;
 	
 	public TextTemplate() {
@@ -24,9 +26,12 @@ implements ComponentInContainer<Paragraph>{
 	}
 
 	@Override
-	public void process(Paragraph container) {
-		Text text = new Text(this.content.toString());
-		this.apply(text);
-		container.add(text);
+	protected Text create() {
+		return new Text(this.content.toString());
 	}
+
+	@Override
+	public void process(Paragraph para) {
+		para.add(this.<Void>produce(null));
+	}		
 }

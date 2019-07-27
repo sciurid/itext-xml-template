@@ -4,7 +4,6 @@ import java.util.function.Consumer;
 
 import org.dom4j.Attribute;
 import org.dom4j.Element;
-import org.dom4j.ElementHandler;
 import org.dom4j.ElementPath;
 import org.dom4j.Node;
 import org.slf4j.Logger;
@@ -12,34 +11,22 @@ import org.slf4j.LoggerFactory;
 
 import com.itextpdf.layout.element.Text;
 
-import me.chenqiang.pdf.template.ParagraphTemplate;
-import me.chenqiang.pdf.template.TextTemplate;
+import me.chenqiang.pdf.template.element.ParagraphTemplate;
+import me.chenqiang.pdf.template.element.TextTemplate;
 import me.chenqiang.pdf.xml.StyleAttributeFactory;
 
-public class TextNode implements ElementHandler{
+public class TextNode extends TemplateElementNode<TextTemplate>{
 	private static final Logger LOGGER = LoggerFactory.getLogger(TextNode.class);
-	private StyleAttributeFactory attrFactory;	
-	private ParagraphTemplate tplPara;
-	private int count;
 	
 	private TextTemplate tplText;
 	
-	public TextNode(ParagraphTemplate tplPara, StyleAttributeFactory attrFactory) {
-		this.attrFactory = attrFactory;
-		this.tplPara = tplPara;
-		this.count = 0;
+	public TextNode(StyleAttributeFactory attrFactory, ParagraphTemplate tplPara) {
+		super(attrFactory, tplPara::append);
 	}
-
+	
 	@Override
-	public void onStart(ElementPath elementPath) {
-		LOGGER.debug("[START] {} - {}", elementPath.getPath(), this.count);
-		this.tplText = new TextTemplate();
-	}
-
-	@Override
-	public void onEnd(ElementPath elementPath) {
-		Element current = elementPath.getCurrent();
-		
+	protected TextTemplate produce(ElementPath elementPath) {
+		Element current = elementPath.getCurrent();		
 		for(Attribute attr : current.attributes()) {
 			Consumer<Text> modifier = 
 					this.attrFactory.<Text>getElementPropertyContainerAttribute(
@@ -60,7 +47,13 @@ public class TextNode implements ElementHandler{
 				tplText.append(node.getText());
 			}
 		}
-		this.tplPara.append(tplText);
-		LOGGER.debug("[END] {} - {}", elementPath.getPath(), this.count++);
+		return this.tplText;
+	}
+
+
+	@Override
+	public void onStart(ElementPath elementPath) {
+		super.onStart(elementPath);
+		this.tplText = new TextTemplate();
 	}
 }
