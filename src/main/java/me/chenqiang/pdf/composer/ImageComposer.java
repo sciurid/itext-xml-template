@@ -12,13 +12,17 @@ import org.slf4j.LoggerFactory;
 
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 
 public class ImageComposer extends BasicElementComposer<Image, ImageComposer>
-implements ParagraphComponent, CellComponent{
+implements DocumentComponent, ParagraphComponent, CellComponent{
 	private static final Logger LOGGER = LoggerFactory.getLogger(ImageComposer.class);
+	public static final String IMAGE_ERROR = "Error loading image.";
 	protected ImageData imageData = null;
 
 	public void setImageData(byte [] data) {
@@ -29,7 +33,7 @@ implements ParagraphComponent, CellComponent{
 		try {
 			this.imageData = ImageDataFactory.create(is.readAllBytes());
 		} catch (IOException e) {
-			LOGGER.error("Error loading image.", e);
+			LOGGER.error(IMAGE_ERROR, e);
 		}
 		return this;
 	}
@@ -38,11 +42,11 @@ implements ParagraphComponent, CellComponent{
 		try {
 			this.imageData = ImageDataFactory.create(filepath);
 		} catch (MalformedURLException e) {
-			LOGGER.error("Error loading image.", e);
+			LOGGER.error(IMAGE_ERROR, e);
 		}
 		return this;
 	}
-	
+
 	public ImageComposer setImageResource(String resource) {
 		this.setImageData(ImageComposer.class.getResourceAsStream(resource));
 		return this;
@@ -57,7 +61,7 @@ implements ParagraphComponent, CellComponent{
 		try {
 			this.setImageData(Hex.decodeHex(base64.toCharArray()));
 		} catch (DecoderException e) {
-			LOGGER.error("Error loading image.", e);
+			LOGGER.error(IMAGE_ERROR, e);
 		}
 		return this;
 	}
@@ -81,6 +85,9 @@ implements ParagraphComponent, CellComponent{
 	public void process(Paragraph para) {
 		para.add(this.<Void>produce(null));
 	}
-	
-	
+
+	@Override
+	public void process(Document doc, PdfDocument pdf, PdfWriter writer) {
+		doc.add(this.<Void>produce(null));
+	}
 }

@@ -33,7 +33,7 @@ public class TableCellHandler extends TemplateElementHandler<TableCellComposer> 
 		for (Node node : current.content()) {
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				String nodeName = node.getName();
-				if ("text".equals(nodeName) || "paragraph".equals(nodeName)) {
+				if ("text".equals(nodeName) || "paragraph".equals(nodeName) || "image".equals(nodeName)) {
 					counter++;
 				}
 			} else if (node.getNodeType() == Node.TEXT_NODE) {
@@ -69,5 +69,6 @@ public class TableCellHandler extends TemplateElementHandler<TableCellComposer> 
 		
 		elementPath.addHandler("text", new TextHandler(this.attrFactory, this.tplCell));
 		elementPath.addHandler("paragraph", new ParagraphHandler(this.attrFactory, this.tplCell));
+		elementPath.addHandler("image", new ImageHandler(this.attrFactory, this.tplCell));
 	}
 }

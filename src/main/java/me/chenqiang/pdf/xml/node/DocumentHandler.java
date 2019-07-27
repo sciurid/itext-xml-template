@@ -21,7 +21,8 @@ public class DocumentHandler extends TemplateElementHandler<DocumentComposer> {
 		super.onStart(elementPath);
 		this.tplDoc = new DocumentComposer();
 		elementPath.addHandler("paragraph", new ParagraphHandler(this.attrFactory, this.tplDoc));		
-		elementPath.addHandler("table", new TableHandler(this.attrFactory, this.tplDoc));		
+		elementPath.addHandler("table", new TableHandler(this.attrFactory, this.tplDoc));	
+		elementPath.addHandler("image", new ImageHandler(this.attrFactory, this.tplDoc));	
 	}
 
 	@Override

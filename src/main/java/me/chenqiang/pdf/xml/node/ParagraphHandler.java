@@ -33,7 +33,7 @@ public class ParagraphHandler extends TemplateElementHandler<ParagraphComposer> 
 		for (Node node : current.content()) {
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				String nodeName = node.getName();
-				if ("text".equals(nodeName)) {
+				if ("text".equals(nodeName) || "image".equals(nodeName)) {
 					counter++;
 				}
 			} else if (node.getNodeType() == Node.TEXT_NODE) {
@@ -51,5 +51,6 @@ public class ParagraphHandler extends TemplateElementHandler<ParagraphComposer> 
 		this.tplPara.setAll(getModifiers(elementPath.getCurrent(), this.attrFactory.getParagraphMap()));
 		
 		elementPath.addHandler("text", new TextHandler(this.attrFactory, this.tplPara));
+		elementPath.addHandler("image", new ImageHandler(this.attrFactory, this.tplPara));
 	}
 }

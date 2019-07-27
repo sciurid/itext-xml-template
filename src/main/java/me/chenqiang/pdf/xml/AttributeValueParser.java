@@ -66,6 +66,7 @@ public class AttributeValueParser {
 		if (expected > 0 && tokens.countTokens() != expected) {
 			LOGGER.error("Attribute '{}' value is not an array of floats with expected length({}): '{}'.",
 					this.attrName, expected, this.originalValue);
+			return new float[0];
 		}
 		int index = 0;
 		float[] res = new float[tokens.countTokens()];
@@ -187,12 +188,14 @@ public class AttributeValueParser {
 	}
 
 	protected static final Pattern LENGTH = Pattern.compile("\\s*(\\d+(?:\\.\\d+)?)\\s*(pt|mm|cm|in|inch)?\\s*");
-
-	protected static Float getPoints(String value) {
+	protected static Float parseLengthToPoints(String value) {
 		Matcher m = LENGTH.matcher(value);
 		if (m.matches()) {
 			float numeric = Float.parseFloat(m.group(1));
-			String unit = m.groupCount() < 3 ? "pt" : m.group(2);
+			String unit = m.groupCount() < 2 ? "pt" : m.group(2);
+			if(unit == null) {
+				unit = "pt";
+			}
 			switch (unit) {
 			case "pt":
 				return numeric;
@@ -211,11 +214,36 @@ public class AttributeValueParser {
 		}
 	}
 
-	protected Float getPoints() {
-		Float res = getPoints(this.attrValue);
+	public Float getLengthInPoints() {
+		Float res = parseLengthToPoints(this.attrValue);
 		if (res == null) {
 			LOGGER.error("Attribute '{}' is not accepted as points/length: '{}'.", this.attrName, this.originalValue);
 		}
 		return res;
+	}
+	
+	public float [] getLengthsInPoints(int expected) {
+		StringTokenizer tokens = this.getTokens();
+		if (expected > 0 && tokens.countTokens() != expected) {
+			LOGGER.error("Attribute '{}' value is not an array of lengths with expected elements({}): '{}'.",
+					this.attrName, expected, this.originalValue);
+			return new float[0];
+		}
+		int index = 0;
+		float[] res = new float[tokens.countTokens()];
+		try {
+			while (tokens.hasMoreTokens()) {
+				float val = parseLengthToPoints(tokens.nextToken());
+				res[index++] = val;
+			}
+			return res;
+		} catch (NumberFormatException nfe) {
+			LOGGER.error("Attribute '{}' is not an array of length values: '{}'.", this.attrName, this.originalValue);
+			return new float[0];
+		}
+	}
+	
+	public float [] getLengthsInPoints() {
+		return this.getLengthsInPoints(0);
 	}
 }

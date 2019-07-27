@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.layout.ElementPropertyContainer;
 import com.itextpdf.layout.element.BlockElement;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
@@ -31,6 +32,7 @@ public final class AttributeRegistry {
 	protected final Map<String, BiFunction<String, String, ? extends Consumer<? super Paragraph>>> mapParagraph;
 	protected final Map<String, BiFunction<String, String, ? extends Consumer<? super Table>>> mapTable;
 	protected final Map<String, BiFunction<String, String, ? extends Consumer<? super Text>>> mapText;
+	protected final Map<String, BiFunction<String, String, ? extends Consumer<? super Image>>> mapImage;
 
 	public AttributeRegistry(ResourceContext context) {
 		super();
@@ -40,11 +42,13 @@ public final class AttributeRegistry {
 		this.mapParagraph = new TreeMap<>();
 		this.mapText = new TreeMap<>();
 		this.mapTable = new TreeMap<>();
+		this.mapImage = new TreeMap<>();
 		this.initElementPropertyContainerMap();
 		this.initBlockElementMap();
 		this.initParagraphMap();
 		this.initTextMap();
 		this.initTableMap();
+		this.initImageMap();
 	}
 
 	public static final String FONT_FAMILY = "font-family";
@@ -66,7 +70,7 @@ public final class AttributeRegistry {
 			return element -> element.setFont(font);
 		});
 		this.mapElementPropertyContainer.put(FONT_SIZE,
-				AttributeRegistry.doFloatValue(ElementPropertyContainer::setFontSize));
+				AttributeRegistry.doFloat(ElementPropertyContainer::setFontSize));
 		this.mapElementPropertyContainer.put(FONT_VARIANT, (name, value) -> {
 			AttributeValueParser parser = new AttributeValueParser(name, value);
 			if (!parser.isValid()) {
@@ -94,9 +98,9 @@ public final class AttributeRegistry {
 				default:
 					LOGGER.error("Text-variant not valid so ignored: {}", var);
 				}
-				if(next != null) {
+				if (next != null) {
 					consumer = consumer == null ? next : consumer.andThen(next);
-				}				
+				}
 			}
 			return consumer;
 		});
@@ -141,41 +145,27 @@ public final class AttributeRegistry {
 	public void initBlockElementMap() {
 		this.mapBlockElement.putAll(this.mapElementPropertyContainer);
 
-		this.mapBlockElement.put(KEEP_TOGETHER, doBooleanValue(BlockElement::setKeepTogether));
-		this.mapBlockElement.put(KEEP_WITH_NEXT, doBooleanValue(BlockElement::setKeepWithNext));
-		this.mapBlockElement.put(MARGINS, (name, value) -> {
-			AttributeValueParser parser = new AttributeValueParser(name, value);
-			if (!parser.isValid()) {
-				return null;
-			}
-			float[] fvals = parser.getFloats(4);
-			return fvals.length == 0 ? null : block -> block.setMargins(fvals[0], fvals[1], fvals[2], fvals[3]);
-		});
-		this.mapBlockElement.put(MARGIN, doFloatValue(BlockElement::setMargin));
-		this.mapBlockElement.put(MARGIN_TOP, doFloatValue(BlockElement::setMarginTop));
-		this.mapBlockElement.put(MARGIN_BOTTOM, doFloatValue(BlockElement::setMarginBottom));
-		this.mapBlockElement.put(MARGIN_LEFT, AttributeRegistry.doFloatValue(BlockElement::setMarginLeft));
-		this.mapBlockElement.put(MARGIN_RIGIHT, doFloatValue(BlockElement::setMarginRight));
-		this.mapBlockElement.put(PADDINGS, (name, value) -> {
-			AttributeValueParser parser = new AttributeValueParser(name, value);
-			if (!parser.isValid()) {
-				return null;
-			}
-			float[] fvals = parser.getFloats(4);
-			return fvals.length == 0 ? null : block -> block.setPaddings(fvals[0], fvals[1], fvals[2], fvals[3]);
-		});
-		this.mapBlockElement.put(PADDING, doFloatValue(BlockElement::setPadding));
-		this.mapBlockElement.put(PADDING_TOP, doFloatValue(BlockElement::setPaddingTop));
-		this.mapBlockElement.put(PADDING_BOTTOM, doFloatValue(BlockElement::setPaddingBottom));
-		this.mapBlockElement.put(PADDING_LEFT, doFloatValue(BlockElement::setPaddingLeft));
-		this.mapBlockElement.put(PADDING_RIGIHT, doFloatValue(BlockElement::setPaddingRight));
+		this.mapBlockElement.put(KEEP_TOGETHER, doBoolean(BlockElement::setKeepTogether));
+		this.mapBlockElement.put(KEEP_WITH_NEXT, doBoolean(BlockElement::setKeepWithNext));
+		this.mapBlockElement.put(MARGINS, doQuadFloat(BlockElement::setMargins));
+		this.mapBlockElement.put(MARGIN, doFloat(BlockElement::setMargin));
+		this.mapBlockElement.put(MARGIN_TOP, doFloat(BlockElement::setMarginTop));
+		this.mapBlockElement.put(MARGIN_BOTTOM, doFloat(BlockElement::setMarginBottom));
+		this.mapBlockElement.put(MARGIN_LEFT, AttributeRegistry.doFloat(BlockElement::setMarginLeft));
+		this.mapBlockElement.put(MARGIN_RIGIHT, doFloat(BlockElement::setMarginRight));
+		this.mapBlockElement.put(PADDINGS, doQuadFloat(BlockElement::setPaddings));
+		this.mapBlockElement.put(PADDING, doFloat(BlockElement::setPadding));
+		this.mapBlockElement.put(PADDING_TOP, doFloat(BlockElement::setPaddingTop));
+		this.mapBlockElement.put(PADDING_BOTTOM, doFloat(BlockElement::setPaddingBottom));
+		this.mapBlockElement.put(PADDING_LEFT, doFloat(BlockElement::setPaddingLeft));
+		this.mapBlockElement.put(PADDING_RIGIHT, doFloat(BlockElement::setPaddingRight));
 		this.mapBlockElement.put(WIDTH, doUnitValue(BlockElement::setWidth));
 		this.mapBlockElement.put(MIN_WIDTH, doUnitValue(BlockElement::setMinWidth));
 		this.mapBlockElement.put(MAX_WIDTH, doUnitValue(BlockElement::setMaxWidth));
 		this.mapBlockElement.put(HEIGHT, doUnitValue(BlockElement::setHeight));
 		this.mapBlockElement.put(MIN_HEIGHT, doUnitValue(BlockElement::setMinHeight));
 		this.mapBlockElement.put(MAX_HEIGHT, doUnitValue(BlockElement::setMaxHeight));
-		this.mapBlockElement.put(SPACING_RATIO, doFloatValue(BlockElement::setSpacingRatio));
+		this.mapBlockElement.put(SPACING_RATIO, doFloat(BlockElement::setSpacingRatio));
 		this.mapBlockElement.put(VERTICAL_ALIGNMENT, (name, value) -> {
 			AttributeValueParser parser = new AttributeValueParser(name, value);
 			if (!parser.isValid()) {
@@ -190,6 +180,46 @@ public final class AttributeRegistry {
 		return Collections.unmodifiableMap(this.mapBlockElement);
 	}
 
+	public static final String SCALE = "scale";
+	public static final String SCALE_ABSOLUTE = "scale-absolute";
+	public static final String SCALE_TO_FIT = "scale-to-fit";
+	public static final String AUTO_SCALE = "auto-scale";
+	public static final String AUTO_SCALE_HEIGHT = "auto-scale-height";
+	public static final String AUTO_SCALE_WIDTH = "auto-scale-width";
+
+	protected void initImageMap() {
+		this.mapImage.putAll(this.mapElementPropertyContainer);
+		this.mapImage.put(WIDTH, doUnitValue(Image::setWidth));
+		this.mapImage.put(MIN_WIDTH, doUnitValue(Image::setMinWidth));
+		this.mapImage.put(MAX_WIDTH, doUnitValue(Image::setMaxWidth));
+		this.mapImage.put(HEIGHT, doUnitValue(Image::setHeight));
+		this.mapImage.put(MIN_HEIGHT, doUnitValue(Image::setMinHeight));
+		this.mapImage.put(MAX_HEIGHT, doUnitValue(Image::setMaxHeight));
+
+		this.mapImage.put(MARGINS, doQuadFloat(Image::setMargins));
+		this.mapImage.put(MARGIN_TOP, doFloat(Image::setMarginTop));
+		this.mapImage.put(MARGIN_BOTTOM, doFloat(Image::setMarginBottom));
+		this.mapImage.put(MARGIN_LEFT, AttributeRegistry.doFloat(Image::setMarginLeft));
+		this.mapImage.put(MARGIN_RIGIHT, doFloat(Image::setMarginRight));
+		this.mapImage.put(PADDINGS, doQuadFloat(Image::setPaddings));
+		this.mapImage.put(PADDING, doFloat(Image::setPadding));
+		this.mapImage.put(PADDING_TOP, doFloat(Image::setPaddingTop));
+		this.mapImage.put(PADDING_BOTTOM, doFloat(Image::setPaddingBottom));
+		this.mapImage.put(PADDING_LEFT, doFloat(Image::setPaddingLeft));
+		this.mapImage.put(PADDING_RIGIHT, doFloat(Image::setPaddingRight));
+
+		this.mapImage.put(SCALE, doBiFloat(Image::scale));
+		this.mapImage.put(SCALE_ABSOLUTE, doBiFloat(Image::scaleAbsolute));
+		this.mapImage.put(SCALE_TO_FIT, doBiFloat(Image::scaleToFit));
+		this.mapImage.put(AUTO_SCALE, doBoolean(Image::setAutoScale));
+		this.mapImage.put(AUTO_SCALE_HEIGHT, doBoolean(Image::setAutoScaleHeight));
+		this.mapImage.put(AUTO_SCALE_WIDTH, doBoolean(Image::setAutoScaleWidth));
+	}
+
+	public Map<String, BiFunction<String, String, ? extends Consumer<? super Image>>> getImageMap() {
+		return Collections.unmodifiableMap(this.mapImage);
+	}
+
 	public static final String FIRST_LINE_INDENT = "first-line-indent";
 	public static final String FIXED_LEADING = "fixed-leading";
 	public static final String MULTIPLIED_LEADING = "multiplied-leading";
@@ -197,9 +227,9 @@ public final class AttributeRegistry {
 	protected void initParagraphMap() {
 		this.mapParagraph.putAll(this.mapBlockElement);
 
-		this.mapParagraph.put(FIRST_LINE_INDENT, doFloatValue(Paragraph::setFirstLineIndent));
-		this.mapParagraph.put(FIXED_LEADING, doFloatValue(Paragraph::setFixedLeading));
-		this.mapParagraph.put(MULTIPLIED_LEADING, doFloatValue(Paragraph::setMultipliedLeading));
+		this.mapParagraph.put(FIRST_LINE_INDENT, doFloat(Paragraph::setFirstLineIndent));
+		this.mapParagraph.put(FIXED_LEADING, doFloat(Paragraph::setFixedLeading));
+		this.mapParagraph.put(MULTIPLIED_LEADING, doFloat(Paragraph::setMultipliedLeading));
 	}
 
 	public Map<String, BiFunction<String, String, ? extends Consumer<? super Paragraph>>> getParagraphMap() {
@@ -226,16 +256,9 @@ public final class AttributeRegistry {
 	public static final String TEXT_HORIZONTAL_SCALING = "text-horizontal-scaling";
 
 	protected void initTextMap() {
-		this.mapText.put(TEXT_RISE, doFloatValue(Text::setTextRise));
-		this.mapText.put(TEXT_SKEW, (name, value) -> {
-			AttributeValueParser parser = new AttributeValueParser(name, value);
-			if (!parser.isValid()) {
-				return null;
-			}
-			float[] skew = parser.getFloats(2);
-			return skew.length == 0 ? null : text -> text.setSkew(skew[0], skew[1]);
-		});
-		this.mapText.put(TEXT_HORIZONTAL_SCALING, doFloatValue(Text::setHorizontalScaling));
+		this.mapText.put(TEXT_RISE, doFloat(Text::setTextRise));
+		this.mapText.put(TEXT_SKEW, doBiFloat(Text::setSkew));
+		this.mapText.put(TEXT_HORIZONTAL_SCALING, doFloat(Text::setHorizontalScaling));
 		this.mapText.putAll(this.mapElementPropertyContainer);
 	}
 
@@ -248,7 +271,7 @@ public final class AttributeRegistry {
 		public void apply(T element, float value);
 	}
 
-	protected static <T> BiFunction<String, String, Consumer<T>> doFloatValue(FloatFunction<T> function) {
+	protected static <T> BiFunction<String, String, Consumer<T>> doFloat(FloatFunction<T> function) {
 		return (name, value) -> {
 			AttributeValueParser parser = new AttributeValueParser(name, value);
 			if (!parser.isValid()) {
@@ -264,7 +287,7 @@ public final class AttributeRegistry {
 		public void apply(T element, boolean value);
 	}
 
-	protected static <T> BiFunction<String, String, Consumer<T>> doBooleanValue(BooleanFunction<T> function) {
+	protected static <T> BiFunction<String, String, Consumer<T>> doBoolean(BooleanFunction<T> function) {
 		return (name, value) -> {
 			AttributeValueParser parser = new AttributeValueParser(name, value);
 			if (!parser.isValid()) {
@@ -287,6 +310,55 @@ public final class AttributeRegistry {
 			}
 			UnitValue uval = parser.getUnitValue();
 			return uval == null ? null : element -> function.apply(element, uval);
+		};
+	}
+
+	@FunctionalInterface
+	protected static interface BiFloatFunction<T> {
+		public void apply(T element, float val1, float val2);
+	}
+
+	protected static <T> BiFunction<String, String, Consumer<T>> doBiFloat(BiFloatFunction<T> function) {
+		return (name, value) -> {
+			AttributeValueParser parser = new AttributeValueParser(name, value);
+			if (!parser.isValid()) {
+				return null;
+			}
+			float[] fvals = parser.getLengthsInPoints(2);
+			return fvals.length == 0 ? null : element -> function.apply(element, fvals[0], fvals[1]);
+		};
+	}
+
+	@FunctionalInterface
+	protected static interface TriFloatFunction<T> {
+		public void apply(T element, float val1, float val2, float val3);
+	}
+
+	protected static <T> BiFunction<String, String, Consumer<T>> doTriFloat(TriFloatFunction<T> function) {
+		return (name, value) -> {
+			AttributeValueParser parser = new AttributeValueParser(name, value);
+			if (!parser.isValid()) {
+				return null;
+			}
+			float[] fvals = parser.getLengthsInPoints(3);
+			return fvals.length == 0 ? null : element -> function.apply(element, fvals[0], fvals[1], fvals[2]);
+		};
+	}
+
+	@FunctionalInterface
+	protected static interface QuadFloatFunction<T> {
+		public void apply(T element, float val1, float val2, float val3, float val4);
+	}
+
+	protected static <T> BiFunction<String, String, Consumer<T>> doQuadFloat(QuadFloatFunction<T> function) {
+		return (name, value) -> {
+			AttributeValueParser parser = new AttributeValueParser(name, value);
+			if (!parser.isValid()) {
+				return null;
+			}
+			float[] fvals = parser.getLengthsInPoints(4);
+			return fvals.length == 0 ? null
+					: element -> function.apply(element, fvals[0], fvals[1], fvals[2], fvals[4]);
 		};
 	}
 }
