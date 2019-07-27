@@ -1,4 +1,4 @@
-package me.chenqiang.pdf.template;
+package me.chenqiang.pdf.composer;
 
 
 import java.io.IOException;
@@ -38,7 +38,7 @@ public class DocumentFactory {
 		}
 	}
 	
-	public static void produce(DocumentTemplate template, OutputStream os, PaperLayout paper) throws IOException {
+	public static void produce(DocumentComposer template, OutputStream os, PaperLayout paper) throws IOException {
 		PdfWriter writer = new PdfWriter(os);
 		PdfDocument pdf = new PdfDocument(writer);
 		Document document = new Document(pdf, paper.ps);
@@ -48,7 +48,7 @@ public class DocumentFactory {
 		writer.close();
 	}
 	
-	public static void produce(DocumentTemplate template, OutputStream os) throws IOException {
+	public static void produce(DocumentComposer template, OutputStream os) throws IOException {
 		produce(template, os, new PaperLayout());
 	}
 }

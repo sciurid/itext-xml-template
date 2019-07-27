@@ -1,4 +1,4 @@
-package me.chenqiang.pdf.template.element;
+package me.chenqiang.pdf.composer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,37 +13,33 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 
-import me.chenqiang.pdf.template.BasicElementTemplate;
-import me.chenqiang.pdf.template.table.TableComponent;
-
-public class ParagraphTemplate extends BasicElementTemplate<Paragraph, ParagraphTemplate>
-implements DocumentComponentTemplate, CellComponent, TableComponent{
-	private static final Logger LOGGER = LoggerFactory.getLogger(ParagraphTemplate.class);
+public class ParagraphComposer extends BasicElementComposer<Paragraph, ParagraphComposer>
+implements DocumentComponent, CellComponent{
+	private static final Logger LOGGER = LoggerFactory.getLogger(ParagraphComposer.class);
 	
 	protected List<ParagraphComponent> components;
-	public ParagraphTemplate() {
+	public ParagraphComposer() {
 		this.components = new ArrayList<>();
 	}
 	
-	public ParagraphTemplate(ParagraphComponent ... comps) {
+	public ParagraphComposer(ParagraphComponent ... comps) {
 		this();
 		for(ParagraphComponent comp : comps) {
 			this.components.add(comp);
 		}
 	}
 	
-	public ParagraphTemplate(Collection<? extends ParagraphComponent> comps) {
+	public ParagraphComposer(Collection<? extends ParagraphComponent> comps) {
 		this();
 		this.components.addAll(comps);
-	}
+	}	
 	
-	
-	public ParagraphTemplate append(ParagraphComponent component) {
+	public ParagraphComposer append(ParagraphComponent component) {
 		this.components.add(component);
 		return this;
 	}
 
-	public ParagraphTemplate insertAt(ParagraphComponent component, int index) {
+	public ParagraphComposer insertAt(ParagraphComponent component, int index) {
 		this.components.add(index, component);
 		return this;
 	}

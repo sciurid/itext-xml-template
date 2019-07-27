@@ -1,4 +1,4 @@
-package me.chenqiang.pdf.template;
+package me.chenqiang.pdf.composer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,25 +11,23 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 
-import me.chenqiang.pdf.template.element.DocumentComponentTemplate;
-
-public class DocumentTemplate {
-	private static final Logger LOGGER = LoggerFactory.getLogger(DocumentTemplate.class);
+public class DocumentComposer {
+	private static final Logger LOGGER = LoggerFactory.getLogger(DocumentComposer.class);
 	
-	protected List<DocumentComponentTemplate> components;
+	protected List<DocumentComponent> components;
 	protected List<Consumer<? super Document>> attributes;	
 	
-	public DocumentTemplate() {
+	public DocumentComposer() {
 		this.components = new ArrayList<>();
 		this.attributes = new ArrayList<>();
 	}
 	
-	public DocumentTemplate append(DocumentComponentTemplate component) {
+	public DocumentComposer append(DocumentComponent component) {
 		this.components.add(component);
 		return this;
 	}
 	
-	public DocumentTemplate set(Consumer<? super Document> attribute) {
+	public DocumentComposer set(Consumer<? super Document> attribute) {
 		this.attributes.add(attribute);
 		return this;
 	}

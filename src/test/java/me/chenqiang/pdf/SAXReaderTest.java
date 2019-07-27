@@ -11,29 +11,29 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import me.chenqiang.pdf.template.DocumentFactory;
-import me.chenqiang.pdf.template.DocumentTemplate;
+import me.chenqiang.pdf.composer.DocumentComposer;
+import me.chenqiang.pdf.composer.DocumentFactory;
 import me.chenqiang.pdf.utils.ResourceContext;
 import me.chenqiang.pdf.xml.SimpleLoggingHanlder;
-import me.chenqiang.pdf.xml.StyleAttributeFactory;
-import me.chenqiang.pdf.xml.node.DocumentNode;
-import me.chenqiang.pdf.xml.node.FontDefinition;
+import me.chenqiang.pdf.xml.AttributeRegistry;
+import me.chenqiang.pdf.xml.node.DocumentHandler;
+import me.chenqiang.pdf.xml.node.FontDefinitionNode;
 
 public class SAXReaderTest {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SAXReaderTest.class);
 	@Test
 	public void doDocDefTest() throws DocumentException {
 		ResourceContext ctx = new ResourceContext();
-		StyleAttributeFactory saf = new StyleAttributeFactory(ctx);
+		AttributeRegistry saf = new AttributeRegistry(ctx);
 		
 		SAXReader reader = new SAXReader();
 		reader.setDefaultHandler(new SimpleLoggingHanlder());
-		reader.addHandler("/root/font", new FontDefinition(ctx));
-		reader.addHandler("/root/document", new DocumentNode(saf, tpl -> this.accept(tpl)));
+		reader.addHandler("/root/font", new FontDefinitionNode(ctx));
+		reader.addHandler("/root/document", new DocumentHandler(saf, tpl -> this.accept(tpl)));
 		reader.read(SAXReaderTest.class.getResourceAsStream("/DocDef.xml"));
 	}
 	
-	public void accept(DocumentTemplate template) {
+	public void accept(DocumentComposer template) {
 		
 		try {
 			File file = File.createTempFile("TEST", ".pdf");

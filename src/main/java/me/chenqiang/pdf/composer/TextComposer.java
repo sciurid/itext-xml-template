@@ -1,28 +1,32 @@
-package me.chenqiang.pdf.template.element;
+package me.chenqiang.pdf.composer;
 
 
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 
-import me.chenqiang.pdf.template.BasicElementTemplate;
-
-public class TextTemplate extends BasicElementTemplate<Text, TextTemplate>
-implements ParagraphComponent{
+public class TextComposer extends BasicElementComposer<Text, TextComposer>
+implements ParagraphComponent, CellComponent{
 	private StringBuilder content;
 	
-	public TextTemplate() {
+	public TextComposer() {
 		super();
 		this.content = new StringBuilder();
 	}
 	
-	public TextTemplate(String str) {
+	public TextComposer(String str) {
 		this();
 		this.append(str);
 	}
 	
-	public TextTemplate append(String text) {
+	public TextComposer append(String text) {
 		this.content.append(text);
 		return this;
+	}
+	
+	@Override
+	public void process(Cell cell) {
+		cell.add(new Paragraph(this.create()));		
 	}
 
 	@Override

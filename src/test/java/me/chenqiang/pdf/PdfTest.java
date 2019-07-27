@@ -12,8 +12,8 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 
-import me.chenqiang.pdf.template.DocumentFactory;
-import me.chenqiang.pdf.template.DocumentTemplate;
+import me.chenqiang.pdf.composer.DocumentComposer;
+import me.chenqiang.pdf.composer.DocumentFactory;
 
 public abstract class PdfTest {
 	private PdfFont songti;
@@ -35,7 +35,7 @@ public abstract class PdfTest {
 				PdfEncodings.IDENTITY_H, true, true);
 	}
 	
-	protected void render(DocumentTemplate template, String prefix) throws IOException {
+	protected void render(DocumentComposer template, String prefix) throws IOException {
 		File file = File.createTempFile(prefix, ".pdf");
 		FileOutputStream fos = new FileOutputStream(file);
 		DocumentFactory.produce(template, fos);

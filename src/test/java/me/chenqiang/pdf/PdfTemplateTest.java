@@ -10,14 +10,14 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.property.TextAlignment;
 
-import me.chenqiang.pdf.template.DocumentTemplate;
-import me.chenqiang.pdf.template.element.ParagraphTemplate;
-import me.chenqiang.pdf.template.element.TextTemplate;
+import me.chenqiang.pdf.composer.DocumentComposer;
+import me.chenqiang.pdf.composer.ParagraphComposer;
+import me.chenqiang.pdf.composer.TextComposer;
 
 public class PdfTemplateTest extends PdfTest{	
 	@Test
 	public void testEmptyDocument() throws IOException {
-		DocumentTemplate template = new DocumentTemplate();
+		DocumentComposer template = new DocumentComposer();
 		this.render(template, "Empty-");
 	}
 	
@@ -33,16 +33,16 @@ public class PdfTemplateTest extends PdfTest{
 	@Test
 	public void testSimpleEnglishDocument() throws IOException {
 		PdfFont times = PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN);
-		DocumentTemplate template = new DocumentTemplate();		
+		DocumentComposer template = new DocumentComposer();		
 		template
 		.set(doc -> doc.setFont(times))
 		.set(doc -> doc.setFontSize(12))
 		;
 		
-		ParagraphTemplate title = new ParagraphTemplate();
+		ParagraphComposer title = new ParagraphComposer();
 		title
-		.append(new TextTemplate("SAMPLE ").set(para -> para.setBold()))
-		.append(new TextTemplate("The Gettysburg Address"));
+		.append(new TextComposer("SAMPLE ").set(para -> para.setBold()))
+		.append(new TextComposer("The Gettysburg Address"));
 		
 		title
 		.set(para -> para.setTextAlignment(TextAlignment.CENTER))
@@ -50,8 +50,8 @@ public class PdfTemplateTest extends PdfTest{
 		
 		template.append(title);
 		
-		ParagraphTemplate content = new ParagraphTemplate();
-		TextTemplate strContent = new TextTemplate(this.gettysburg);
+		ParagraphComposer content = new ParagraphComposer();
+		TextComposer strContent = new TextComposer(this.gettysburg);
 		content.append(strContent);
 		content.set(para -> para.setFirstLineIndent(24))
 		.set(para -> para.setTextAlignment(TextAlignment.JUSTIFIED));		
@@ -89,24 +89,24 @@ public class PdfTemplateTest extends PdfTest{
 		FontProvider fp = new FontProvider();
 		fp.addSystemFonts();
 		
-		DocumentTemplate template = new DocumentTemplate();
+		DocumentComposer template = new DocumentComposer();
 		template
 		.set(doc -> doc.setFontProvider(fp))
 		.set(doc -> doc.setFontFamily("kaiti"))
 		.set(doc -> doc.setFontSize(12))
 		;
 		
-		ParagraphTemplate title = new ParagraphTemplate();
+		ParagraphComposer title = new ParagraphComposer();
 		title
-		.append(new TextTemplate("蜀道难"))
+		.append(new TextComposer("蜀道难"))
 		.set(para -> para.setFontFamily("simhei"))
 		.set(para -> para.setTextAlignment(TextAlignment.CENTER))
 		.set(para -> para.setFontSize(24));
 		
 		template.append(title);
 		
-		ParagraphTemplate content = new ParagraphTemplate();
-		TextTemplate strContent = new TextTemplate(this.shudaonan);
+		ParagraphComposer content = new ParagraphComposer();
+		TextComposer strContent = new TextComposer(this.shudaonan);
 		content.append(strContent)
 		.set(para -> para.setFirstLineIndent(24))
 		.set(para -> para.setTextAlignment(TextAlignment.JUSTIFIED));		

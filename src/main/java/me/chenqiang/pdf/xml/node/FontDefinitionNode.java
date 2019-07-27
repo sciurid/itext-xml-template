@@ -11,11 +11,11 @@ import org.slf4j.LoggerFactory;
 
 import me.chenqiang.pdf.utils.ResourceContext;
 
-public class FontDefinition implements ElementHandler{
-	private static final Logger LOGGER = LoggerFactory.getLogger(FontDefinition.class);
+public class FontDefinitionNode implements ElementHandler{
+	private static final Logger LOGGER = LoggerFactory.getLogger(FontDefinitionNode.class);
 	protected ResourceContext fontCollection;	
 
-	public FontDefinition(ResourceContext fontCollection) {
+	public FontDefinitionNode(ResourceContext fontCollection) {
 		super();
 		this.fontCollection = fontCollection;
 	}
