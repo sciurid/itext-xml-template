@@ -3,6 +3,7 @@ package me.chenqiang.pdf.composer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,5 +69,14 @@ implements DocumentComponent, CellComponent{
 			this.components.forEach(component -> component.process(para));
 		}
 		return para;
-	}	
+	}
+
+	@Override
+	public void substitute(Map<String, String> params) {
+		this.components.stream()
+		.filter(comp -> comp instanceof StringStub)
+		.forEach(comp -> ((StringStub)comp).substitute(params));
+	}
+	
+	
 }

@@ -111,4 +111,9 @@ public class BarcodeComposer extends ImageComposer {
 		}
 		return super.create();
 	}
+
+	@Override
+	public void substitute(Map<String, String> params) {
+		
+	}
 }

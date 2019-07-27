@@ -1,9 +1,13 @@
 package me.chenqiang.pdf.composer;
 
+import java.util.Map;
+
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 
-public class StringComposer implements ParagraphComponent, CellComponent{
+import me.chenqiang.pdf.utils.Substitution;
+
+public class StringComposer implements ParagraphComponent, CellComponent, StringStub{
 	private String content;
 	
 	public StringComposer(String content) {
@@ -25,5 +29,11 @@ public class StringComposer implements ParagraphComponent, CellComponent{
 	public String toString() {
 		return this.content;
 	}
+
+	@Override
+	public void substitute(Map<String, String> params) {
+		this.content = Substitution.substitute(this.content, params);
+	}
+	
 	
 }

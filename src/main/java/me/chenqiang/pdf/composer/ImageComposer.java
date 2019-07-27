@@ -3,6 +3,7 @@ package me.chenqiang.pdf.composer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.Map;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
@@ -89,5 +90,10 @@ implements DocumentComponent, ParagraphComponent, CellComponent{
 	@Override
 	public void process(Document doc, PdfDocument pdf, PdfWriter writer) {
 		doc.add(this.<Void>produce(null));
+	}
+
+	@Override
+	public void substitute(Map<String, String> params) {
+		//Do nothing.
 	}
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class BasicElementComposer<T, S extends BasicElementComposer<T, S>>
-implements ElementComposer<T>{
+implements ElementComposer<T>, StringStub{
 	protected List<Consumer<? super T>> attributes;	
 	
 	protected BasicElementComposer() {

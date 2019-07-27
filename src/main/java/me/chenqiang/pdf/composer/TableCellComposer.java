@@ -2,6 +2,7 @@ package me.chenqiang.pdf.composer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import com.itextpdf.layout.element.Cell;
@@ -77,6 +78,13 @@ implements ElementComposer<Cell>{
 			throw new UnsupportedOperationException();
 		}
 		
+	}
+
+	@Override
+	public void substitute(Map<String, String> params) {
+		this.components.stream()
+		.filter(comp -> comp instanceof StringStub)
+		.forEach(comp -> ((StringStub)comp).substitute(params));
 	}
 	
 }
