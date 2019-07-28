@@ -15,9 +15,15 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 
+import me.chenqiang.pdf.composer.DocumentComposer.DocumentComponent;
+
 public class DocumentComposer implements StringStub, Iterable<DocumentComponent> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DocumentComposer.class);
-
+	
+	public static interface DocumentComponent {
+		public void process(Document doc, PdfDocument pdf, PdfWriter writer);
+	}
+	
 	protected String id;
 	protected List<DocumentComponent> components;
 	protected List<Consumer<? super Document>> attributes;

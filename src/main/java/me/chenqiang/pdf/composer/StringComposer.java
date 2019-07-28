@@ -5,6 +5,8 @@ import java.util.Map;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 
+import me.chenqiang.pdf.composer.ParagraphComposer.ParagraphComponent;
+import me.chenqiang.pdf.composer.TableCellComposer.TableCellComponent;
 import me.chenqiang.pdf.utils.Substitution;
 
 public class StringComposer implements ParagraphComponent, TableCellComponent, StringStub {

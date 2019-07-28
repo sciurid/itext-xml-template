@@ -2,22 +2,24 @@ package me.chenqiang.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.events.Event;
 import com.itextpdf.kernel.events.IEventHandler;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.layout.Document;
+import com.itextpdf.pdfa.PdfADocument;
 
 import me.chenqiang.pdf.composer.DocumentComposer;
 
@@ -51,12 +53,18 @@ public class DocumentFactory {
 	}
 
 	public static void produce(DocumentComposer template, OutputStream os, PaperLayout paper) throws IOException {
+		Map<String, String> params = Map.ofEntries(
+				Map.entry("占位", "替换结果"),
+				Map.entry("B1", "变量B1")
+				);
+		template.substitute(params);
+		
 		PdfWriter writer = new PdfWriter(os);
-//		PdfDocument pdf = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3A, 
-//				new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", 
-//						DocumentFactory.class.getResourceAsStream("/sRGB_CS_profile.icm")));
-//		pdf.setTagged();
-		PdfDocument pdf = new PdfDocument(writer);
+		PdfDocument pdf = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3A, 
+				new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", 
+						DocumentFactory.class.getResourceAsStream("/sRGB_CS_profile.icm")));
+		pdf.setTagged();
+//		PdfDocument pdf = new PdfDocument(writer);
 		
 		pdf.addEventHandler(PdfDocumentEvent.END_PAGE, new Watermark());
 		Document document = new Document(pdf, paper.ps);
@@ -70,18 +78,6 @@ public class DocumentFactory {
 		produce(template, os, new PaperLayout());
 	}
 	
-	public static abstract class EventHandler implements IEventHandler {
-
-		@Override
-		public void handleEvent(Event event) {
-			PdfDocumentEvent docEvent = (PdfDocumentEvent) event;
-	        PdfDocument pdfDoc = docEvent.getDocument();
-	        PdfPage page = docEvent.getPage();
-	        this.handleEvent(docEvent, pdfDoc, page);
-		}
-		
-		protected abstract void handleEvent(PdfDocumentEvent event, PdfDocument pdfDoc, PdfPage page);
-	}
 	
 	public static class Watermark implements IEventHandler {
 
@@ -96,14 +92,22 @@ public class DocumentFactory {
 	            page.newContentStreamBefore(), page.getResources(), pdfDoc);
 	 
 	        //Set background
-	        Color limeColor = new DeviceCmyk(0.208f, 0, 0.584f, 0);
-	        Color blueColor = new DeviceCmyk(0.445f, 0.0546f, 0, 0.0667f);
-	        pdfCanvas.saveState()
-	                .setFillColor(pageNumber % 2 == 1 ? limeColor : blueColor)
-	                .rectangle(pageSize.getLeft(), pageSize.getBottom(),
-	                    pageSize.getWidth(), pageSize.getHeight())
-	                .fill().restoreState();
+//	        Color limeColor = new DeviceCmyk(0.208f, 0, 0.584f, 0);
+//	        Color blueColor = new DeviceCmyk(0.445f, 0.0546f, 0, 0.0667f);
+//	        pdfCanvas.saveState()
+//	                .setFillColor(pageNumber % 2 == 1 ? limeColor : blueColor)
+//	                .rectangle(pageSize.getLeft(), pageSize.getBottom(),
+//	                    pageSize.getWidth(), pageSize.getHeight())
+//	                .fill().restoreState();
 	        
+//	        Color limeColor = DeviceRgb.GREEN;
+//	        Color blueColor = DeviceRgb.BLUE;
+//	        pdfCanvas.saveState()
+//	                .setFillColor(pageNumber % 2 == 1 ? limeColor : blueColor)
+//	                .rectangle(pageSize.getLeft(), pageSize.getBottom(),
+//	                    pageSize.getWidth(), pageSize.getHeight())
+//	                .fill().restoreState();
+//	        
 //	        //Add header and footer
 //	        pdfCanvas.beginText()
 //	                .setFontAndSize(helvetica, 9)

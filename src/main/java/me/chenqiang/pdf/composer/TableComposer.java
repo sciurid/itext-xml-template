@@ -18,6 +18,10 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.UnitValue;
 
+import me.chenqiang.pdf.composer.DocumentComposer.DocumentComponent;
+import me.chenqiang.pdf.composer.ParagraphComposer.ParagraphComponent;
+import me.chenqiang.pdf.composer.TableCellComposer.TableCellComponent;
+
 public class TableComposer extends BasicElementComposer<Table, TableComposer> implements DocumentComponent, Iterable<TableCellComposer> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TableComposer.class);
 

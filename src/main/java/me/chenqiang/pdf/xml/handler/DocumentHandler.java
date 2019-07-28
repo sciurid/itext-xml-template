@@ -1,4 +1,4 @@
-package me.chenqiang.pdf.xml.node;
+package me.chenqiang.pdf.xml.handler;
 
 import java.util.function.BiConsumer;
 
@@ -29,6 +29,7 @@ public final class DocumentHandler extends TemplateElementHandler<DocumentCompos
 		elementPath.addHandler("table", new TableHandler(this.context, this.tplDoc));
 		elementPath.addHandler("image", new ImageHandler(this.context, this.tplDoc));
 		elementPath.addHandler("barcode", new BarcodeHandler(this.context, this.tplDoc));
+		elementPath.addHandler("newpage", new NewPageHandler(this.context, this.tplDoc));
 	}
 
 	@Override

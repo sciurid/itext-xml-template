@@ -11,6 +11,8 @@ import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 
+import me.chenqiang.pdf.utils.LengthUnit;
+
 public class AttributeValueParser {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AttributeValueParser.class);
 	private final String attrName;
@@ -145,12 +147,12 @@ public class AttributeValueParser {
 			case "pt":
 				return UnitValue.createPointValue(numeric);
 			case "mm":
-				return UnitValue.createPointValue(numeric * 72 / 25.4f);
+				return UnitValue.createPointValue(LengthUnit.mm2pt(numeric));
 			case "cm":
-				return UnitValue.createPointValue(numeric * 72 / 2.54f);
+				return UnitValue.createPointValue(LengthUnit.cm2pt(numeric));
 			case "in":
 			case "inch":
-				return UnitValue.createPointValue(numeric * 72);
+				return UnitValue.createPointValue(LengthUnit.inch2pt(numeric));
 			case "%":
 				return UnitValue.createPercentValue(numeric);
 			default:
@@ -200,12 +202,12 @@ public class AttributeValueParser {
 			case "pt":
 				return numeric;
 			case "mm":
-				return numeric * 72 / 25.4f;
+				return LengthUnit.mm2pt(numeric);
 			case "cm":
-				return numeric * 72 / 2.54f;
+				return LengthUnit.cm2pt(numeric);
 			case "in":
 			case "inch":
-				return numeric * 72;
+				return LengthUnit.inch2pt(numeric);
 			default:
 				return null;
 			}

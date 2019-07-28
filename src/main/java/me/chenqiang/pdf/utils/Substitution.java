@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 public final class Substitution {
 	private Substitution() {}
-	public static final Pattern VARIABLE = Pattern.compile("(?<!\\\\)\\$\\{(\\p{L}+)\\}");
+	public static final Pattern VARIABLE = Pattern.compile("(?<!\\\\)\\$\\{([\\p{L}\\d]+)\\}");
 	public static String substitute(String original, Map<String, String> params) {
 		Matcher m = VARIABLE.matcher(original);
 		StringBuffer sb = new StringBuffer(original.length());

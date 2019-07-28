@@ -15,10 +15,18 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 
+import me.chenqiang.pdf.composer.DocumentComposer.DocumentComponent;
+import me.chenqiang.pdf.composer.ParagraphComposer.ParagraphComponent;
+import me.chenqiang.pdf.composer.TableCellComposer.TableCellComponent;
+
 public class ParagraphComposer extends BasicElementComposer<Paragraph, ParagraphComposer>
 		implements DocumentComponent, TableCellComponent, Iterable<ParagraphComponent> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ParagraphComposer.class);
 
+	public static interface ParagraphComponent {
+		public void process(Paragraph para);
+	}
+	
 	protected List<ParagraphComponent> components;
 
 	public ParagraphComposer() {

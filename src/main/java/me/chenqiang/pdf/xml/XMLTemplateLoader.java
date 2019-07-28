@@ -9,10 +9,10 @@ import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
 
 import me.chenqiang.pdf.composer.DocumentComposer;
-import me.chenqiang.pdf.xml.node.DocumentHandler;
-import me.chenqiang.pdf.xml.node.FontDefinitionHandler;
-import me.chenqiang.pdf.xml.node.ImageDefinitionHandler;
-import me.chenqiang.pdf.xml.node.SimpleLoggingHanlder;
+import me.chenqiang.pdf.xml.handler.DocumentHandler;
+import me.chenqiang.pdf.xml.handler.FontDefinitionHandler;
+import me.chenqiang.pdf.xml.handler.ImageDefinitionHandler;
+import me.chenqiang.pdf.xml.handler.SimpleLoggingHanlder;
 
 public class XMLTemplateLoader {
 	protected TemplateContext context;

@@ -7,6 +7,8 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 
+import me.chenqiang.pdf.composer.ParagraphComposer.ParagraphComponent;
+import me.chenqiang.pdf.composer.TableCellComposer.TableCellComponent;
 import me.chenqiang.pdf.utils.Substitution;
 
 public class TextComposer extends BasicElementComposer<Text, TextComposer>
@@ -53,8 +55,7 @@ implements ParagraphComponent, TableCellComponent, ParameterPlaceholder<String>{
 
 	@Override
 	public void substitute(Map<String, String> params) {
-		this.content = new StringBuilder();
-		this.content.append(Substitution.substitute(this.content.toString(), params));
+		this.content = new StringBuilder(Substitution.substitute(this.content.toString(), params));
 	}
 
 	@Override

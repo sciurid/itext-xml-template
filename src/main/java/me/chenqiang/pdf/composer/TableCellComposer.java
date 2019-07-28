@@ -9,6 +9,11 @@ import com.itextpdf.layout.element.Cell;
 
 public class TableCellComposer extends BasicElementComposer<Cell, TableCellComposer>
 implements ElementComposer<Cell>{
+	
+	public static interface TableCellComponent {
+		public void process(Cell cell);
+	}
+	
 	protected final List<TableCellComponent> components;
 	protected int colspan = 1;
 	protected int rowspan = 1;
