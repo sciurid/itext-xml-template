@@ -24,7 +24,7 @@ public class TableRowHander implements ElementHandler {
 	public void onStart(ElementPath elementPath) {
 		LOGGER.debug("[START] {}", elementPath.getPath());
 		Element current = elementPath.getCurrent();
-		this.row.setAll(TemplateElementHandler.getModifiers(current, this.context.getAttributeRegistry().getCellMap()));
+		this.row.setAll(BasicTemplateElementHandler.getModifiers(current, this.context.getAttributeRegistry().getCellMap()));
 		elementPath.addHandler("cell", new TableCellHandler(this.context, this.row));
 	}
 

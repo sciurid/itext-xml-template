@@ -24,7 +24,7 @@ import me.chenqiang.pdf.composer.ParagraphComposer.ParagraphComponent;
 import me.chenqiang.pdf.composer.TableCellComposer.TableCellComponent;
 
 public abstract class BasicImageComposer<T extends BasicImageComposer<T>>
-		extends BasicElementComposer<Image, BasicImageComposer<T>>
+		extends BasicElementPropertyContainerComposer<Image, BasicImageComposer<T>>
 		implements DocumentComponent, ParagraphComponent, TableCellComponent {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BasicImageComposer.class);
 	public static final String IMAGE_ERROR = "Error loading image.";

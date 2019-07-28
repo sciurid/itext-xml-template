@@ -12,7 +12,7 @@ import me.chenqiang.pdf.xml.AttributeRegistry;
 import me.chenqiang.pdf.xml.ComposerDirectory;
 import me.chenqiang.pdf.xml.TemplateContext;
 
-public class ParagraphHandler extends TemplateElementHandler<ParagraphComposer> {
+public class ParagraphHandler extends BasicTemplateElementHandler<ParagraphComposer> {
 //	private static final Logger LOGGER = LoggerFactory.getLogger(ParagraphNode.class);
 	private ParagraphComposer tplPara;
 
@@ -57,6 +57,8 @@ public class ParagraphHandler extends TemplateElementHandler<ParagraphComposer> 
 		}
 		
 		AttributeRegistry attrreg = this.context.getAttributeRegistry();
+		this.tplPara.accept(attrreg.getFontColorAttribute(listAttributes(current)));
+		this.tplPara.accept(attrreg.getBackgroundColorAttribute(listAttributes(current)));
 		this.tplPara.setAllAttributes(getModifiers(current, attrreg.getParagraphMap()));
 		
 		elementPath.addHandler("text", new TextHandler(this.context, this.tplPara));

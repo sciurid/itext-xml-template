@@ -12,7 +12,7 @@ import me.chenqiang.pdf.xml.AttributeRegistry;
 import me.chenqiang.pdf.xml.AttributeValueParser;
 import me.chenqiang.pdf.xml.TemplateContext;
 
-public class TableHandler extends TemplateElementHandler<TableComposer> {
+public class TableHandler extends BasicTemplateElementHandler<TableComposer> {
 //	private static final Logger LOGGER = LoggerFactory.getLogger(TableNode.class);
 	private TableComposer tplTbl;
 	public TableHandler(TemplateContext context, DocumentComposer tplDoc) {
@@ -32,7 +32,7 @@ public class TableHandler extends TemplateElementHandler<TableComposer> {
 			}
 			else if (AttributeRegistry.WIDTHS.equals(attrName)) {
 				AttributeValueParser parser = new AttributeValueParser(attr.getName(), attr.getValue());
-				UnitValue [] widths = parser.getUnitValues();
+				UnitValue [] widths = parser.getUnitValueArray();
 				if(widths.length > 0) {
 					this.tplTbl.setColumns(widths);
 				}
@@ -45,7 +45,10 @@ public class TableHandler extends TemplateElementHandler<TableComposer> {
 				}
 			} 
 		}
-		this.tplTbl.setAllAttributes(getModifiers(current, this.context.getAttributeRegistry().getTableMap()));
+		AttributeRegistry attrreg = this.context.getAttributeRegistry();
+		this.tplTbl.accept(attrreg.getFontColorAttribute(listAttributes(current)));
+		this.tplTbl.accept(attrreg.getBackgroundColorAttribute(listAttributes(current)));
+		this.tplTbl.setAllAttributes(getModifiers(current, attrreg.getTableMap()));
 		
 		elementPath.addHandler("header", new TableRowHander(this.context, this.tplTbl.getHeader()));
 		elementPath.addHandler("body", new TableRowHander(this.context, this.tplTbl.getBody()));

@@ -27,7 +27,7 @@ public class DocumentComposer implements StringStub, Iterable<DocumentComponent>
 	protected String id;
 	protected List<DocumentComponent> components;
 	protected List<Consumer<? super Document>> attributes;
-	protected List<Pair<String, IEventHandler>> handlers;
+	protected List<Pair<String, IEventHandler>> handlers;	
 
 	public DocumentComposer() {
 		this.components = new ArrayList<>();

@@ -12,7 +12,7 @@ import me.chenqiang.pdf.composer.TableCellComposer;
 import me.chenqiang.pdf.xml.AttributeRegistry;
 import me.chenqiang.pdf.xml.TemplateContext;
 
-public class BarcodeHandler extends TemplateElementHandler<BarcodeComposer>{
+public class BarcodeHandler extends BasicTemplateElementHandler<BarcodeComposer>{
 	private static final Logger LOGGER = LoggerFactory.getLogger(BarcodeHandler.class);
 	public BarcodeHandler(TemplateContext context, DocumentComposer doc) {
 		super(context, doc::append);
@@ -39,7 +39,10 @@ public class BarcodeHandler extends TemplateElementHandler<BarcodeComposer>{
 		
 		BarcodeComposer barcode = new BarcodeComposer()
 				.setFormat(format).setMessage(current.getText());
-		barcode.setAllAttributes(getModifiers(current, this.context.getAttributeRegistry().getImageMap()));
+		AttributeRegistry attrreg = this.context.getAttributeRegistry();
+		barcode.accept(attrreg.getFontColorAttribute(listAttributes(current)));
+		barcode.accept(attrreg.getBackgroundColorAttribute(listAttributes(current)));
+		barcode.setAllAttributes(getModifiers(current, attrreg.getImageMap()));
 		return barcode;
 	}
 

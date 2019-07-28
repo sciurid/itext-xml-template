@@ -15,18 +15,19 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 
+import me.chenqiang.pdf.attribute.FontColorAttribute;
 import me.chenqiang.pdf.composer.DocumentComposer.DocumentComponent;
 import me.chenqiang.pdf.composer.ParagraphComposer.ParagraphComponent;
 import me.chenqiang.pdf.composer.TableCellComposer.TableCellComponent;
 
-public class ParagraphComposer extends BasicElementComposer<Paragraph, ParagraphComposer>
-		implements DocumentComponent, TableCellComponent, Iterable<ParagraphComponent> {
+public class ParagraphComposer extends BasicElementPropertyContainerComposer<Paragraph, ParagraphComposer>
+		implements FontColorAttribute.Acceptor, DocumentComponent, TableCellComponent, Iterable<ParagraphComponent> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ParagraphComposer.class);
 
 	public static interface ParagraphComponent {
 		public void process(Paragraph para);
 	}
-	
+
 	protected List<ParagraphComponent> components;
 
 	public ParagraphComposer() {
@@ -47,14 +48,13 @@ public class ParagraphComposer extends BasicElementComposer<Paragraph, Paragraph
 
 	public ParagraphComposer append(ParagraphComponent component) {
 		if (component != null) {
-			this.components.add(component);;
+			this.components.add(component);
 		}
-		
 		return this;
 	}
 
 	public ParagraphComposer insertAt(ParagraphComponent component, int index) {
-		if(component != null) {
+		if (component != null) {
 			this.components.add(index, component);
 		}
 		return this;

@@ -11,7 +11,7 @@ import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.xml.AttributeRegistry;
 import me.chenqiang.pdf.xml.TemplateContext;
 
-public final class DocumentHandler extends TemplateElementHandler<DocumentComposer> {
+public final class DocumentHandler extends BasicTemplateElementHandler<DocumentComposer> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DocumentHandler.class);
 	protected DocumentComposer tplDoc;
 	protected BiConsumer<String, DocumentComposer> postprocessor;
@@ -30,6 +30,7 @@ public final class DocumentHandler extends TemplateElementHandler<DocumentCompos
 		elementPath.addHandler("image", new ImageHandler(this.context, this.tplDoc));
 		elementPath.addHandler("barcode", new BarcodeHandler(this.context, this.tplDoc));
 		elementPath.addHandler("newpage", new NewPageHandler(this.context, this.tplDoc));
+		elementPath.addHandler("watermark", new WatermarkHandler(this.context, this.tplDoc));
 	}
 
 	@Override

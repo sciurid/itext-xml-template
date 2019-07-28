@@ -12,7 +12,7 @@ import me.chenqiang.pdf.xml.AttributeRegistry;
 import me.chenqiang.pdf.xml.ComposerDirectory;
 import me.chenqiang.pdf.xml.TemplateContext;
 
-public class ImageHandler extends TemplateElementHandler<ImageComposer> {
+public class ImageHandler extends BasicTemplateElementHandler<ImageComposer> {
 
 	public ImageHandler(TemplateContext context, DocumentComposer doc) {
 		super(context, doc::append);
@@ -51,7 +51,10 @@ public class ImageHandler extends TemplateElementHandler<ImageComposer> {
 			default:
 			}
 		}
-		tplImg.setAllAttributes(getModifiers(current, this.context.getAttributeRegistry().getImageMap()));
+		AttributeRegistry attrreg = this.context.getAttributeRegistry();
+		tplImg.accept(attrreg.getFontColorAttribute(listAttributes(current)));
+		tplImg.accept(attrreg.getBackgroundColorAttribute(listAttributes(current)));
+		tplImg.setAllAttributes(getModifiers(current, attrreg.getImageMap()));
 		return tplImg;
 	}
 

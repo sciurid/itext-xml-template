@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 
 import com.itextpdf.layout.element.Cell;
 
-public class TableCellComposer extends BasicElementComposer<Cell, TableCellComposer>
+public class TableCellComposer extends BasicElementPropertyContainerComposer<Cell, TableCellComposer>
 implements ElementComposer<Cell>{
 	
 	public static interface TableCellComponent {

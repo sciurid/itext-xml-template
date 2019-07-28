@@ -22,7 +22,8 @@ import me.chenqiang.pdf.composer.DocumentComposer.DocumentComponent;
 import me.chenqiang.pdf.composer.ParagraphComposer.ParagraphComponent;
 import me.chenqiang.pdf.composer.TableCellComposer.TableCellComponent;
 
-public class TableComposer extends BasicElementComposer<Table, TableComposer> implements DocumentComponent, Iterable<TableCellComposer> {
+public class TableComposer extends BasicElementPropertyContainerComposer<Table, TableComposer> 
+implements DocumentComponent, Iterable<TableCellComposer> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TableComposer.class);
 
 	public static class Row {

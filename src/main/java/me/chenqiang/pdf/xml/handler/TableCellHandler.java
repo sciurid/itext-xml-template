@@ -12,7 +12,7 @@ import me.chenqiang.pdf.xml.AttributeRegistry;
 import me.chenqiang.pdf.xml.AttributeValueParser;
 import me.chenqiang.pdf.xml.TemplateContext;
 
-public class TableCellHandler extends TemplateElementHandler<TableCellComposer> {
+public class TableCellHandler extends BasicTemplateElementHandler<TableCellComposer> {
 //	private static final Logger LOGGER = LoggerFactory.getLogger(TableCellNode.class);
 	private TableCellComposer tplCell;
 	private TableComposer.Row row;
@@ -71,7 +71,10 @@ public class TableCellHandler extends TemplateElementHandler<TableCellComposer> 
 			}
 		}
 		this.tplCell.inheritAttributes(this.row.getAttributes());
-		this.tplCell.setAllAttributes(getModifiers(current, this.context.getAttributeRegistry().getCellMap()));
+		AttributeRegistry attrreg = this.context.getAttributeRegistry();
+		this.tplCell.accept(attrreg.getFontColorAttribute(listAttributes(current)));
+		this.tplCell.accept(attrreg.getBackgroundColorAttribute(listAttributes(current)));
+		this.tplCell.setAllAttributes(getModifiers(current, attrreg.getCellMap()));
 		
 		elementPath.addHandler("text", new TextHandler(this.context, this.tplCell));
 		elementPath.addHandler("paragraph", new ParagraphHandler(this.context, this.tplCell));

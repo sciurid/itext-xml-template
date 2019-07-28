@@ -11,15 +11,12 @@ import com.itextpdf.kernel.events.IEventHandler;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.layout.Document;
-import com.itextpdf.pdfa.PdfADocument;
 
 import me.chenqiang.pdf.composer.DocumentComposer;
 
@@ -60,13 +57,12 @@ public class DocumentFactory {
 		template.substitute(params);
 		
 		PdfWriter writer = new PdfWriter(os);
-		PdfDocument pdf = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3A, 
-				new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", 
-						DocumentFactory.class.getResourceAsStream("/sRGB_CS_profile.icm")));
+//		PdfDocument pdf = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3A, 
+//				new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", 
+//						DocumentFactory.class.getResourceAsStream("/sRGB_CS_profile.icm")));
+		PdfDocument pdf = new PdfDocument(writer);
 		pdf.setTagged();
-//		PdfDocument pdf = new PdfDocument(writer);
 		
-		pdf.addEventHandler(PdfDocumentEvent.END_PAGE, new Watermark());
 		Document document = new Document(pdf, paper.ps);
 		document.setMargins(paper.marginTop, paper.marginRight, paper.marginBottom, paper.marginLeft);
 		template.process(document, pdf, writer);

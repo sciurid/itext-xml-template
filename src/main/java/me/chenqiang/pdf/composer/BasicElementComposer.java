@@ -1,28 +1,27 @@
 package me.chenqiang.pdf.composer;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.function.Consumer;
 
 public abstract class BasicElementComposer<T, S extends BasicElementComposer<T, S>>
 implements ElementComposer<T>, StringStub {
 	protected String id;
-	protected List<Consumer<? super T>> attributes;	
+	protected LinkedList<Consumer<? super T>> attributes;	
 	
 	protected BasicElementComposer() {
-		this.attributes = new ArrayList<>();
+		this.attributes = new LinkedList<>();
 	}
 	
 	@SuppressWarnings("unchecked")
 	public S setAttribute(Consumer<? super T> attribute) {
-		this.attributes.add(attribute);
+		this.attributes.addFirst(attribute);
 		return (S)this;
 	}
 	
 	@SuppressWarnings("unchecked")
 	public S setAllAttributes(Collection<? extends Consumer<? super T>> attributes) {
-		this.attributes.addAll(attributes);
+		this.attributes.addAll(0, attributes);
 		return (S)this;
 	}
 	
@@ -31,7 +30,7 @@ implements ElementComposer<T>, StringStub {
 	@Override
 	public <C> T produce(C context) {
 		T instance = this.create();
-		this.attributes.forEach(attribuate -> attribuate.accept(instance));
+		this.attributes.forEach(attribute -> attribute.accept(instance));
 		return instance;
 	}
 }

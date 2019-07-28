@@ -11,7 +11,7 @@ import me.chenqiang.pdf.composer.ParagraphComposer.ParagraphComponent;
 import me.chenqiang.pdf.composer.TableCellComposer.TableCellComponent;
 import me.chenqiang.pdf.utils.Substitution;
 
-public class TextComposer extends BasicElementComposer<Text, TextComposer>
+public class TextComposer extends BasicElementPropertyContainerComposer<Text, TextComposer>
 implements ParagraphComponent, TableCellComponent, ParameterPlaceholder<String>{
 	private StringBuilder content;
 	

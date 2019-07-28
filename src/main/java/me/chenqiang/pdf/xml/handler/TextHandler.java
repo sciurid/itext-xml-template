@@ -11,7 +11,7 @@ import me.chenqiang.pdf.xml.AttributeRegistry;
 import me.chenqiang.pdf.xml.ComposerDirectory;
 import me.chenqiang.pdf.xml.TemplateContext;
 
-public class TextHandler extends TemplateElementHandler<TextComposer> {
+public class TextHandler extends BasicTemplateElementHandler<TextComposer> {
 //	private static final Logger LOGGER = LoggerFactory.getLogger(TextNode.class);
 
 	private TextComposer tplText;
@@ -46,6 +46,9 @@ public class TextHandler extends TemplateElementHandler<TextComposer> {
 			dir.registerIdentifiable(id, this.tplText);
 			dir.registerStringPlaceholder(id, this.tplText);
 		}
-		this.tplText.setAllAttributes(getModifiers(current, this.context.getAttributeRegistry().getTextMap()));
+		AttributeRegistry attrreg = this.context.getAttributeRegistry();
+		this.tplText.accept(attrreg.getFontColorAttribute(listAttributes(current)));
+		this.tplText.accept(attrreg.getBackgroundColorAttribute(listAttributes(current)));
+		this.tplText.setAllAttributes(getModifiers(current, attrreg.getTextMap()));
 	}
 }

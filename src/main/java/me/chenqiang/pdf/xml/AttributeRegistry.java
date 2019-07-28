@@ -1,8 +1,9 @@
 package me.chenqiang.pdf.xml;
 
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -10,6 +11,7 @@ import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.layout.ElementPropertyContainer;
 import com.itextpdf.layout.element.BlockElement;
@@ -21,6 +23,9 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
+
+import me.chenqiang.pdf.attribute.BackgroundColorAttribute;
+import me.chenqiang.pdf.attribute.FontColorAttribute;
 
 public final class AttributeRegistry {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AttributeRegistry.class);
@@ -65,9 +70,6 @@ public final class AttributeRegistry {
 	protected void initElementPropertyContainerMap() {
 		this.mapElementPropertyContainer.put(FONT_FAMILY, (name, value) -> {
 			AttributeValueParser parser = new AttributeValueParser(name, value);
-			if (!parser.isValid()) {
-				return null;
-			}
 			PdfFont font = this.context.getFont(parser.getString());
 			if (font == null) {
 				LOGGER.error("Font-family name '{}' not registered.", value);
@@ -79,13 +81,10 @@ public final class AttributeRegistry {
 				AttributeRegistry.doFloat(ElementPropertyContainer::setFontSize));
 		this.mapElementPropertyContainer.put(FONT_VARIANT, (name, value) -> {
 			AttributeValueParser parser = new AttributeValueParser(name, value);
-			if (!parser.isValid()) {
-				return null;
-			}
-			StringTokenizer st = parser.getTokens();
+			Iterator<String> iter = parser.iterator();
 			Consumer<ElementPropertyContainer<?>> consumer = null;
-			while (st.hasMoreTokens()) {
-				String var = st.nextToken().trim();
+			while (iter.hasNext()) {
+				String var = iter.next().trim();
 				Consumer<ElementPropertyContainer<?>> next = null;
 				switch (var) {
 				case "bold":
@@ -112,12 +111,10 @@ public final class AttributeRegistry {
 		});
 		this.mapElementPropertyContainer.put(TEXT_ALIGN, (name, value) -> {
 			AttributeValueParser parser = new AttributeValueParser(name, value);
-			if (!parser.isValid()) {
-				return null;
-			}
 			TextAlignment alignment = parser.getTextAlign();
 			return alignment == null ? null : element -> element.setTextAlignment(alignment);
 		});
+		this.mapElementPropertyContainer.put(BACKGROUND_COLOR, doRgbColor(ElementPropertyContainer::setBackgroundColor));
 	}
 
 	public Map<String, BiFunction<String, String, ? extends Consumer<? super ElementPropertyContainer<?>>>> getElementPropertyContainerMap() {
@@ -174,9 +171,6 @@ public final class AttributeRegistry {
 		this.mapBlockElement.put(SPACING_RATIO, doFloat(BlockElement::setSpacingRatio));
 		this.mapBlockElement.put(VERTICAL_ALIGNMENT, (name, value) -> {
 			AttributeValueParser parser = new AttributeValueParser(name, value);
-			if (!parser.isValid()) {
-				return null;
-			}
 			VerticalAlignment va = parser.getVerticalAlignment();
 			return va == null ? null : block -> block.setVerticalAlignment(va);
 		});
@@ -289,6 +283,75 @@ public final class AttributeRegistry {
 	public Map<String, BiFunction<String, String, ? extends Consumer<? super Text>>> getTextMap() {
 		return Collections.unmodifiableMap(this.mapText);
 	}
+	
+	
+
+	public static final String FONT_COLOR= "font-color";
+	public static final String FONT_OPACITY= "font-opacity";
+	public FontColorAttribute getFontColorAttribute(List<Map.Entry<String, String>> attributes) {
+		FontColorAttribute res = null;
+		for(Map.Entry<String, String> attr : attributes) {
+			switch(attr.getKey()) {
+			case FONT_COLOR:
+				if(res == null) {
+					res = new FontColorAttribute();
+				}
+				res.setFontColor(new AttributeValueParser(attr.getKey(), attr.getValue()).getDeviceRgb());
+				break;
+			case FONT_OPACITY:
+				if(res == null) {
+					res = new FontColorAttribute();
+				}
+				res.setOpacity(new AttributeValueParser(attr.getKey(), attr.getValue()).getFloat());
+				break;
+			}
+		}
+		return res;
+	}
+	
+
+	public static final String BACKGROUND_COLOR = "background-color";
+	public static final String BACKGROUND_OPACITY = "background-opacity";
+	public BackgroundColorAttribute getBackgroundColorAttribute(List<Map.Entry<String, String>> attributes) {
+		BackgroundColorAttribute res = null;
+		for(Map.Entry<String, String> attr : attributes) {
+			switch(attr.getKey()) {
+			case BACKGROUND_COLOR:
+				if(res == null) {
+					res = new BackgroundColorAttribute();
+				}
+				res.setFontColor(new AttributeValueParser(attr.getKey(), attr.getValue()).getDeviceRgb());
+				break;
+			case BACKGROUND_OPACITY:
+				if(res == null) {
+					res = new BackgroundColorAttribute();
+				}
+				res.setOpacity(new AttributeValueParser(attr.getKey(), attr.getValue()).getFloat());
+				break;
+			}
+		}
+		return res;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	@FunctionalInterface
 	protected static interface FloatFunction<T> {
@@ -298,10 +361,7 @@ public final class AttributeRegistry {
 	protected static <T> BiFunction<String, String, Consumer<T>> doFloat(FloatFunction<T> function) {
 		return (name, value) -> {
 			AttributeValueParser parser = new AttributeValueParser(name, value);
-			if (!parser.isValid()) {
-				return null;
-			}
-			Float fval = parser.getLengthInPoints();
+			Float fval = parser.getLength();
 			return fval == null ? null : element -> function.apply(element, fval.floatValue());
 		};
 	}
@@ -314,9 +374,6 @@ public final class AttributeRegistry {
 	protected static <T> BiFunction<String, String, Consumer<T>> doBoolean(BooleanFunction<T> function) {
 		return (name, value) -> {
 			AttributeValueParser parser = new AttributeValueParser(name, value);
-			if (!parser.isValid()) {
-				return null;
-			}
 			return element -> function.apply(element, parser.getBoolean());
 		};
 	}
@@ -329,9 +386,6 @@ public final class AttributeRegistry {
 	protected static <T> BiFunction<String, String, Consumer<T>> doUnitValue(UnitValueFunction<T> function) {
 		return (name, value) -> {
 			AttributeValueParser parser = new AttributeValueParser(name, value);
-			if (!parser.isValid()) {
-				return null;
-			}
 			UnitValue uval = parser.getUnitValue();
 			return uval == null ? null : element -> function.apply(element, uval);
 		};
@@ -345,10 +399,7 @@ public final class AttributeRegistry {
 	protected static <T> BiFunction<String, String, Consumer<T>> doBiFloat(BiFloatFunction<T> function) {
 		return (name, value) -> {
 			AttributeValueParser parser = new AttributeValueParser(name, value);
-			if (!parser.isValid()) {
-				return null;
-			}
-			float[] fvals = parser.getLengthsInPoints(2);
+			float[] fvals = parser.getLengthArray(2);
 			return fvals.length == 0 ? null : element -> function.apply(element, fvals[0], fvals[1]);
 		};
 	}
@@ -361,10 +412,7 @@ public final class AttributeRegistry {
 	protected static <T> BiFunction<String, String, Consumer<T>> doTriFloat(TriFloatFunction<T> function) {
 		return (name, value) -> {
 			AttributeValueParser parser = new AttributeValueParser(name, value);
-			if (!parser.isValid()) {
-				return null;
-			}
-			float[] fvals = parser.getLengthsInPoints(3);
+			float[] fvals = parser.getLengthArray(3);
 			return fvals.length == 0 ? null : element -> function.apply(element, fvals[0], fvals[1], fvals[2]);
 		};
 	}
@@ -377,12 +425,30 @@ public final class AttributeRegistry {
 	protected static <T> BiFunction<String, String, Consumer<T>> doQuadFloat(QuadFloatFunction<T> function) {
 		return (name, value) -> {
 			AttributeValueParser parser = new AttributeValueParser(name, value);
-			if (!parser.isValid()) {
-				return null;
-			}
-			float[] fvals = parser.getLengthsInPoints(4);
+			float[] fvals = parser.getLengthArray(4);
 			return fvals.length == 0 ? null
 					: element -> function.apply(element, fvals[0], fvals[1], fvals[2], fvals[4]);
+		};
+	}
+	
+	@FunctionalInterface
+	protected static interface ColorFunction<T> {
+		public void apply(T element, Color color);
+	}
+	
+	protected static <T> BiFunction<String, String, Consumer<T>> doRgbColor(ColorFunction<T> function) {
+		return (name, value) -> {
+			AttributeValueParser parser = new AttributeValueParser(name, value);
+			Color color = parser.getDeviceRgb();
+			return color == null ? null : element -> function.apply(element, color);
+		};
+	}
+	
+	protected static <T> BiFunction<String, String, Consumer<T>> doCmykColor(ColorFunction<T> function) {
+		return (name, value) -> {
+			AttributeValueParser parser = new AttributeValueParser(name, value);
+			Color color = parser.getDeviceCmyk();
+			return color == null ? null : element -> function.apply(element, color);
 		};
 	}
 }

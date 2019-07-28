@@ -1,6 +1,7 @@
 package me.chenqiang.pdf.xml.handler;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -15,14 +16,14 @@ import org.slf4j.LoggerFactory;
 
 import me.chenqiang.pdf.xml.TemplateContext;
 
-public abstract class TemplateElementHandler<T> implements ElementHandler{
-	private static final Logger LOGGER = LoggerFactory.getLogger(TemplateElementHandler.class);
+public abstract class BasicTemplateElementHandler<T> implements ElementHandler{
+	private static final Logger LOGGER = LoggerFactory.getLogger(BasicTemplateElementHandler.class);
 
 	protected TemplateContext context;
 	protected int count;
 	protected Consumer<? super T> consumer;	
 	
-	protected TemplateElementHandler(TemplateContext context, Consumer<? super T> consumer) {
+	protected BasicTemplateElementHandler(TemplateContext context, Consumer<? super T> consumer) {
 		this.context = context;
 		this.consumer = consumer;
 		this.count = 0;
@@ -46,9 +47,18 @@ public abstract class TemplateElementHandler<T> implements ElementHandler{
 		LOGGER.debug("[END] {} - {}", elementPath.getPath(), this.count++);
 	}
 	
+	public static List<Map.Entry<String, String>> listAttributes(Element current) {
+		List<Map.Entry<String, String>> res = new ArrayList<>(current.attributeCount());
+		for(Attribute attr : current.attributes()) {
+			res.add(Map.entry(attr.getName(), attr.getValue()));
+		}
+		return Collections.unmodifiableList(res);
+	}
+	
 	public static <E> List<Consumer<? super E>> getModifiers(Element current, 
 			Map<String, BiFunction<String, String, ? extends Consumer<? super E>> > registryMap) {
 		List<Consumer<? super E>> res = new ArrayList<>(current.attributes().size());
+		
 		for(Attribute attr : current.attributes()) {
 			String name = attr.getName();
 			String value = attr.getValue();
