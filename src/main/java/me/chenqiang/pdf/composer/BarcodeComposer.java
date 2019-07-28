@@ -23,7 +23,10 @@ import com.google.zxing.pdf417.PDF417Writer;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.itextpdf.layout.element.Image;
 
-public class BarcodeComposer extends ImageComposer {
+import me.chenqiang.pdf.utils.Substitution;
+
+public class BarcodeComposer extends BasicImageComposer<BarcodeComposer>
+implements ParameterPlaceholder<String> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BarcodeComposer.class);
 	protected String message;
 	protected String output = "PNG";
@@ -73,8 +76,13 @@ public class BarcodeComposer extends ImageComposer {
 		return this;
 	}
 
+	@Override
+	public void setParameter(String parameter) {
+		this.setMessage(parameter);
+	}
+
 	public BarcodeComposer setFormat(String format) {
-		if (FORMATS.containsKey(format)) {
+		if (format != null && FORMATS.containsKey(format)) {
 			this.format = FORMATS.get(format);
 		} else {
 			this.format = BarcodeFormat.QR_CODE;
@@ -96,17 +104,15 @@ public class BarcodeComposer extends ImageComposer {
 	@Override
 	protected Image create() {
 		try {
-			if(this.creators.containsKey(this.format)) {
+			if (this.creators.containsKey(this.format)) {
 				BitMatrix matrix = this.creators.get(this.format).create();
-				if(matrix == null) {
-					this.setImageData((byte[])null);
-				}
-				else {
+				if (matrix == null) {
+					this.setImageData((byte[]) null);
+				} else {
 					this.setImageData(this.getImageData(matrix));
 				}
 			}
-		}
-		catch(WriterException we) {
+		} catch (WriterException we) {
 			LOGGER.error(IMAGE_ERROR, we);
 		}
 		return super.create();
@@ -114,6 +120,6 @@ public class BarcodeComposer extends ImageComposer {
 
 	@Override
 	public void substitute(Map<String, String> params) {
-		
+		this.setMessage(Substitution.substitute(this.message, params));
 	}
 }

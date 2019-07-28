@@ -9,7 +9,7 @@ import com.itextpdf.layout.element.Cell;
 
 public class TableCellComposer extends BasicElementComposer<Cell, TableCellComposer>
 implements ElementComposer<Cell>{
-	protected final List<CellComponent> components;
+	protected final List<TableCellComponent> components;
 	protected int colspan = 1;
 	protected int rowspan = 1;
 
@@ -31,13 +31,17 @@ implements ElementComposer<Cell>{
 		this.attributes.addAll(0, rowAttributes);
 	}
 	
-	public TableCellComposer append(CellComponent component) {
-		this.components.add(component);
+	public TableCellComposer append(TableCellComponent component) {
+		if(component != null) {
+			this.components.add(component);
+		}
 		return this;
 	}
 	
-	public TableCellComposer insertAt(CellComponent component, int pos) {
-		this.components.add(pos, component);
+	public TableCellComposer insertAt(TableCellComponent component, int pos) {
+		if(component != null) {
+			this.components.add(pos, component);
+		}
 		return this;
 	}
 	
@@ -69,7 +73,7 @@ implements ElementComposer<Cell>{
 		}
 
 		@Override
-		public TableCellComposer append(CellComponent component) {
+		public TableCellComposer append(TableCellComponent component) {
 			throw new UnsupportedOperationException();
 		}
 

@@ -1,21 +1,24 @@
-package me.chenqiang.pdf.utils;
+package me.chenqiang.pdf.xml;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.layout.Style;
 
-public class ResourceContext {
+public class ResourceRepository {
 	protected Map<String, PdfFont> fonts;
 	protected Map<String, Style> styles;
+	protected Map<String, ImageData> images;
 		
-	public ResourceContext() {
+	public ResourceRepository() {
 		this.fonts = new TreeMap<>();
 		this.styles = new TreeMap<>();
+		this.images = new TreeMap<>();
 	}
 
 	public void loadSingleFontData(byte [] data, String ... names) throws IOException {
@@ -56,12 +59,12 @@ public class ResourceContext {
 			this.loadTtcFontResource(resource, 0, names);
 		}
 		else {
-			this.loadSingleFontData(ResourceContext.class.getResourceAsStream(resource).readAllBytes(), names);
+			this.loadSingleFontData(ResourceRepository.class.getResourceAsStream(resource).readAllBytes(), names);
 		}
 	}
 	
 	public void loadTtcFontResource(String resource, int ttcIndex, String ... names) throws IOException {
-		this.loadTtcFontData(ResourceContext.class.getResourceAsStream(resource).readAllBytes(), ttcIndex, names);
+		this.loadTtcFontData(ResourceRepository.class.getResourceAsStream(resource).readAllBytes(), ttcIndex, names);
 	}
 	
 	public PdfFont getFont(String name) {
@@ -74,5 +77,13 @@ public class ResourceContext {
 	
 	public Style getStyle(String name) {
 		return this.styles.get(name);
+	}
+	
+	public void registerImage(String id, ImageData data) {
+		this.images.put(id, data);
+	}
+	
+	public ImageData getImage(String id) {
+		return this.images.get(id);
 	}
 }

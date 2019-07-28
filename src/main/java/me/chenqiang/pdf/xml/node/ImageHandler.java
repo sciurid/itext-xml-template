@@ -9,52 +9,50 @@ import me.chenqiang.pdf.composer.ImageComposer;
 import me.chenqiang.pdf.composer.ParagraphComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
 import me.chenqiang.pdf.xml.AttributeRegistry;
+import me.chenqiang.pdf.xml.ComposerDirectory;
+import me.chenqiang.pdf.xml.TemplateContext;
 
 public class ImageHandler extends TemplateElementHandler<ImageComposer> {
-	protected ImageComposer tplImg;
 
-	public ImageHandler(AttributeRegistry attrFactory, DocumentComposer doc) {
-		super(attrFactory, doc::append);
+	public ImageHandler(TemplateContext context, DocumentComposer doc) {
+		super(context, doc::append);
 	}
-	
-	public ImageHandler(AttributeRegistry attrFactory, ParagraphComposer para) {
-		super(attrFactory, para::append);
+
+	public ImageHandler(TemplateContext context, ParagraphComposer para) {
+		super(context, para::append);
 	}
-	
-	public ImageHandler(AttributeRegistry attrFactory, TableCellComposer cell) {
-		super(attrFactory, cell::append);
+
+	public ImageHandler(TemplateContext context, TableCellComposer cell) {
+		super(context, cell::append);
 	}
 
 	@Override
-	public void onStart(ElementPath elementPath) {
-		super.onStart(elementPath);
-		this.tplImg = new ImageComposer();
+	protected ImageComposer produce(ElementPath elementPath) {
+		ImageComposer tplImg = new ImageComposer();
 		Element current = elementPath.getCurrent();
 		for (Attribute attr : current.attributes()) {
 			String name = attr.getName();
 			String value = attr.getValue();
 			switch (name) {
-			case "file":
-				this.tplImg.setImageFile(value);
+			case AttributeRegistry.FILE:
+				tplImg.setImageFile(value);
 				break;
-			case "resource":
-				this.tplImg.setImageResource(value);
+			case AttributeRegistry.RESOURCE:
+				tplImg.setImageResource(value);
 				break;
-			case "base64":
-				this.tplImg.setImageDataBase64(value);
+			case AttributeRegistry.REF:
+				tplImg.setImageData(this.context.getResourceRepository().getImage(value));
 				break;
-			case "hex":
-				this.tplImg.setImageDataHex(value);
+			case AttributeRegistry.ID:
+				ComposerDirectory dir = this.context.getComposerDirectory();
+				dir.registerIdentifiable(value, tplImg);
+				dir.registerDataPlaceholder(value, tplImg);
 				break;
 			default:
 			}
 		}
-		this.tplImg.setAll(getModifiers(current, this.attrFactory.getImageMap()));
-	}
-
-	@Override
-	protected ImageComposer produce(ElementPath elementPath) {
-		return this.tplImg;
+		tplImg.setAllAttributes(getModifiers(current, this.context.getAttributeRegistry().getImageMap()));
+		return tplImg;
 	}
 
 }

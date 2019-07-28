@@ -3,8 +3,9 @@
 	<font name="heiti" path="/simhei.ttf" type="resource" />
 	<font name="songti" path="/simsun.ttc" type="resource" />
 	<font name="宋体" path="C:\\Windows\\Fonts\\simsun.ttc" type="file" />
-	<document name="test1">
-		<paragraph font-family="songti" margin-left="200">
+	<image-resource id="hawk" resource="/hawk.png"/>
+	<document id="test1">
+		<paragraph font-family="songti" margin-left="10cm" text-align="center">
 			<text font-variant="bold, italic, underline" font-size="18">《朝花夕拾》</text>
 		</paragraph>
 		<paragraph font-family="heiti" font-size="24" text-align="center">从百草园到三味书屋</paragraph>
@@ -33,5 +34,8 @@
 			</body>
 			<footer><cell>甲</cell><cell>乙</cell><cell>丙</cell></footer>
 		</table>
+		<image ref="hawk" width="80%" text-align="center"/>
+		<barcode format="qrcode" width="80%">fjkdslajfdlskjfdslahfsdlhflsdahflsadjflsdoaufoewhorfhsdl</barcode>
+		<barcode format="pdf417" width="80%">fjkdslajfdlskjfdslahfsdlhflsdahflsadjflsdoaufoewhorfhsdl</barcode>
 	</document>
 </root>

@@ -8,15 +8,15 @@ import org.slf4j.LoggerFactory;
 
 import me.chenqiang.pdf.composer.TableComposer;
 import me.chenqiang.pdf.composer.TableComposer.Row;
-import me.chenqiang.pdf.xml.AttributeRegistry;
+import me.chenqiang.pdf.xml.TemplateContext;
 
 public class TableRowHander implements ElementHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TableRowHander.class);
-	protected AttributeRegistry attrFactory;
+	protected TemplateContext context;
 	protected TableComposer.Row row;
 
-	public TableRowHander(AttributeRegistry attrFactory, Row row) {
-		this.attrFactory = attrFactory;
+	public TableRowHander(TemplateContext context, Row row) {
+		this.context = context;
 		this.row = row;
 	}
 
@@ -24,8 +24,8 @@ public class TableRowHander implements ElementHandler {
 	public void onStart(ElementPath elementPath) {
 		LOGGER.debug("[START] {}", elementPath.getPath());
 		Element current = elementPath.getCurrent();
-		this.row.setAll(TemplateElementHandler.getModifiers(current, this.attrFactory.getBlockElementMap()));
-		elementPath.addHandler("cell", new TableCellHandler(this.attrFactory, this.row));
+		this.row.setAll(TemplateElementHandler.getModifiers(current, this.context.getAttributeRegistry().getCellMap()));
+		elementPath.addHandler("cell", new TableCellHandler(this.context, this.row));
 	}
 
 	@Override

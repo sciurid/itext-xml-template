@@ -2,6 +2,7 @@ package me.chenqiang.pdf.composer;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -17,7 +18,7 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.UnitValue;
 
-public class TableComposer extends BasicElementComposer<Table, TableComposer> implements DocumentComponent {
+public class TableComposer extends BasicElementComposer<Table, TableComposer> implements DocumentComponent, Iterable<TableCellComposer> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TableComposer.class);
 
 	public static class Row {
@@ -34,16 +35,16 @@ public class TableComposer extends BasicElementComposer<Table, TableComposer> im
 			return this;
 		}
 
-		public Row add(CellComponent tplCellComp) {
+		public Row add(TableCellComponent tplCellComp) {
 			TableCellComposer tplCell = new TableCellComposer();
 			tplCell.append(tplCellComp);
 			this.add(tplCell);
 			return this;
 		}
 
-		public Row add(CellComponent[] tplCellComps) {
+		public Row add(TableCellComponent[] tplCellComps) {
 			TableCellComposer tplCell = new TableCellComposer();
-			for (CellComponent tcc : tplCellComps) {
+			for (TableCellComponent tcc : tplCellComps) {
 				tplCell.append(tcc);
 			}
 			this.add(tplCell);
@@ -152,4 +153,14 @@ public class TableComposer extends BasicElementComposer<Table, TableComposer> im
 		this.body.components.forEach(comp -> comp.substitute(params));
 		this.footer.components.forEach(comp -> comp.substitute(params));
 	}
+
+	@Override
+	public Iterator<TableCellComposer> iterator() {
+		List<TableCellComposer> all = new ArrayList<>(
+				this.header.components.size() + this.body.components.size() + this.footer.components.size());
+		all.addAll(this.header.components);
+		all.addAll(this.body.components);
+		all.addAll(this.footer.components);
+		return all.iterator();
+	}	
 }

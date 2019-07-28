@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class BasicElementComposer<T, S extends BasicElementComposer<T, S>>
-implements ElementComposer<T>, StringStub{
+implements ElementComposer<T>, StringStub {
+	protected String id;
 	protected List<Consumer<? super T>> attributes;	
 	
 	protected BasicElementComposer() {
@@ -14,13 +15,13 @@ implements ElementComposer<T>, StringStub{
 	}
 	
 	@SuppressWarnings("unchecked")
-	public S set(Consumer<? super T> attribute) {
+	public S setAttribute(Consumer<? super T> attribute) {
 		this.attributes.add(attribute);
 		return (S)this;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public S setAll(Collection<? extends Consumer<? super T>> attributes) {
+	public S setAllAttributes(Collection<? extends Consumer<? super T>> attributes) {
 		this.attributes.addAll(attributes);
 		return (S)this;
 	}

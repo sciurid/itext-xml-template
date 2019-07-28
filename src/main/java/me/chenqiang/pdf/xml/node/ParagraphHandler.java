@@ -9,17 +9,19 @@ import me.chenqiang.pdf.composer.ParagraphComposer;
 import me.chenqiang.pdf.composer.StringComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
 import me.chenqiang.pdf.xml.AttributeRegistry;
+import me.chenqiang.pdf.xml.ComposerDirectory;
+import me.chenqiang.pdf.xml.TemplateContext;
 
 public class ParagraphHandler extends TemplateElementHandler<ParagraphComposer> {
 //	private static final Logger LOGGER = LoggerFactory.getLogger(ParagraphNode.class);
 	private ParagraphComposer tplPara;
 
-	public ParagraphHandler(AttributeRegistry attrFactory, DocumentComposer tplDoc) {
-		super(attrFactory, tplDoc::append);
+	public ParagraphHandler(TemplateContext context, DocumentComposer tplDoc) {
+		super(context, tplDoc::append);
 	}
 
-	public ParagraphHandler(AttributeRegistry attrFactory, TableCellComposer tplCell) {
-		super(attrFactory, tplCell::append);
+	public ParagraphHandler(TemplateContext context, TableCellComposer tplCell) {
+		super(context, tplCell::append);
 	}
 
 	@Override
@@ -47,10 +49,18 @@ public class ParagraphHandler extends TemplateElementHandler<ParagraphComposer> 
 	public void onStart(ElementPath elementPath) {
 		super.onStart(elementPath);
 		this.tplPara = new ParagraphComposer();
+		Element current = elementPath.getCurrent();
+		String id = current.attributeValue(AttributeRegistry.ID);
+		if(id != null) {
+			ComposerDirectory dir = this.context.getComposerDirectory();
+			dir.registerIdentifiable(id, this.tplPara);
+		}
 		
-		this.tplPara.setAll(getModifiers(elementPath.getCurrent(), this.attrFactory.getParagraphMap()));
+		AttributeRegistry attrreg = this.context.getAttributeRegistry();
+		this.tplPara.setAllAttributes(getModifiers(current, attrreg.getParagraphMap()));
 		
-		elementPath.addHandler("text", new TextHandler(this.attrFactory, this.tplPara));
-		elementPath.addHandler("image", new ImageHandler(this.attrFactory, this.tplPara));
+		elementPath.addHandler("text", new TextHandler(this.context, this.tplPara));
+		elementPath.addHandler("image", new ImageHandler(this.context, this.tplPara));
+		elementPath.addHandler("barcode", new BarcodeHandler(this.context, this.tplPara));
 	}
 }

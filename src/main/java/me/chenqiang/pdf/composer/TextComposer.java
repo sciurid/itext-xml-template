@@ -10,7 +10,7 @@ import com.itextpdf.layout.element.Text;
 import me.chenqiang.pdf.utils.Substitution;
 
 public class TextComposer extends BasicElementComposer<Text, TextComposer>
-implements ParagraphComponent, CellComponent{
+implements ParagraphComponent, TableCellComponent, ParameterPlaceholder<String>{
 	private StringBuilder content;
 	
 	public TextComposer() {
@@ -35,18 +35,30 @@ implements ParagraphComponent, CellComponent{
 
 	@Override
 	protected Text create() {
-		return new Text(this.content.toString());
+		if(this.content.length() == 0) {
+			return null;
+		}
+		else {
+			return new Text(this.content.toString());
+		}
 	}
 
 	@Override
 	public void process(Paragraph para) {
-		para.add(this.<Void>produce(null));
+		Text text = this.<Void>produce(null);
+		if(text != null) {
+			para.add(text);
+		}
 	}
 
 	@Override
 	public void substitute(Map<String, String> params) {
 		this.content = new StringBuilder();
 		this.content.append(Substitution.substitute(this.content.toString(), params));
-	}		
-	
+	}
+
+	@Override
+	public void setParameter(String parameter) {
+		this.content = new StringBuilder(parameter);
+	}	
 }

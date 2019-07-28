@@ -25,12 +25,12 @@ public class TableTemplateTest extends PdfTest {
 		fp.addSystemFonts();
 
 		DocumentComposer template = new DocumentComposer();
-		template.set(doc -> doc.setFontProvider(fp)).set(doc -> doc.setFontSize(12));
+		template.setAttribute(doc -> doc.setFontProvider(fp)).setAttribute(doc -> doc.setFontSize(12));
 
 		TableComposer tbl = new TableComposer();
 		tbl.setColumns(UnitValue.createPercentArray(new float[] { 20f, 30f, 50f }));
-		tbl.set(table -> table.setFontFamily("stkaiti"))
-				.set(table -> table.setWidth(UnitValue.createPercentValue(100)));
+		tbl.setAttribute(table -> table.setFontFamily("stkaiti"))
+				.setAttribute(table -> table.setWidth(UnitValue.createPercentValue(100)));
 
 		Row header = tbl.getHeader();
 		header.set(cell -> cell.setFontFamily("simhei"));
@@ -55,7 +55,7 @@ public class TableTemplateTest extends PdfTest {
 				new TableCellComposer().setColspan(3)
 				.append(new ImageComposer()
 						.setImageResource("/books.png")
-						.set(image -> image.setWidth(UnitValue.createPercentValue(100f)))
+						.setAttribute(image -> image.setWidth(UnitValue.createPercentValue(100f)))
 						)
 				.append(new BarcodeComposer().setMessage("https://www.tsinghua.edu.cn").setFormat("qrcode"))
 				.append(new BarcodeComposer().setMessage("https://www.tsinghua.edu.cn").setFormat("pdf417"))

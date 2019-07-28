@@ -9,13 +9,13 @@ import org.dom4j.ElementPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import me.chenqiang.pdf.utils.ResourceContext;
+import me.chenqiang.pdf.xml.ResourceRepository;
 
-public class FontDefinitionNode implements ElementHandler{
-	private static final Logger LOGGER = LoggerFactory.getLogger(FontDefinitionNode.class);
-	protected ResourceContext fontCollection;	
+public class FontDefinitionHandler implements ElementHandler{
+	private static final Logger LOGGER = LoggerFactory.getLogger(FontDefinitionHandler.class);
+	protected ResourceRepository fontCollection;	
 
-	public FontDefinitionNode(ResourceContext fontCollection) {
+	public FontDefinitionHandler(ResourceRepository fontCollection) {
 		super();
 		this.fontCollection = fontCollection;
 	}

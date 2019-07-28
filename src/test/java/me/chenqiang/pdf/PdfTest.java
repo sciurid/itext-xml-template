@@ -13,7 +13,6 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 
 import me.chenqiang.pdf.composer.DocumentComposer;
-import me.chenqiang.pdf.composer.DocumentFactory;
 
 public abstract class PdfTest {
 	private PdfFont songti;

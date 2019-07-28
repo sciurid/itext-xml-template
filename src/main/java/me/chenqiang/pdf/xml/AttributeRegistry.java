@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.layout.ElementPropertyContainer;
 import com.itextpdf.layout.element.BlockElement;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
@@ -21,35 +22,40 @@ import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 
-import me.chenqiang.pdf.utils.ResourceContext;
-
 public final class AttributeRegistry {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AttributeRegistry.class);
-	protected ResourceContext context;
+	protected ResourceRepository context;
 
 	protected final Map<String, BiFunction<String, String, ? extends Consumer<? super ElementPropertyContainer<?>>>> mapElementPropertyContainer;
 	protected final Map<String, BiFunction<String, String, ? extends Consumer<? super BlockElement<?>>>> mapBlockElement;
+	protected final Map<String, BiFunction<String, String, ? extends Consumer<? super BlockElement<?>>>> mapCell;
 	protected final Map<String, BiFunction<String, String, ? extends Consumer<? super Paragraph>>> mapParagraph;
 	protected final Map<String, BiFunction<String, String, ? extends Consumer<? super Table>>> mapTable;
 	protected final Map<String, BiFunction<String, String, ? extends Consumer<? super Text>>> mapText;
 	protected final Map<String, BiFunction<String, String, ? extends Consumer<? super Image>>> mapImage;
 
-	public AttributeRegistry(ResourceContext context) {
+	public AttributeRegistry(ResourceRepository context) {
 		super();
 		this.context = context;
 		this.mapElementPropertyContainer = new TreeMap<>();
-		this.mapBlockElement = new TreeMap<>();
-		this.mapParagraph = new TreeMap<>();
-		this.mapText = new TreeMap<>();
-		this.mapTable = new TreeMap<>();
-		this.mapImage = new TreeMap<>();
 		this.initElementPropertyContainerMap();
+		this.mapBlockElement = new TreeMap<>();
 		this.initBlockElementMap();
+		this.mapCell = new TreeMap<>();
+		this.initCellMap();
+		this.mapParagraph = new TreeMap<>();
 		this.initParagraphMap();
-		this.initTextMap();
+		this.mapTable = new TreeMap<>();
 		this.initTableMap();
+		this.mapText = new TreeMap<>();
+		this.initTextMap();
+		this.mapImage = new TreeMap<>();
 		this.initImageMap();
 	}
+	
+	protected static final BiFunction<String, String, ? extends Consumer<Object>> DO_NOTHING = (name, value) -> {return item -> {};};
+	
+	public static final String ID = "id";
 
 	public static final String FONT_FAMILY = "font-family";
 	public static final String FONT_SIZE = "font-size";
@@ -79,7 +85,7 @@ public final class AttributeRegistry {
 			StringTokenizer st = parser.getTokens();
 			Consumer<ElementPropertyContainer<?>> consumer = null;
 			while (st.hasMoreTokens()) {
-				String var = st.nextToken();
+				String var = st.nextToken().trim();
 				Consumer<ElementPropertyContainer<?>> next = null;
 				switch (var) {
 				case "bold":
@@ -186,6 +192,10 @@ public final class AttributeRegistry {
 	public static final String AUTO_SCALE = "auto-scale";
 	public static final String AUTO_SCALE_HEIGHT = "auto-scale-height";
 	public static final String AUTO_SCALE_WIDTH = "auto-scale-width";
+	public static final String REF = "ref";
+	public static final String FILE = "file";
+	public static final String RESOURCE = "resource";
+	public static final String FORMAT = "format";
 
 	protected void initImageMap() {
 		this.mapImage.putAll(this.mapElementPropertyContainer);
@@ -214,6 +224,10 @@ public final class AttributeRegistry {
 		this.mapImage.put(AUTO_SCALE, doBoolean(Image::setAutoScale));
 		this.mapImage.put(AUTO_SCALE_HEIGHT, doBoolean(Image::setAutoScaleHeight));
 		this.mapImage.put(AUTO_SCALE_WIDTH, doBoolean(Image::setAutoScaleWidth));
+		
+		this.mapImage.put(REF, DO_NOTHING);
+		this.mapImage.put(FILE, DO_NOTHING);
+		this.mapImage.put(RESOURCE, DO_NOTHING);
 	}
 
 	public Map<String, BiFunction<String, String, ? extends Consumer<? super Image>>> getImageMap() {
@@ -241,7 +255,8 @@ public final class AttributeRegistry {
 
 	protected void initTableMap() {
 		this.mapTable.putAll(this.mapBlockElement);
-
+		this.mapCell.put(WIDTHS, DO_NOTHING);
+		this.mapCell.put(COLUMNS, DO_NOTHING);
 	}
 
 	public Map<String, BiFunction<String, String, ? extends Consumer<? super Table>>> getTableMap() {
@@ -250,6 +265,15 @@ public final class AttributeRegistry {
 
 	public static final String ROW_SPAN = "rowspan";
 	public static final String COL_SPAN = "colspan";
+	
+	protected void initCellMap() {
+		this.mapCell.put(ROW_SPAN, DO_NOTHING);
+		this.mapCell.put(COL_SPAN, DO_NOTHING);
+	}
+	
+	public Map<String, BiFunction<String, String, ? extends Consumer<? super Cell>>> getCellMap() {
+		return Collections.unmodifiableMap(this.mapCell);
+	}
 
 	public static final String TEXT_RISE = "text-rise";
 	public static final String TEXT_SKEW = "text-skew";
@@ -277,7 +301,7 @@ public final class AttributeRegistry {
 			if (!parser.isValid()) {
 				return null;
 			}
-			Float fval = parser.getFloat();
+			Float fval = parser.getLengthInPoints();
 			return fval == null ? null : element -> function.apply(element, fval.floatValue());
 		};
 	}

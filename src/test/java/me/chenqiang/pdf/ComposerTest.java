@@ -14,7 +14,7 @@ import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.composer.ParagraphComposer;
 import me.chenqiang.pdf.composer.TextComposer;
 
-public class PdfTemplateTest extends PdfTest{	
+public class ComposerTest extends PdfTest{	
 	@Test
 	public void testEmptyDocument() throws IOException {
 		DocumentComposer template = new DocumentComposer();
@@ -35,26 +35,26 @@ public class PdfTemplateTest extends PdfTest{
 		PdfFont times = PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN);
 		DocumentComposer template = new DocumentComposer();		
 		template
-		.set(doc -> doc.setFont(times))
-		.set(doc -> doc.setFontSize(12))
+		.setAttribute(doc -> doc.setFont(times))
+		.setAttribute(doc -> doc.setFontSize(12))
 		;
 		
 		ParagraphComposer title = new ParagraphComposer();
 		title
-		.append(new TextComposer("SAMPLE ").set(para -> para.setBold()))
+		.append(new TextComposer("SAMPLE ").setAttribute(para -> para.setBold()))
 		.append(new TextComposer("The Gettysburg Address"));
 		
 		title
-		.set(para -> para.setTextAlignment(TextAlignment.CENTER))
-		.set(para -> para.setFontSize(24));
+		.setAttribute(para -> para.setTextAlignment(TextAlignment.CENTER))
+		.setAttribute(para -> para.setFontSize(24));
 		
 		template.append(title);
 		
 		ParagraphComposer content = new ParagraphComposer();
 		TextComposer strContent = new TextComposer(this.gettysburg);
 		content.append(strContent);
-		content.set(para -> para.setFirstLineIndent(24))
-		.set(para -> para.setTextAlignment(TextAlignment.JUSTIFIED));		
+		content.setAttribute(para -> para.setFirstLineIndent(24))
+		.setAttribute(para -> para.setTextAlignment(TextAlignment.JUSTIFIED));		
 		template.append(content);
 		
 		this.render(template, "SimpleEnglish-");
@@ -91,25 +91,25 @@ public class PdfTemplateTest extends PdfTest{
 		
 		DocumentComposer template = new DocumentComposer();
 		template
-		.set(doc -> doc.setFontProvider(fp))
-		.set(doc -> doc.setFontFamily("kaiti"))
-		.set(doc -> doc.setFontSize(12))
+		.setAttribute(doc -> doc.setFontProvider(fp))
+		.setAttribute(doc -> doc.setFontFamily("kaiti"))
+		.setAttribute(doc -> doc.setFontSize(12))
 		;
 		
 		ParagraphComposer title = new ParagraphComposer();
 		title
 		.append(new TextComposer("蜀道难"))
-		.set(para -> para.setFontFamily("simhei"))
-		.set(para -> para.setTextAlignment(TextAlignment.CENTER))
-		.set(para -> para.setFontSize(24));
+		.setAttribute(para -> para.setFontFamily("simhei"))
+		.setAttribute(para -> para.setTextAlignment(TextAlignment.CENTER))
+		.setAttribute(para -> para.setFontSize(24));
 		
 		template.append(title);
 		
 		ParagraphComposer content = new ParagraphComposer();
 		TextComposer strContent = new TextComposer(this.shudaonan);
 		content.append(strContent)
-		.set(para -> para.setFirstLineIndent(24))
-		.set(para -> para.setTextAlignment(TextAlignment.JUSTIFIED));		
+		.setAttribute(para -> para.setFirstLineIndent(24))
+		.setAttribute(para -> para.setTextAlignment(TextAlignment.JUSTIFIED));		
 		
 		template.append(content);
 		

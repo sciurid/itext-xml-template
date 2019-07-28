@@ -13,17 +13,17 @@ import org.dom4j.ElementPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import me.chenqiang.pdf.xml.AttributeRegistry;
+import me.chenqiang.pdf.xml.TemplateContext;
 
 public abstract class TemplateElementHandler<T> implements ElementHandler{
 	private static final Logger LOGGER = LoggerFactory.getLogger(TemplateElementHandler.class);
 
-	protected AttributeRegistry attrFactory;
+	protected TemplateContext context;
 	protected int count;
 	protected Consumer<? super T> consumer;	
 	
-	protected TemplateElementHandler(AttributeRegistry attrFactory, Consumer<? super T> consumer) {
-		this.attrFactory = attrFactory;
+	protected TemplateElementHandler(TemplateContext context, Consumer<? super T> consumer) {
+		this.context = context;
 		this.consumer = consumer;
 		this.count = 0;
 	}
@@ -37,11 +37,16 @@ public abstract class TemplateElementHandler<T> implements ElementHandler{
 
 	@Override
 	public void onEnd(ElementPath elementPath) {
-		this.consumer.accept(this.produce(elementPath));		
+		if(this.consumer != null) {
+			this.consumer.accept(this.produce(elementPath));	
+		}
+		else {
+			LOGGER.debug("No consumer of element {} - {} found.", elementPath.getPath(), this.count);
+		}
 		LOGGER.debug("[END] {} - {}", elementPath.getPath(), this.count++);
 	}
 	
-	protected static <E> List<Consumer<? super E>> getModifiers(Element current, 
+	public static <E> List<Consumer<? super E>> getModifiers(Element current, 
 			Map<String, BiFunction<String, String, ? extends Consumer<? super E>> > registryMap) {
 		List<Consumer<? super E>> res = new ArrayList<>(current.attributes().size());
 		for(Attribute attr : current.attributes()) {

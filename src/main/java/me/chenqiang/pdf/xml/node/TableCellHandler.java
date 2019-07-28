@@ -10,14 +10,15 @@ import me.chenqiang.pdf.composer.TableCellComposer;
 import me.chenqiang.pdf.composer.TableComposer;
 import me.chenqiang.pdf.xml.AttributeRegistry;
 import me.chenqiang.pdf.xml.AttributeValueParser;
+import me.chenqiang.pdf.xml.TemplateContext;
 
 public class TableCellHandler extends TemplateElementHandler<TableCellComposer> {
 //	private static final Logger LOGGER = LoggerFactory.getLogger(TableCellNode.class);
 	private TableCellComposer tplCell;
 	private TableComposer.Row row;
 
-	public TableCellHandler(AttributeRegistry attrFactory, TableComposer.Row row) {
-		super(attrFactory, row::add);
+	public TableCellHandler(TemplateContext context, TableComposer.Row row) {
+		super(context, row::add);
 		this.row = row;
 	}
 
@@ -50,13 +51,18 @@ public class TableCellHandler extends TemplateElementHandler<TableCellComposer> 
 		
 		Element current = elementPath.getCurrent();
 		for (Attribute attr : current.attributes()) {
-			if (AttributeRegistry.ROW_SPAN.equals(attr.getName())) {
+			String attrName = attr.getName();
+			if(AttributeRegistry.ID.equals(attrName)) {
+				String id = attr.getValue();
+				this.context.getComposerDirectory().registerIdentifiable(id, this.tplCell);
+			}
+			else if (AttributeRegistry.ROW_SPAN.equals(attrName)) {
 				AttributeValueParser parser = new AttributeValueParser(attr.getName(), attr.getValue());
 				Integer rowspan = parser.getInteger();
 				if (rowspan != null && rowspan > 1) {
 					this.tplCell.setRowspan(rowspan);
 				}
-			} else if (AttributeRegistry.COL_SPAN.equals(attr.getName())) {
+			} else if (AttributeRegistry.COL_SPAN.equals(attrName)) {
 				AttributeValueParser parser = new AttributeValueParser(attr.getName(), attr.getValue());
 				Integer cellspan = parser.getInteger();
 				if (cellspan != null && cellspan > 1) {
@@ -65,10 +71,11 @@ public class TableCellHandler extends TemplateElementHandler<TableCellComposer> 
 			}
 		}
 		this.tplCell.inheritAttributes(this.row.getAttributes());
-		this.tplCell.setAll(getModifiers(current, this.attrFactory.getBlockElementMap()));
+		this.tplCell.setAllAttributes(getModifiers(current, this.context.getAttributeRegistry().getCellMap()));
 		
-		elementPath.addHandler("text", new TextHandler(this.attrFactory, this.tplCell));
-		elementPath.addHandler("paragraph", new ParagraphHandler(this.attrFactory, this.tplCell));
-		elementPath.addHandler("image", new ImageHandler(this.attrFactory, this.tplCell));
+		elementPath.addHandler("text", new TextHandler(this.context, this.tplCell));
+		elementPath.addHandler("paragraph", new ParagraphHandler(this.context, this.tplCell));
+		elementPath.addHandler("image", new ImageHandler(this.context, this.tplCell));
+		elementPath.addHandler("barcode", new BarcodeHandler(this.context, this.tplCell));
 	}
 }
