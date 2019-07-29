@@ -11,8 +11,8 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
 
-import me.chenqiang.pdf.WatermarkMaker;
-import me.chenqiang.pdf.WatermarkMaker.TextWatermarkSetting;
+import me.chenqiang.pdf.composer.WatermarkMaker;
+import me.chenqiang.pdf.composer.WatermarkMaker.TextWatermarkSetting;
 import me.chenqiang.pdf.xml.context.AttributeRegistry;
 import me.chenqiang.pdf.xml.context.AttributeValueParser;
 import me.chenqiang.pdf.xml.context.TemplateContext;
@@ -51,25 +51,25 @@ public class WatermarkTextHandler implements ElementHandler {
 						LOGGER.error("Font-family name '{}' not registered. Watermark may fail.", value);
 					}
 					break;
-				case "offset-x":
+				case AttributeRegistry.OFFSET_X:
 					parser.setLength(setting::setOffsetX);
 					break;
-				case "offset-y":
+				case AttributeRegistry.OFFSET_Y:
 					parser.setLength(setting::setOffsetY);
 					break;
-				case "width":
+				case AttributeRegistry.WIDTH:
 					parser.setLength(setting::setWidth);
 					break;
-				case "font-size":
+				case AttributeRegistry.FONT_SIZE:
 					parser.setUnitValue(setting::setFontSize);
 					break;
-				case "font-color":
+				case AttributeRegistry.FONT_COLOR:
 					parser.setDeviceRgb(setting::setFontColor);
 					break;
-				case "opacity":
+				case AttributeRegistry.OPACITY:
 					parser.setFloat(setting::setOpacity);
 					break;
-				case "rotation":
+				case AttributeRegistry.ROTATION:
 					parser.setFloat(setting::setRotation);
 					break;
 				case AttributeRegistry.VERTICAL_ALIGNMENT:
@@ -101,4 +101,8 @@ public class WatermarkTextHandler implements ElementHandler {
 		}
 	}
 
+	public void register(ElementPath path) {
+		path.addHandler("text", this);
+		path.addHandler("span", this);
+	}
 }

@@ -29,4 +29,9 @@ public class NewPageHandler extends BasicTemplateElementHandler<AreaBreakCompose
 		return null;
 	}
 
+	@Override
+	public void register(ElementPath path) {
+		path.addHandler("newpage", this);
+	}
+
 }

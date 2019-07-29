@@ -27,7 +27,7 @@ import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 
-import me.chenqiang.pdf.composer.PaperLayout;
+import me.chenqiang.pdf.attribute.PaperLayout;
 
 public final class AttributeRegistry {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AttributeRegistry.class);
@@ -151,7 +151,7 @@ public final class AttributeRegistry {
 	public static final String HEIGHT = "height";
 	public static final String MIN_HEIGHT = "min-height";
 	public static final String MAX_HEIGHT = "max-height";
-	public static final String ROTATION_ANGLE = "rotation-angle";
+	public static final String ROTATION = "rotation";
 	public static final String SPACING_RATIO = "spacing-ratio";
 	public static final String VERTICAL_ALIGNMENT = "vertical-alignment";
 
@@ -178,6 +178,7 @@ public final class AttributeRegistry {
 		this.mapBlockElement.put(HEIGHT, doUnitValue(BlockElement::setHeight));
 		this.mapBlockElement.put(MIN_HEIGHT, doUnitValue(BlockElement::setMinHeight));
 		this.mapBlockElement.put(MAX_HEIGHT, doUnitValue(BlockElement::setMaxHeight));
+		this.mapBlockElement.put(ROTATION, doFloat(BlockElement::setRotationAngle));
 		this.mapBlockElement.put(SPACING_RATIO, doFloat(BlockElement::setSpacingRatio));
 		this.mapBlockElement.put(VERTICAL_ALIGNMENT, (name, value) -> {
 			AttributeValueParser parser = new AttributeValueParser(name, value);
@@ -200,6 +201,10 @@ public final class AttributeRegistry {
 	public static final String FILE = "file";
 	public static final String RESOURCE = "resource";
 	public static final String FORMAT = "format";
+	public static final String OPACITY = "opacity";
+	public static final String OFFSET_X = "offset-x";
+	public static final String OFFSET_Y = "offset-y";
+	
 
 	protected void initImageMap() {
 		this.mapImage.putAll(this.mapElementPropertyContainer);

@@ -61,6 +61,11 @@ public class TableHandler extends BasicTemplateElementHandler<TableComposer, Tab
 	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Table>>> getAttributeMap() {
 		return this.context.getAttributeRegistry().getTableMap();
 	}
+
+	@Override
+	public void register(ElementPath path) {
+		path.addHandler("table", this);
+	}
 	
 	
 }

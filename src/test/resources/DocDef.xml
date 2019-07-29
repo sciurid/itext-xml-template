@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-	<font name="heiti" path="/simhei.ttf" type="resource" />
-	<font name="songti" path="/simsun.ttc" type="resource" />
-	<font name="宋体" path="C:\\Windows\\Fonts\\simsun.ttc" type="file" />
 	<image-resource id="hawk" resource="/hawk.png"/>
 	<document id="test">
-		<paragraph font-family="songti" margin-left="10cm" text-align="center" font-color="lime" font-opacity="0.2">
+		<paragraph font-family="宋体" margin-left="10cm" text-align="center" font-color="lime" font-opacity="0.2">
 			<text font-variant="bold, italic, underline" font-size="18">《朝花夕拾》</text>
 			<text id="author">作者</text>
 		</paragraph>
-		<paragraph font-family="heiti" font-size="24" text-align="center">从百草园到三味书屋</paragraph>
-		<paragraph font-family="songti" font-size="12" first-line-indent="24" multiplied-leading="2" background-color="gray" background-opacity="0.3">
+		<paragraph font-family="黑体" font-size="24" text-align="center">从百草园到三味书屋</paragraph>
+		<paragraph font-family="宋体" font-size="12" first-line-indent="24" multiplied-leading="2" background-color="gray" background-opacity="0.3">
 			不必说
 			<text text-rise="8">碧绿的菜畦，光滑的石井栏，高大的皂荚树，紫红的桑椹</text>
 			；
@@ -24,7 +21,7 @@
 			如果不怕刺，还可以摘到覆盆子，象小珊瑚珠攒成的小球，又酸又甜，色味都比桑椹要好得远。
 		</paragraph>
 		<newpage/>
-		<table widths="50%, 20%, 30%" width="100%" text-align="center" font-family="heiti">
+		<table widths="50%, 20%, 30%" width="100%" text-align="center" font-family="黑体">
 			<header border-color="red" min-height="60" vertical-alignment="middle"><cell>A</cell><cell>B</cell><cell>C</cell></header>
 			<body vertical-alignment="middle">
 				<cell rowspan="3"><image resource="/books.png" scale-to-fit="5cm,5cm"/></cell>
@@ -41,7 +38,7 @@
 		<barcode format="pdf417" width="80%">fjkdslajfdlskjfdslahfsdlhflsdahflsadjflsdoaufoewhorfhsdl</barcode>
 		<watermark>
 			<image ref="hawk" width="3cm" opacity="0.3" offset-x="-5cm" offset-y="10cm"/>
-			<text offset-x="3cm" offset-y="3cm" font-color="lime" opacity="0.3" rotation="45" font-family="heiti">私密 CONFIDENTIAL</text>
+			<text offset-x="3cm" offset-y="3cm" font-color="lime" opacity="0.3" rotation="45" font-family="黑体">私密 CONFIDENTIAL</text>
 		</watermark>
 	</document>
 </root>

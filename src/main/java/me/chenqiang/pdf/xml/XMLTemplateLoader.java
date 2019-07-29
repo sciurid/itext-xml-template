@@ -13,9 +13,9 @@ import org.dom4j.io.SAXReader;
 import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.xml.context.TemplateContext;
 import me.chenqiang.pdf.xml.handler.DocumentHandler;
-import me.chenqiang.pdf.xml.handler.FontDefinitionHandler;
-import me.chenqiang.pdf.xml.handler.ImageDefinitionHandler;
 import me.chenqiang.pdf.xml.handler.SimpleLoggingHanlder;
+import me.chenqiang.pdf.xml.handler.resource.FontResourceHandler;
+import me.chenqiang.pdf.xml.handler.resource.ImageResourceHandler;
 
 public class XmlTemplateLoader {
 	protected TemplateContext context;
@@ -32,8 +32,9 @@ public class XmlTemplateLoader {
 	protected SAXReader init() {
 		SAXReader reader = new SAXReader();
 		reader.setDefaultHandler(new SimpleLoggingHanlder());
-		reader.addHandler("/root/font", new FontDefinitionHandler(this.context.getResourceRepository()));
-		reader.addHandler("/root/image-resource", new ImageDefinitionHandler(this.context.getResourceRepository()));
+		reader.addHandler("/root/font", new FontResourceHandler(this.context.getResourceRepository()));
+		reader.addHandler("/root/image-resource", new ImageResourceHandler(this.context.getResourceRepository()));
+		
 		reader.addHandler("/root/document", new DocumentHandler(this.context, this::doTemplatePostProcess));
 		return reader;
 	}

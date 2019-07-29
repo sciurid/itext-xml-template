@@ -64,4 +64,9 @@ public class ImageHandler extends BasicTemplateElementHandler<ImageComposer, Ima
 		return this.context.getAttributeRegistry().getImageMap();
 	}
 
+	@Override
+	public void register(ElementPath path) {
+		path.addHandler("image", this);
+		path.addHandler("img", this);
+	}
 }

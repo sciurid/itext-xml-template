@@ -6,6 +6,8 @@ import org.dom4j.ElementPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.itextpdf.layout.element.Cell;
+
 import me.chenqiang.pdf.composer.ComposerDirectory;
 import me.chenqiang.pdf.composer.TableRowComposer;
 import me.chenqiang.pdf.xml.context.AttributeRegistry;
@@ -36,7 +38,7 @@ public class TableRowHander implements ElementHandler {
 		AttributeRegistry attributeRegistry = this.context.getAttributeRegistry();
 		CompositeAttribute compositeAttribute = attributeRegistry.getCompositeAttribute(current.attributes());
 		compositeAttribute.applyFontColor(this.row).applyBackgroundColor(this.row).applyBorder(this.row);		
-		this.row.setAllAttributes(BasicTemplateElementHandler.getModifiers(current, attributeRegistry.getCellMap()));
+		this.row.setAllAttributes(BasicTemplateElementHandler.getModifiers(current, attributeRegistry.getCellMap(), this.getClass()));
 		
 		LOGGER.debug("[END] {}", elementPath.getPath());
 	}

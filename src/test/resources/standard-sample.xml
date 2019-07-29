@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<image-resource id="hawk" resource="/hawk.png" />
+	<document id="test" font-family="宋体" font-size="10.5">
+		<paragraph font-family="思源宋体" font-size="14" text-align="right">内部资料<br/>注意保存</paragraph>
+		<para font-family="黑体" font-size="20" text-align="center">标题格式</para>
+		<p margin="0">正常的文档默认字体（宋体）:</p>
+		<p first-line-indent="21" margin="0">此行首行缩进两个汉字。《滁州西涧》（韦应物）“独怜幽草涧边生，上有黄鹂深树鸣。春潮带雨晚来急，野渡无人舟自横。”</p>
+		<watermark>
+			<image ref="hawk" opacity="0.2" offset-y="2cm" width="-0.5" />
+			<text font-family="思源粗宋" font-size="24" font-color="red" opacity="0.3" offset-y="-2cm">内部资料</text>
+		</watermark>
+	</document>
+</root>

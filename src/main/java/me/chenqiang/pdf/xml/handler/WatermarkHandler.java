@@ -5,8 +5,8 @@ import org.dom4j.ElementPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import me.chenqiang.pdf.WatermarkMaker;
 import me.chenqiang.pdf.composer.DocumentComposer;
+import me.chenqiang.pdf.composer.WatermarkMaker;
 import me.chenqiang.pdf.xml.context.TemplateContext;
 
 public class WatermarkHandler implements ElementHandler {
@@ -23,8 +23,8 @@ public class WatermarkHandler implements ElementHandler {
 	public void onStart(ElementPath elementPath) {
 		LOGGER.debug("[START] {}", elementPath.getPath());
 		WatermarkMaker wmm = this.tplDoc.getWatermarkMaker();
-		elementPath.addHandler("image", new WatermarkImageHandler(this.context, wmm));
-		elementPath.addHandler("text", new WatermarkTextHandler(this.context, wmm));
+		new WatermarkImageHandler(this.context, wmm).register(elementPath);
+		new WatermarkTextHandler(this.context, wmm).register(elementPath);
 	}
 
 	@Override
@@ -32,4 +32,7 @@ public class WatermarkHandler implements ElementHandler {
 		// DO NOTHING
 	}
 
+	public void register(ElementPath elementPath) {
+		elementPath.addHandler("watermark", this);
+	}
 }

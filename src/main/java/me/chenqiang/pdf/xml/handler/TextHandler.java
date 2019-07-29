@@ -49,6 +49,10 @@ public class TextHandler extends BasicTemplateElementHandler<TextComposer, Text>
 	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Text>>> getAttributeMap() {
 		return this.context.getAttributeRegistry().getTextMap();
 	}
-	
-	
+
+	@Override
+	public void register(ElementPath path) {
+		path.addHandler("text", this);
+		path.addHandler("span", this);
+	}
 }

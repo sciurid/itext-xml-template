@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 
-import me.chenqiang.pdf.WatermarkMaker;
-import me.chenqiang.pdf.WatermarkMaker.ImageWatermarkSetting;
+import me.chenqiang.pdf.composer.WatermarkMaker;
+import me.chenqiang.pdf.composer.WatermarkMaker.ImageWatermarkSetting;
 import me.chenqiang.pdf.xml.context.AttributeRegistry;
 import me.chenqiang.pdf.xml.context.AttributeValueParser;
 import me.chenqiang.pdf.xml.context.TemplateContext;
@@ -54,16 +54,16 @@ public class WatermarkImageHandler implements ElementHandler {
 				case AttributeRegistry.REF:
 					imageData = this.context.getResourceRepository().getImage(parser.getString());
 					break;
-				case "offset-x":
+				case AttributeRegistry.OFFSET_X:
 					parser.setLength(setting::setOffsetX);
 					break;
-				case "offset-y":
+				case AttributeRegistry.OFFSET_Y:
 					parser.setLength(setting::setOffsetY);
 					break;
-				case "width":
+				case AttributeRegistry.WIDTH:
 					parser.setLength(setting::setWidth);
 					break;
-				case "opacity":
+				case AttributeRegistry.OPACITY:
 					parser.setLength(setting::setOpacity);
 					break;
 				default:
@@ -80,6 +80,11 @@ public class WatermarkImageHandler implements ElementHandler {
 		} else {
 			LOGGER.error("Watermark image is not specified.");
 		}
+	}
+	
+	public void register(ElementPath path) {
+		path.addHandler("image", this);
+		path.addHandler("img", this);
 	}
 
 }

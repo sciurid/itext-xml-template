@@ -2,6 +2,7 @@ package me.chenqiang.pdf.xml.context;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.TreeMap;
 
 import com.itextpdf.io.font.PdfEncodings;
@@ -10,6 +11,8 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.layout.Style;
 
+import me.chenqiang.pdf.spi.IntegratedPdfFontService;
+
 public class ResourceRepository {
 	protected Map<String, PdfFont> fonts;
 	protected Map<String, Style> styles;
@@ -17,10 +20,16 @@ public class ResourceRepository {
 		
 	public ResourceRepository() {
 		this.fonts = new TreeMap<>();
+		this.loadIntegratedPdfFonts();
 		this.styles = new TreeMap<>();
 		this.images = new TreeMap<>();
 	}
 
+	protected void loadIntegratedPdfFonts() {
+		ServiceLoader<IntegratedPdfFontService> serviceLoader = ServiceLoader.load(IntegratedPdfFontService.class);
+		serviceLoader.forEach(service -> this.fonts.putAll(service.getIntegratedFonts()));
+	}
+	
 	public void loadSingleFontData(byte [] data, String ... names) throws IOException {
 		PdfFont font = PdfFontFactory.createFont(data, PdfEncodings.IDENTITY_H, true, true);
 		for(String name : names) {

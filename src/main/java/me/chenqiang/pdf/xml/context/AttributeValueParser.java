@@ -155,7 +155,7 @@ public class AttributeValueParser {
 	}
 
 	protected static final Pattern LENGTH_OR_PERCENT = Pattern
-			.compile("\\s*[\\+\\-]?(\\d+(?:\\.\\d+)?)\\s*(pt|mm|cm|in|inch|%)?\\s*");
+			.compile("\\s*([\\+\\-]?\\d+(?:\\.\\d+)?)\\s*(pt|mm|cm|in|inch|%)?\\s*");
 
 	protected static class LengthParser {
 		final String original;

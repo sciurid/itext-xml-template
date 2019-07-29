@@ -35,8 +35,8 @@ public class ComposerTest extends PdfTest{
 		PdfFont times = PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN);
 		DocumentComposer template = new DocumentComposer();		
 		template
-		.setAttribute(doc -> doc.setFont(times))
-		.setAttribute(doc -> doc.setFontSize(12))
+		.set(doc -> doc.setFont(times))
+		.set(doc -> doc.setFontSize(12))
 		;
 		
 		ParagraphComposer title = new ParagraphComposer();
@@ -90,9 +90,9 @@ public class ComposerTest extends PdfTest{
 		
 		DocumentComposer template = new DocumentComposer();
 		template
-		.setAttribute(doc -> doc.setFontProvider(fp))
-		.setAttribute(doc -> doc.setFontFamily("kaiti"))
-		.setAttribute(doc -> doc.setFontSize(12))
+		.set(doc -> doc.setFontProvider(fp))
+		.set(doc -> doc.setFontFamily("kaiti"))
+		.set(doc -> doc.setFontSize(12))
 		;
 		
 		ParagraphComposer title = new ParagraphComposer();

@@ -70,15 +70,22 @@ public class TableCellHandler extends BasicTemplateElementHandler<TableCellCompo
 				}
 			}
 		}
-		
-		elementPath.addHandler("text", new TextHandler(this.context, this.directory, this.tplCell));
-		elementPath.addHandler("paragraph", new ParagraphHandler(this.context, this.directory, this.tplCell));
-		elementPath.addHandler("image", new ImageHandler(this.context, this.directory, this.tplCell));
-		elementPath.addHandler("barcode", new BarcodeHandler(this.context, this.directory, this.tplCell));
+		new TextHandler(this.context, this.directory, this.tplCell).register(elementPath);
+		new ParagraphHandler(this.context, this.directory, this.tplCell).register(elementPath);
+		new ImageHandler(this.context, this.directory, this.tplCell).register(elementPath);
+		new BarcodeHandler(this.context, this.directory, this.tplCell).register(elementPath);
 	}
 
 	@Override
 	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Cell>>> getAttributeMap() {
 		return this.context.getAttributeRegistry().getCellMap();
+	}
+
+	@Override
+	public void register(ElementPath path) {
+		path.addHandler("cell", this);
+		path.addHandler("td", this);
 	}	
+	
+	
 }

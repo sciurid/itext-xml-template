@@ -3,6 +3,7 @@ package me.chenqiang.pdf.xml.handler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -41,6 +42,7 @@ public abstract class BasicTemplateElementHandler<T, E> implements ElementHandle
 	
 	protected abstract T produce(ElementPath elementPath);
 	protected abstract Map<String, BiFunction<String, String, ? extends Consumer<? super E>> > getAttributeMap();
+	public abstract void register(ElementPath path);
 
 	@Override
 	public void onStart(ElementPath elementPath) {
@@ -78,7 +80,7 @@ public abstract class BasicTemplateElementHandler<T, E> implements ElementHandle
 		if(element instanceof AttributedComposer) {
 			Map<String, BiFunction<String, String, ? extends Consumer<? super E>>> attributeMap = this.getAttributeMap();
 			if(attributeMap != null) {
-				((AttributedComposer<E>) element).setAllAttributes(getModifiers(current, attributeMap));
+				((AttributedComposer<E>) element).setAllAttributes(getModifiers(current, attributeMap, element.getClass()));
 			}
 		}
 		
@@ -86,13 +88,18 @@ public abstract class BasicTemplateElementHandler<T, E> implements ElementHandle
 			this.consumer.accept(element);	
 		}
 		else {
-			LOGGER.debug("No consumer of element {} - {} found.", elementPath.getPath(), this.count);
+			if(!(this instanceof DocumentHandler)) {
+				LOGGER.warn("No consumer of element {} - {} found.", elementPath.getPath(), this.count);
+			}
 		}
 		LOGGER.debug("[END] {} - {}", elementPath.getPath(), this.count++);
 	}
 	
+	protected static final Set<String> WARNING_FREE = Set.of(
+			AttributeRegistry.ID);
 	public static <E> List<Consumer<? super E>> getModifiers(Element current, 
-			Map<String, BiFunction<String, String, ? extends Consumer<? super E>> > registryMap) {
+			Map<String, BiFunction<String, String, ? extends Consumer<? super E>> > registryMap,
+			Class<?> clazz) {
 		List<Consumer<? super E>> res = new ArrayList<>(current.attributes().size());
 		
 		for(Attribute attr : current.attributes()) {
@@ -105,7 +112,9 @@ public abstract class BasicTemplateElementHandler<T, E> implements ElementHandle
 				}
 			}
 			else {
-				LOGGER.info("Unrecognized attribute: {}", attr.getName());
+				if(!WARNING_FREE.contains(name)) {
+					LOGGER.info("Unrecognized attribute '{}' for {}", attr.getName(), clazz);
+				}
 			}
 		}
 		return res;

@@ -1,6 +1,7 @@
 package me.chenqiang.pdf.composer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -14,13 +15,18 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 
-import me.chenqiang.pdf.WatermarkMaker;
+import me.chenqiang.pdf.attribute.BackgroundColorAttribute;
+import me.chenqiang.pdf.attribute.BorderAttribute;
+import me.chenqiang.pdf.attribute.FontColorAttribute;
+import me.chenqiang.pdf.attribute.PaperLayout;
 import me.chenqiang.pdf.composer.DocumentComposer.DocumentComponent;
 import me.chenqiang.pdf.configurability.DataParameterPlaceholder;
 import me.chenqiang.pdf.configurability.StringParameterPlaceholder;
 import me.chenqiang.pdf.configurability.StringStub;
 
-public class DocumentComposer implements StringStub, Iterable<DocumentComponent> {
+public class DocumentComposer extends BasicElementPropertyContainerComposer<Document, DocumentComposer>
+implements StringStub, Iterable<DocumentComponent>, AttributedComposer<Document>,
+FontColorAttribute.Acceptor, BackgroundColorAttribute.Acceptor, BorderAttribute.Acceptor {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DocumentComposer.class);
 
 	public static interface DocumentComponent {
@@ -59,9 +65,19 @@ public class DocumentComposer implements StringStub, Iterable<DocumentComponent>
 		return this;
 	}
 
-	public DocumentComposer setAttribute(Consumer<? super Document> attribute) {
+	public void setAttribute(Consumer<? super Document> attribute) {
 		this.attributes.add(attribute);
-		return this;
+	}
+	
+
+	@Override
+	public void setAllAttributes(Collection<? extends Consumer<? super Document>> attributes) {
+		this.attributes.addAll(attributes);
+	}
+	
+	@Override
+	protected Document create() {
+		throw new UnsupportedOperationException();
 	}
 
 	public Document compose(PdfDocument pdf, PdfWriter writer, boolean close) {

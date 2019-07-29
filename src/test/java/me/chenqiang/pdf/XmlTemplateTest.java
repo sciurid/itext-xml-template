@@ -13,10 +13,26 @@ import org.slf4j.LoggerFactory;
 
 public class XmlTemplateTest {
 	private static final Logger LOGGER = LoggerFactory.getLogger(XmlTemplateTest.class);
-	@Test
+//	@Test
 	public void doDocDefTest() throws DocumentException, IOException {
 		InputStream stream = XmlTemplateTest.class.getResourceAsStream("/DocDef.xml");
 		File file = File.createTempFile("TEST", ".pdf");
+		
+		try (FileOutputStream fos = new FileOutputStream(file)) {			
+			DocumentEngine.produce(stream, "test", null, null, fos);
+		} catch (IOException e) {
+			LOGGER.error("Template failed.", e);
+		}
+		
+		if(Desktop.isDesktopSupported()) {
+			Desktop.getDesktop().open(file);
+		}
+	}
+	
+	@Test
+	public void doStandardSampleTest() throws DocumentException, IOException {
+		InputStream stream = XmlTemplateTest.class.getResourceAsStream("/standard-sample.xml");
+		File file = File.createTempFile("Sample", ".pdf");
 		
 		try (FileOutputStream fos = new FileOutputStream(file)) {			
 			DocumentEngine.produce(stream, "test", null, null, fos);

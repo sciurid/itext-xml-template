@@ -1,6 +1,7 @@
 package me.chenqiang.pdf.xml.handler;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -34,12 +35,13 @@ public class ParagraphHandler extends BasicTemplateElementHandler<ParagraphCompo
 		return this.tplPara;
 	}
 
+	protected static final Set<String> HANDLED_ELEMENT = Set.of(
+			"text", "image", "barcode", "br");
 	protected void resumeTextContent(Element current) {
 		int counter = 0;
 		for (Node node : current.content()) {
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				String nodeName = node.getName();
-				if ("text".equals(nodeName) || "image".equals(nodeName)) {
+				if (HANDLED_ELEMENT.contains(node.getName())) {
 					counter++;
 				}
 			} else if (node.getNodeType() == Node.TEXT_NODE) {
@@ -53,14 +55,22 @@ public class ParagraphHandler extends BasicTemplateElementHandler<ParagraphCompo
 	public void onStart(ElementPath elementPath) {
 		super.onStart(elementPath);
 		this.tplPara = new ParagraphComposer();		
-		elementPath.addHandler("text", new TextHandler(this.context, this.directory, this.tplPara));
-		elementPath.addHandler("image", new ImageHandler(this.context, this.directory, this.tplPara));
-		elementPath.addHandler("barcode", new BarcodeHandler(this.context, this.directory, this.tplPara));
+		new TextHandler(this.context, this.directory, this.tplPara).register(elementPath);
+		new ImageHandler(this.context, this.directory, this.tplPara).register(elementPath);
+		new BarcodeHandler(this.context, this.directory, this.tplPara).register(elementPath);
+		new LineReturnHandler(this.tplPara).register(elementPath);
 	}
 
 	@Override
 	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Paragraph>>> getAttributeMap() {
 		return this.context.getAttributeRegistry().getParagraphMap();
+	}
+
+	@Override
+	public void register(ElementPath path) {
+		path.addHandler("paragraph", this);
+		path.addHandler("para", this);
+		path.addHandler("p", this);
 	}
 	
 	

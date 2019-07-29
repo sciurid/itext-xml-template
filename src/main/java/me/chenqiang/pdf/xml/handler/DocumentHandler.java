@@ -31,12 +31,12 @@ public final class DocumentHandler extends BasicTemplateElementHandler<DocumentC
 		super.onStart(elementPath);
 		this.tplDoc = new DocumentComposer();		
 		this.directory = this.tplDoc.getDirectory();
-		elementPath.addHandler("paragraph", new ParagraphHandler(this.context, this.directory, this.tplDoc));
-		elementPath.addHandler("table", new TableHandler(this.context, this.directory, this.tplDoc));
-		elementPath.addHandler("image", new ImageHandler(this.context, this.directory, this.tplDoc));
-		elementPath.addHandler("barcode", new BarcodeHandler(this.context, this.directory, this.tplDoc));
-		elementPath.addHandler("newpage", new NewPageHandler(this.context, this.directory, this.tplDoc));
-		elementPath.addHandler("watermark", new WatermarkHandler(this.context, this.tplDoc));
+		new ParagraphHandler(this.context, this.directory, this.tplDoc).register(elementPath);
+		new TableHandler(this.context, this.directory, this.tplDoc).register(elementPath);
+		new ImageHandler(this.context, this.directory, this.tplDoc).register(elementPath);
+		new BarcodeHandler(this.context, this.directory, this.tplDoc).register(elementPath);
+		new NewPageHandler(this.context, this.directory, this.tplDoc).register(elementPath);
+		new WatermarkHandler(this.context, this.tplDoc).register(elementPath);
 	}
 
 	@Override
@@ -63,5 +63,12 @@ public final class DocumentHandler extends BasicTemplateElementHandler<DocumentC
 	@Override
 	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Document>>> getAttributeMap() {
 		return this.context.getAttributeRegistry().getDocumentMap();
+	}
+
+	@Override
+	public void register(ElementPath path) {
+		throw new UnsupportedOperationException();
 	}	
+	
+	
 }

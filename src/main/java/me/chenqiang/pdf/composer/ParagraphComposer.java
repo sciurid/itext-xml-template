@@ -1,10 +1,10 @@
 package me.chenqiang.pdf.composer;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,36 +15,28 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 
-import me.chenqiang.pdf.attribute.FontColorAttribute;
 import me.chenqiang.pdf.composer.DocumentComposer.DocumentComponent;
 import me.chenqiang.pdf.composer.ParagraphComposer.ParagraphComponent;
 import me.chenqiang.pdf.composer.TableCellComposer.TableCellComponent;
 import me.chenqiang.pdf.configurability.StringStub;
 
 public class ParagraphComposer extends BasicElementPropertyContainerComposer<Paragraph, ParagraphComposer>
-		implements FontColorAttribute.Acceptor, DocumentComponent, TableCellComponent, Iterable<ParagraphComponent> {
+		implements DocumentComponent, TableCellComponent, Iterable<ParagraphComponent> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ParagraphComposer.class);
-
+	protected Supplier<Paragraph> creator;
 	public static interface ParagraphComponent {
 		public void process(Paragraph para);
 	}
 
 	protected List<ParagraphComponent> components;
 
-	public ParagraphComposer() {
+	public ParagraphComposer(Supplier<Paragraph> creator) {
+		this.creator = creator;
 		this.components = new ArrayList<>();
 	}
-
-	public ParagraphComposer(ParagraphComponent... comps) {
-		this();
-		for (ParagraphComponent comp : comps) {
-			this.components.add(comp);
-		}
-	}
-
-	public ParagraphComposer(Collection<? extends ParagraphComponent> comps) {
-		this();
-		this.components.addAll(comps);
+	
+	public ParagraphComposer() {
+		this(Paragraph::new);
 	}
 
 	public ParagraphComposer append(ParagraphComponent component) {

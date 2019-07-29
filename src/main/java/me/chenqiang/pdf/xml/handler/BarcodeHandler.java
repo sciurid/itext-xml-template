@@ -50,4 +50,9 @@ public class BarcodeHandler extends BasicTemplateElementHandler<BarcodeComposer,
 	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Image>>> getAttributeMap() {
 		return this.context.getAttributeRegistry().getImageMap();
 	}
+	
+	@Override
+	public void register(ElementPath path) {
+		path.addHandler("barcode", this);
+	}
 }
