@@ -1,17 +1,23 @@
 package me.chenqiang.pdf.xml.handler;
 
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+
 import org.dom4j.Element;
 import org.dom4j.ElementPath;
 import org.dom4j.Node;
 
+import com.itextpdf.layout.element.Text;
+
 import me.chenqiang.pdf.composer.ParagraphComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
 import me.chenqiang.pdf.composer.TextComposer;
-import me.chenqiang.pdf.xml.AttributeRegistry;
-import me.chenqiang.pdf.xml.ComposerDirectory;
-import me.chenqiang.pdf.xml.TemplateContext;
+import me.chenqiang.pdf.xml.context.AttributeRegistry;
+import me.chenqiang.pdf.xml.context.ComposerDirectory;
+import me.chenqiang.pdf.xml.context.TemplateContext;
 
-public class TextHandler extends BasicTemplateElementHandler<TextComposer> {
+public class TextHandler extends BasicTemplateElementHandler<TextComposer, Text> {
 //	private static final Logger LOGGER = LoggerFactory.getLogger(TextNode.class);
 
 	private TextComposer tplText;
@@ -46,9 +52,12 @@ public class TextHandler extends BasicTemplateElementHandler<TextComposer> {
 			dir.registerIdentifiable(id, this.tplText);
 			dir.registerStringPlaceholder(id, this.tplText);
 		}
-		AttributeRegistry attrreg = this.context.getAttributeRegistry();
-		this.tplText.accept(attrreg.getFontColorAttribute(listAttributes(current)));
-		this.tplText.accept(attrreg.getBackgroundColorAttribute(listAttributes(current)));
-		this.tplText.setAllAttributes(getModifiers(current, attrreg.getTextMap()));
 	}
+
+	@Override
+	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Text>>> getAttributeMap() {
+		return this.context.getAttributeRegistry().getTextMap();
+	}
+	
+	
 }

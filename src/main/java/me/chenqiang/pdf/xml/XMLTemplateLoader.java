@@ -9,6 +9,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
 
 import me.chenqiang.pdf.composer.DocumentComposer;
+import me.chenqiang.pdf.xml.context.TemplateContext;
 import me.chenqiang.pdf.xml.handler.DocumentHandler;
 import me.chenqiang.pdf.xml.handler.FontDefinitionHandler;
 import me.chenqiang.pdf.xml.handler.ImageDefinitionHandler;

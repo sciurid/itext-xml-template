@@ -1,4 +1,4 @@
-package me.chenqiang.pdf.xml;
+package me.chenqiang.pdf.xml.context;
 
 public class TemplateContext {
 	protected ResourceRepository resourceRepository;

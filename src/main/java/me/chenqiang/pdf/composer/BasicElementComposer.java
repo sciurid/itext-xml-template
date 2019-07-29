@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.function.Consumer;
 
 public abstract class BasicElementComposer<T, S extends BasicElementComposer<T, S>>
-implements ElementComposer<T>, StringStub {
+implements ElementComposer<T>, StringStub, AttributedComposer<T> {
 	protected String id;
 	protected LinkedList<Consumer<? super T>> attributes;	
 	
@@ -13,15 +13,25 @@ implements ElementComposer<T>, StringStub {
 		this.attributes = new LinkedList<>();
 	}
 	
-	@SuppressWarnings("unchecked")
-	public S setAttribute(Consumer<? super T> attribute) {
+	@Override
+	public void setAttribute(Consumer<? super T> attribute) {
 		this.attributes.addFirst(attribute);
+	}
+	
+	@Override
+	public void setAllAttributes(Collection<? extends Consumer<? super T>> attributes) {
+		this.attributes.addAll(0, attributes);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public S set(Consumer<? super T> attribute) {
+		this.setAttribute(attribute);
 		return (S)this;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public S setAllAttributes(Collection<? extends Consumer<? super T>> attributes) {
-		this.attributes.addAll(0, attributes);
+	public S setAll(Collection<? extends Consumer<? super T>> attributes) {
+		this.setAllAttributes(attributes);
 		return (S)this;
 	}
 	

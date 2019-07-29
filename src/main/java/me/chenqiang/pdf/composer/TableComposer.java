@@ -1,7 +1,6 @@
 package me.chenqiang.pdf.composer;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -19,70 +18,14 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.UnitValue;
 
 import me.chenqiang.pdf.composer.DocumentComposer.DocumentComponent;
-import me.chenqiang.pdf.composer.ParagraphComposer.ParagraphComponent;
-import me.chenqiang.pdf.composer.TableCellComposer.TableCellComponent;
 
-public class TableComposer extends BasicElementPropertyContainerComposer<Table, TableComposer> 
-implements DocumentComponent, Iterable<TableCellComposer> {
+public class TableComposer extends BasicElementPropertyContainerComposer<Table, TableComposer>
+		implements DocumentComponent, Iterable<TableCellComposer> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TableComposer.class);
-
-	public static class Row {
-		protected final List<TableCellComposer> components;
-		protected final List<Consumer<? super Cell>> attributes;
-
-		public Row() {
-			this.components = new ArrayList<>();
-			this.attributes = new ArrayList<>();
-		}
-
-		public Row add(TableCellComposer tplCell) {
-			this.components.add(tplCell);
-			return this;
-		}
-
-		public Row add(TableCellComponent tplCellComp) {
-			TableCellComposer tplCell = new TableCellComposer();
-			tplCell.append(tplCellComp);
-			this.add(tplCell);
-			return this;
-		}
-
-		public Row add(TableCellComponent[] tplCellComps) {
-			TableCellComposer tplCell = new TableCellComposer();
-			for (TableCellComponent tcc : tplCellComps) {
-				tplCell.append(tcc);
-			}
-			this.add(tplCell);
-			return this;
-		}
-
-		public Row add(ParagraphComponent[] tplParaComps) {
-			ParagraphComposer tplPara = new ParagraphComposer();
-			for (ParagraphComponent tplEle : tplParaComps) {
-				tplPara.append(tplEle);
-			}
-			this.add(tplPara);
-			return this;
-		}
-
-		public void set(Consumer<? super Cell> attribute) {
-			this.attributes.add(attribute);
-		}
-
-		public void setAll(Collection<? extends Consumer<? super Cell>> attribute) {
-			this.attributes.addAll(attribute);
-		}
-
-		public List<Consumer<? super Cell>> getAttributes() {
-			return attributes;
-		}
-
-	}
-
 	protected Supplier<Table> creator;
-	protected Row header = new Row();
-	protected Row body = new Row();
-	protected Row footer = new Row();
+	protected TableRowComposer header = new TableRowComposer();
+	protected TableRowComposer body = new TableRowComposer();
+	protected TableRowComposer footer = new TableRowComposer();
 
 	public void setColumns(int numColumns) {
 		this.creator = () -> new Table(numColumns);
@@ -96,15 +39,15 @@ implements DocumentComponent, Iterable<TableCellComposer> {
 		this.creator = () -> new Table(columnWidths);
 	}
 
-	public Row getHeader() {
+	public TableRowComposer getHeader() {
 		return header;
 	}
 
-	public Row getBody() {
+	public TableRowComposer getBody() {
 		return body;
 	}
 
-	public Row getFooter() {
+	public TableRowComposer getFooter() {
 		return footer;
 	}
 
@@ -167,5 +110,5 @@ implements DocumentComponent, Iterable<TableCellComposer> {
 		all.addAll(this.body.components);
 		all.addAll(this.footer.components);
 		return all.iterator();
-	}	
+	}
 }

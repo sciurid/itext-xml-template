@@ -36,12 +36,12 @@
 			</body>
 			<footer><cell>甲</cell><cell>乙</cell><cell>丙</cell></footer>
 		</table>
-		<image ref="hawk" width="80%" text-align="center"/>
+		<paragraph><image ref="hawk" width="80%" text-align="center"/></paragraph>
 		<barcode format="qrcode" width="80%">fjkdslajfdlskjfdslahfsdlhflsdahflsadjflsdoaufoewhorfhsdl</barcode>
 		<barcode format="pdf417" width="80%">fjkdslajfdlskjfdslahfsdlhflsdahflsadjflsdoaufoewhorfhsdl</barcode>
 		<watermark>
 			<image ref="hawk" width="3cm" opacity="0.3" offset-x="-5cm" offset-y="10cm"/>
-			<text offset-x="3cm" offset-y="3cm">CONFIDENTIAL</text>
+			<text offset-x="3cm" offset-y="3cm" font-color="lime" opacity="0.3" rotation="45" font-family="heiti">私密 CONFIDENTIAL</text>
 		</watermark>
 	</document>
 </root>

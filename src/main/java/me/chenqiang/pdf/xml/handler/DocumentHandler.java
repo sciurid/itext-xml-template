@@ -1,17 +1,21 @@
 package me.chenqiang.pdf.xml.handler;
 
+import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
+import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.ElementPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import me.chenqiang.pdf.composer.DocumentComposer;
-import me.chenqiang.pdf.xml.AttributeRegistry;
-import me.chenqiang.pdf.xml.TemplateContext;
+import me.chenqiang.pdf.xml.context.AttributeRegistry;
+import me.chenqiang.pdf.xml.context.TemplateContext;
 
-public final class DocumentHandler extends BasicTemplateElementHandler<DocumentComposer> {
+public final class DocumentHandler extends BasicTemplateElementHandler<DocumentComposer, Document> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DocumentHandler.class);
 	protected DocumentComposer tplDoc;
 	protected BiConsumer<String, DocumentComposer> postprocessor;
@@ -50,4 +54,11 @@ public final class DocumentHandler extends BasicTemplateElementHandler<DocumentC
 		}
 		LOGGER.debug("[END] {} - {}", elementPath.getPath(), this.count++);
 	}
+
+	@Override
+	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Document>>> getAttributeMap() {
+		return null;
+	}
+	
+	
 }

@@ -40,21 +40,20 @@ public class ComposerTest extends PdfTest{
 		;
 		
 		ParagraphComposer title = new ParagraphComposer();
-		title
-		.append(new TextComposer("SAMPLE ").setAttribute(para -> para.setBold()))
-		.append(new TextComposer("The Gettysburg Address"));
+		title.append(new TextComposer("SAMPLE ").set(para -> para.setBold()));
+		title.append(new TextComposer("The Gettysburg Address"));
 		
 		title
-		.setAttribute(para -> para.setTextAlignment(TextAlignment.CENTER))
-		.setAttribute(para -> para.setFontSize(24));
+		.set(para -> para.setTextAlignment(TextAlignment.CENTER))
+		.set(para -> para.setFontSize(24));
 		
 		template.append(title);
 		
 		ParagraphComposer content = new ParagraphComposer();
 		TextComposer strContent = new TextComposer(this.gettysburg);
 		content.append(strContent);
-		content.setAttribute(para -> para.setFirstLineIndent(24))
-		.setAttribute(para -> para.setTextAlignment(TextAlignment.JUSTIFIED));		
+		content.set(para -> para.setFirstLineIndent(24))
+		.set(para -> para.setTextAlignment(TextAlignment.JUSTIFIED));		
 		template.append(content);
 		
 		this.render(template, "SimpleEnglish-");
@@ -99,17 +98,17 @@ public class ComposerTest extends PdfTest{
 		ParagraphComposer title = new ParagraphComposer();
 		title
 		.append(new TextComposer("蜀道难"))
-		.setAttribute(para -> para.setFontFamily("simhei"))
-		.setAttribute(para -> para.setTextAlignment(TextAlignment.CENTER))
-		.setAttribute(para -> para.setFontSize(24));
+		.set(para -> para.setFontFamily("simhei"))
+		.set(para -> para.setTextAlignment(TextAlignment.CENTER))
+		.set(para -> para.setFontSize(24));
 		
 		template.append(title);
 		
 		ParagraphComposer content = new ParagraphComposer();
 		TextComposer strContent = new TextComposer(this.shudaonan);
 		content.append(strContent)
-		.setAttribute(para -> para.setFirstLineIndent(24))
-		.setAttribute(para -> para.setTextAlignment(TextAlignment.JUSTIFIED));		
+		.set(para -> para.setFirstLineIndent(24))
+		.set(para -> para.setTextAlignment(TextAlignment.JUSTIFIED));		
 		
 		template.append(content);
 		

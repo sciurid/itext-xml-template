@@ -1,4 +1,4 @@
-package me.chenqiang.pdf.xml;
+package me.chenqiang.pdf.xml.context;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -8,6 +8,7 @@ import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
+import org.dom4j.Attribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,9 +24,6 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
-
-import me.chenqiang.pdf.attribute.BackgroundColorAttribute;
-import me.chenqiang.pdf.attribute.FontColorAttribute;
 
 public final class AttributeRegistry {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AttributeRegistry.class);
@@ -66,7 +64,7 @@ public final class AttributeRegistry {
 	public static final String FONT_SIZE = "font-size";
 	public static final String FONT_VARIANT = "font-variant";
 	public static final String TEXT_ALIGN = "text-align";
-
+	
 	protected void initElementPropertyContainerMap() {
 		this.mapElementPropertyContainer.put(FONT_FAMILY, (name, value) -> {
 			AttributeValueParser parser = new AttributeValueParser(name, value);
@@ -288,49 +286,30 @@ public final class AttributeRegistry {
 
 	public static final String FONT_COLOR= "font-color";
 	public static final String FONT_OPACITY= "font-opacity";
-	public FontColorAttribute getFontColorAttribute(List<Map.Entry<String, String>> attributes) {
-		FontColorAttribute res = null;
-		for(Map.Entry<String, String> attr : attributes) {
-			switch(attr.getKey()) {
+	public static final String BACKGROUND_COLOR = "background-color";
+	public static final String BACKGROUND_OPACITY = "background-opacity";	
+	public CompositeAttribute getCompositeAttribute(List<Attribute> attributes) {
+		CompositeAttribute attribute = new CompositeAttribute();
+		
+		for(Attribute attr : attributes) {
+			String attrName = attr.getName();
+			String attrValue = attr.getValue();
+			switch(attrName) {
 			case FONT_COLOR:
-				if(res == null) {
-					res = new FontColorAttribute();
-				}
-				res.setFontColor(new AttributeValueParser(attr.getKey(), attr.getValue()).getDeviceRgb());
+				attribute.getFontColor().setFontColor(new AttributeValueParser(attrName, attrValue).getDeviceRgb());
 				break;
 			case FONT_OPACITY:
-				if(res == null) {
-					res = new FontColorAttribute();
-				}
-				res.setOpacity(new AttributeValueParser(attr.getKey(), attr.getValue()).getFloat());
+				attribute.getFontColor().setOpacity(new AttributeValueParser(attrName, attrValue).getFloat());
 				break;
-			}
-		}
-		return res;
-	}
-	
-
-	public static final String BACKGROUND_COLOR = "background-color";
-	public static final String BACKGROUND_OPACITY = "background-opacity";
-	public BackgroundColorAttribute getBackgroundColorAttribute(List<Map.Entry<String, String>> attributes) {
-		BackgroundColorAttribute res = null;
-		for(Map.Entry<String, String> attr : attributes) {
-			switch(attr.getKey()) {
 			case BACKGROUND_COLOR:
-				if(res == null) {
-					res = new BackgroundColorAttribute();
-				}
-				res.setFontColor(new AttributeValueParser(attr.getKey(), attr.getValue()).getDeviceRgb());
+				attribute.getBackgroundColor().setFontColor(new AttributeValueParser(attrName, attrValue).getDeviceRgb());
 				break;
 			case BACKGROUND_OPACITY:
-				if(res == null) {
-					res = new BackgroundColorAttribute();
-				}
-				res.setOpacity(new AttributeValueParser(attr.getKey(), attr.getValue()).getFloat());
+				attribute.getBackgroundColor().setOpacity(new AttributeValueParser(attrName, attrValue).getFloat());
 				break;
 			}
 		}
-		return res;
+		return attribute;
 	}
 	
 	

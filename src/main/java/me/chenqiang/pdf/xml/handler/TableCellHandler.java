@@ -1,23 +1,29 @@
 package me.chenqiang.pdf.xml.handler;
 
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+
 import org.dom4j.Attribute;
 import org.dom4j.Element;
 import org.dom4j.ElementPath;
 import org.dom4j.Node;
 
+import com.itextpdf.layout.element.Cell;
+
 import me.chenqiang.pdf.composer.StringComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
-import me.chenqiang.pdf.composer.TableComposer;
-import me.chenqiang.pdf.xml.AttributeRegistry;
-import me.chenqiang.pdf.xml.AttributeValueParser;
-import me.chenqiang.pdf.xml.TemplateContext;
+import me.chenqiang.pdf.composer.TableRowComposer;
+import me.chenqiang.pdf.xml.context.AttributeRegistry;
+import me.chenqiang.pdf.xml.context.AttributeValueParser;
+import me.chenqiang.pdf.xml.context.TemplateContext;
 
-public class TableCellHandler extends BasicTemplateElementHandler<TableCellComposer> {
+public class TableCellHandler extends BasicTemplateElementHandler<TableCellComposer, Cell> {
 //	private static final Logger LOGGER = LoggerFactory.getLogger(TableCellNode.class);
 	private TableCellComposer tplCell;
-	private TableComposer.Row row;
+	private TableRowComposer row;
 
-	public TableCellHandler(TemplateContext context, TableComposer.Row row) {
+	public TableCellHandler(TemplateContext context, TableRowComposer row) {
 		super(context, row::add);
 		this.row = row;
 	}
@@ -71,14 +77,15 @@ public class TableCellHandler extends BasicTemplateElementHandler<TableCellCompo
 			}
 		}
 		this.tplCell.inheritAttributes(this.row.getAttributes());
-		AttributeRegistry attrreg = this.context.getAttributeRegistry();
-		this.tplCell.accept(attrreg.getFontColorAttribute(listAttributes(current)));
-		this.tplCell.accept(attrreg.getBackgroundColorAttribute(listAttributes(current)));
-		this.tplCell.setAllAttributes(getModifiers(current, attrreg.getCellMap()));
 		
 		elementPath.addHandler("text", new TextHandler(this.context, this.tplCell));
 		elementPath.addHandler("paragraph", new ParagraphHandler(this.context, this.tplCell));
 		elementPath.addHandler("image", new ImageHandler(this.context, this.tplCell));
 		elementPath.addHandler("barcode", new BarcodeHandler(this.context, this.tplCell));
 	}
+
+	@Override
+	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Cell>>> getAttributeMap() {
+		return this.context.getAttributeRegistry().getCellMap();
+	}	
 }

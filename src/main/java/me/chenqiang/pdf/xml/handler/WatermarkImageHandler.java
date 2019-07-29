@@ -14,9 +14,9 @@ import com.itextpdf.io.image.ImageDataFactory;
 
 import me.chenqiang.pdf.WatermarkMaker;
 import me.chenqiang.pdf.WatermarkMaker.ImageWatermarkSetting;
-import me.chenqiang.pdf.xml.AttributeRegistry;
-import me.chenqiang.pdf.xml.AttributeValueParser;
-import me.chenqiang.pdf.xml.TemplateContext;
+import me.chenqiang.pdf.xml.context.AttributeRegistry;
+import me.chenqiang.pdf.xml.context.AttributeValueParser;
+import me.chenqiang.pdf.xml.context.TemplateContext;
 
 public class WatermarkImageHandler implements ElementHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WatermarkImageHandler.class);

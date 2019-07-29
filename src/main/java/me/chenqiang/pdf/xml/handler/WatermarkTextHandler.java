@@ -7,10 +7,15 @@ import org.dom4j.ElementPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.VerticalAlignment;
+
 import me.chenqiang.pdf.WatermarkMaker;
 import me.chenqiang.pdf.WatermarkMaker.TextWatermarkSetting;
-import me.chenqiang.pdf.xml.AttributeValueParser;
-import me.chenqiang.pdf.xml.TemplateContext;
+import me.chenqiang.pdf.xml.context.AttributeRegistry;
+import me.chenqiang.pdf.xml.context.AttributeValueParser;
+import me.chenqiang.pdf.xml.context.TemplateContext;
 
 public class WatermarkTextHandler implements ElementHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WatermarkTextHandler.class);
@@ -37,6 +42,15 @@ public class WatermarkTextHandler implements ElementHandler {
 			AttributeValueParser parser = new AttributeValueParser(name, value);
 			try {
 				switch (name) {
+				case AttributeRegistry.FONT_FAMILY:
+					PdfFont font = this.context.getResourceRepository().getFont(parser.getString());
+					if(font != null) {
+						setting.setFont(font);
+					}
+					else {
+						LOGGER.error("Font-family name '{}' not registered. Watermark may fail.", value);
+					}
+					break;
 				case "offset-x":
 					parser.setLengthInPoints(setting::setOffsetX);
 					break;
@@ -47,8 +61,29 @@ public class WatermarkTextHandler implements ElementHandler {
 					parser.setLengthInPoints(setting::setWidth);
 					break;
 				case "font-size":
-					parser.setLengthInPoints(setting::setFontSize);
+					parser.setUnitValue(setting::setFontSize);
 					break;
+				case "font-color":
+					parser.setDeviceRgb(setting::setFontColor);
+					break;
+				case "opacity":
+					parser.setFloat(setting::setOpacity);
+					break;
+				case "rotation":
+					parser.setFloat(setting::setRotation);
+					break;
+				case AttributeRegistry.VERTICAL_ALIGNMENT:
+					VerticalAlignment verticalAlignment = parser.getVerticalAlignment();
+					if(verticalAlignment != null) {
+						setting.setVerticalAlignment(verticalAlignment);
+					}
+					break;
+				case AttributeRegistry.TEXT_ALIGN:
+					TextAlignment textAlign = parser.getTextAlign();
+					if(textAlign != null) {
+						setting.setTextAlignment(textAlign);
+					}
+					break;					
 				default:
 				}
 			} catch (RuntimeException e) {

@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.itextpdf.io.image.ImageDataFactory;
 
-import me.chenqiang.pdf.xml.ResourceRepository;
+import me.chenqiang.pdf.xml.context.ResourceRepository;
 
 public class ImageDefinitionHandler implements ElementHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ImageDefinitionHandler.class);

@@ -9,7 +9,7 @@ import com.itextpdf.kernel.events.PdfDocumentEvent;
 
 import me.chenqiang.pdf.WatermarkMaker;
 import me.chenqiang.pdf.composer.DocumentComposer;
-import me.chenqiang.pdf.xml.TemplateContext;
+import me.chenqiang.pdf.xml.context.TemplateContext;
 
 public class WatermarkHandler implements ElementHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WatermarkHandler.class);

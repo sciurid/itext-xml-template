@@ -15,7 +15,7 @@ import me.chenqiang.pdf.composer.ParagraphComposer;
 import me.chenqiang.pdf.composer.StringComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
 import me.chenqiang.pdf.composer.TableComposer;
-import me.chenqiang.pdf.composer.TableComposer.Row;
+import me.chenqiang.pdf.composer.TableRowComposer;
 
 public class TableTemplateTest extends PdfTest {
 
@@ -29,16 +29,16 @@ public class TableTemplateTest extends PdfTest {
 
 		TableComposer tbl = new TableComposer();
 		tbl.setColumns(UnitValue.createPercentArray(new float[] { 20f, 30f, 50f }));
-		tbl.setAttribute(table -> table.setFontFamily("stkaiti"))
-				.setAttribute(table -> table.setWidth(UnitValue.createPercentValue(100)));
+		tbl.set(table -> table.setFontFamily("stkaiti"))
+				.set(table -> table.setWidth(UnitValue.createPercentValue(100)));
 
-		Row header = tbl.getHeader();
+		TableRowComposer header = tbl.getHeader();
 		header.set(cell -> cell.setFontFamily("simhei"));
 		header.add(new ParagraphComposer().append(new StringComposer("A 甲")));
 		header.add(new StringComposer("B 乙"));
 		header.add(new StringComposer("C 丙"));
 
-		Row content = tbl.getBody();
+		TableRowComposer content = tbl.getBody();
 		content.set(cell -> cell.setFontFamily("stsong"));
 		content.add(new TableCellComposer().setRowspan(2).setColspan(2)
 				.append(new ParagraphComposer().append(new StringComposer("A1 甲壹"))));
@@ -55,7 +55,7 @@ public class TableTemplateTest extends PdfTest {
 				new TableCellComposer().setColspan(3)
 				.append(new ImageComposer()
 						.setImageResource("/books.png")
-						.setAttribute(image -> image.setWidth(UnitValue.createPercentValue(100f)))
+						.set(image -> image.setWidth(UnitValue.createPercentValue(100f)))
 						)
 				.append(new BarcodeComposer().setMessage("https://www.tsinghua.edu.cn").setFormat("qrcode"))
 				.append(new BarcodeComposer().setMessage("https://www.tsinghua.edu.cn").setFormat("pdf417"))

@@ -1,12 +1,11 @@
 package me.chenqiang.pdf.attribute;
 
 import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.layout.ElementPropertyContainer;
 
 public class FontColorAttribute {
-	protected Color fontColor = DeviceRgb.BLACK;
-	protected float opacity = 1.0f;
+	protected Color fontColor = null;
+	protected Float opacity = null;
 	
 	public void setFontColor(Color fontColor) {
 		this.fontColor = fontColor;
@@ -16,7 +15,15 @@ public class FontColorAttribute {
 	}
 	
 	public <T extends ElementPropertyContainer<T>> void apply(T element) {
-		element.setFontColor(this.fontColor, this.opacity);
+		if(this.fontColor != null) {
+			if(this.opacity != null) {
+				element.setFontColor(this.fontColor, this.opacity);
+			}
+			else {
+				element.setFontColor(this.fontColor);
+			}
+		}
+		
 	}
 	
 	public static interface Acceptor {

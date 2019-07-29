@@ -6,16 +6,19 @@ import org.dom4j.ElementPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import me.chenqiang.pdf.composer.TableComposer;
-import me.chenqiang.pdf.composer.TableComposer.Row;
-import me.chenqiang.pdf.xml.TemplateContext;
+import me.chenqiang.pdf.attribute.BackgroundColorAttribute;
+import me.chenqiang.pdf.attribute.FontColorAttribute;
+import me.chenqiang.pdf.composer.TableRowComposer;
+import me.chenqiang.pdf.xml.context.AttributeRegistry;
+import me.chenqiang.pdf.xml.context.CompositeAttribute;
+import me.chenqiang.pdf.xml.context.TemplateContext;
 
 public class TableRowHander implements ElementHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TableRowHander.class);
 	protected TemplateContext context;
-	protected TableComposer.Row row;
+	protected TableRowComposer row;
 
-	public TableRowHander(TemplateContext context, Row row) {
+	public TableRowHander(TemplateContext context, TableRowComposer row) {
 		this.context = context;
 		this.row = row;
 	}
@@ -24,7 +27,17 @@ public class TableRowHander implements ElementHandler {
 	public void onStart(ElementPath elementPath) {
 		LOGGER.debug("[START] {}", elementPath.getPath());
 		Element current = elementPath.getCurrent();
-		this.row.setAll(BasicTemplateElementHandler.getModifiers(current, this.context.getAttributeRegistry().getCellMap()));
+		AttributeRegistry attributeRegistry = this.context.getAttributeRegistry();
+		CompositeAttribute compositeAttribute = attributeRegistry.getCompositeAttribute(current.attributes());
+		FontColorAttribute fontColorAttr = compositeAttribute.getFontColor();
+		if(fontColorAttr != null) {
+			this.row.setAttribute(fontColorAttr::apply);
+		}
+		BackgroundColorAttribute backgroundColorAttr = compositeAttribute.getBackgroundColor();
+		if(backgroundColorAttr != null) {
+			this.row.setAttribute(backgroundColorAttr::apply);
+		}
+		this.row.setAllAttributes(BasicTemplateElementHandler.getModifiers(current, attributeRegistry.getCellMap()));
 		elementPath.addHandler("cell", new TableCellHandler(this.context, this.row));
 	}
 

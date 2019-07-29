@@ -1,22 +1,28 @@
 package me.chenqiang.pdf.attribute;
 
 import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.layout.ElementPropertyContainer;
 
 public class BackgroundColorAttribute {
-	protected Color fontColor = DeviceRgb.BLACK;
-	protected float opacity = 1.0f;
+	protected Color backgroundColor = null;
+	protected Float opacity = null;
 	
 	public void setFontColor(Color fontColor) {
-		this.fontColor = fontColor;
+		this.backgroundColor = fontColor;
 	}
 	public void setOpacity(float opacity) {
 		this.opacity = opacity;
 	}
 	
 	public <T extends ElementPropertyContainer<T>> void apply(T element) {
-		element.setBackgroundColor(this.fontColor, this.opacity);
+		if(this.backgroundColor != null) {
+			if(this.opacity != null) {
+				element.setBackgroundColor(this.backgroundColor, this.opacity);
+			}
+			else {
+				element.setBackgroundColor(this.backgroundColor);
+			}
+		}
 	}
 	
 	public static interface Acceptor {

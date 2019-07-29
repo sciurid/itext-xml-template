@@ -1,18 +1,23 @@
 package me.chenqiang.pdf.xml.handler;
 
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+
 import org.dom4j.Attribute;
 import org.dom4j.Element;
 import org.dom4j.ElementPath;
 
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.UnitValue;
 
 import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.composer.TableComposer;
-import me.chenqiang.pdf.xml.AttributeRegistry;
-import me.chenqiang.pdf.xml.AttributeValueParser;
-import me.chenqiang.pdf.xml.TemplateContext;
+import me.chenqiang.pdf.xml.context.AttributeRegistry;
+import me.chenqiang.pdf.xml.context.AttributeValueParser;
+import me.chenqiang.pdf.xml.context.TemplateContext;
 
-public class TableHandler extends BasicTemplateElementHandler<TableComposer> {
+public class TableHandler extends BasicTemplateElementHandler<TableComposer, Table> {
 //	private static final Logger LOGGER = LoggerFactory.getLogger(TableNode.class);
 	private TableComposer tplTbl;
 	public TableHandler(TemplateContext context, DocumentComposer tplDoc) {
@@ -45,10 +50,6 @@ public class TableHandler extends BasicTemplateElementHandler<TableComposer> {
 				}
 			} 
 		}
-		AttributeRegistry attrreg = this.context.getAttributeRegistry();
-		this.tplTbl.accept(attrreg.getFontColorAttribute(listAttributes(current)));
-		this.tplTbl.accept(attrreg.getBackgroundColorAttribute(listAttributes(current)));
-		this.tplTbl.setAllAttributes(getModifiers(current, attrreg.getTableMap()));
 		
 		elementPath.addHandler("header", new TableRowHander(this.context, this.tplTbl.getHeader()));
 		elementPath.addHandler("body", new TableRowHander(this.context, this.tplTbl.getBody()));
@@ -59,4 +60,11 @@ public class TableHandler extends BasicTemplateElementHandler<TableComposer> {
 	protected TableComposer produce(ElementPath elementPath) {
 		return this.tplTbl;
 	}
+
+	@Override
+	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Table>>> getAttributeMap() {
+		return this.context.getAttributeRegistry().getTableMap();
+	}
+	
+	
 }

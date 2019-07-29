@@ -1,18 +1,24 @@
 package me.chenqiang.pdf.xml.handler;
 
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+
 import org.dom4j.Attribute;
 import org.dom4j.Element;
 import org.dom4j.ElementPath;
+
+import com.itextpdf.layout.element.Image;
 
 import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.composer.ImageComposer;
 import me.chenqiang.pdf.composer.ParagraphComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
-import me.chenqiang.pdf.xml.AttributeRegistry;
-import me.chenqiang.pdf.xml.ComposerDirectory;
-import me.chenqiang.pdf.xml.TemplateContext;
+import me.chenqiang.pdf.xml.context.AttributeRegistry;
+import me.chenqiang.pdf.xml.context.ComposerDirectory;
+import me.chenqiang.pdf.xml.context.TemplateContext;
 
-public class ImageHandler extends BasicTemplateElementHandler<ImageComposer> {
+public class ImageHandler extends BasicTemplateElementHandler<ImageComposer, Image> {
 
 	public ImageHandler(TemplateContext context, DocumentComposer doc) {
 		super(context, doc::append);
@@ -51,11 +57,12 @@ public class ImageHandler extends BasicTemplateElementHandler<ImageComposer> {
 			default:
 			}
 		}
-		AttributeRegistry attrreg = this.context.getAttributeRegistry();
-		tplImg.accept(attrreg.getFontColorAttribute(listAttributes(current)));
-		tplImg.accept(attrreg.getBackgroundColorAttribute(listAttributes(current)));
-		tplImg.setAllAttributes(getModifiers(current, attrreg.getImageMap()));
 		return tplImg;
+	}
+	
+	@Override
+	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Image>>> getAttributeMap() {
+		return this.context.getAttributeRegistry().getImageMap();
 	}
 
 }
