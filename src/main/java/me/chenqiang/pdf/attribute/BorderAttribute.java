@@ -1,7 +1,5 @@
 package me.chenqiang.pdf.attribute;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -111,10 +109,4 @@ public class BorderAttribute {
 	public static interface Acceptor {
 		public void accept(BorderAttribute common, BorderAttribute top, BorderAttribute right, BorderAttribute bottom, BorderAttribute left);
 	}
-	
-	public static final List<BiConsumer<ElementPropertyContainer<?>, Border>> BORDER_SETTERS = 
-			Arrays.<BiConsumer<ElementPropertyContainer<?>, Border>>asList(
-					ElementPropertyContainer::setBorder,
-					ElementPropertyContainer::setBorderTop, ElementPropertyContainer::setBorderRight,
-					ElementPropertyContainer::setBorderBottom, ElementPropertyContainer::setBorderLeft);
 }

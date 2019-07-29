@@ -19,6 +19,7 @@ import me.chenqiang.pdf.attribute.FontColorAttribute;
 import me.chenqiang.pdf.composer.DocumentComposer.DocumentComponent;
 import me.chenqiang.pdf.composer.ParagraphComposer.ParagraphComponent;
 import me.chenqiang.pdf.composer.TableCellComposer.TableCellComponent;
+import me.chenqiang.pdf.configurability.StringStub;
 
 public class ParagraphComposer extends BasicElementPropertyContainerComposer<Paragraph, ParagraphComposer>
 		implements FontColorAttribute.Acceptor, DocumentComponent, TableCellComponent, Iterable<ParagraphComponent> {
@@ -95,4 +96,5 @@ public class ParagraphComposer extends BasicElementPropertyContainerComposer<Par
 	public Iterator<ParagraphComponent> iterator() {
 		return this.components.iterator();
 	}
+
 }

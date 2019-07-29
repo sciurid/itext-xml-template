@@ -9,10 +9,11 @@ import com.itextpdf.layout.element.Text;
 
 import me.chenqiang.pdf.composer.ParagraphComposer.ParagraphComponent;
 import me.chenqiang.pdf.composer.TableCellComposer.TableCellComponent;
-import me.chenqiang.pdf.utils.Substitution;
+import me.chenqiang.pdf.configurability.StringParameterPlaceholder;
+import me.chenqiang.pdf.configurability.Substitution;
 
 public class TextComposer extends BasicElementPropertyContainerComposer<Text, TextComposer>
-implements ParagraphComponent, TableCellComponent, ParameterPlaceholder<String>{
+implements ParagraphComponent, TableCellComponent, StringParameterPlaceholder{
 	private StringBuilder content;
 	
 	public TextComposer() {

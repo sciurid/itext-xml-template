@@ -106,7 +106,7 @@ public class AttributeValueParser {
 			consumer.accept(fval);
 		}
 	}
-	public void setLengthInPoints(FloatConsumer consumer) {
+	public void setLength(FloatConsumer consumer) {
 		Float fval = this.getLength();
 		if (fval != null) {
 			consumer.accept(fval.floatValue());

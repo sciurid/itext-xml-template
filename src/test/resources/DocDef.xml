@@ -4,7 +4,7 @@
 	<font name="songti" path="/simsun.ttc" type="resource" />
 	<font name="宋体" path="C:\\Windows\\Fonts\\simsun.ttc" type="file" />
 	<image-resource id="hawk" resource="/hawk.png"/>
-	<document id="test1">
+	<document id="test">
 		<paragraph font-family="songti" margin-left="10cm" text-align="center" font-color="lime" font-opacity="0.2">
 			<text font-variant="bold, italic, underline" font-size="18">《朝花夕拾》</text>
 			<text id="author">作者</text>

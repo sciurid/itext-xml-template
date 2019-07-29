@@ -7,7 +7,8 @@ import com.itextpdf.layout.element.Paragraph;
 
 import me.chenqiang.pdf.composer.ParagraphComposer.ParagraphComponent;
 import me.chenqiang.pdf.composer.TableCellComposer.TableCellComponent;
-import me.chenqiang.pdf.utils.Substitution;
+import me.chenqiang.pdf.configurability.StringStub;
+import me.chenqiang.pdf.configurability.Substitution;
 
 public class StringComposer implements ParagraphComponent, TableCellComponent, StringStub {
 	private String content;

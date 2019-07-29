@@ -15,7 +15,7 @@ implements ElementComposer<AreaBreak>, DocumentComponent{
 	public void process(Document doc, PdfDocument pdf, PdfWriter writer) {
 		doc.add(this.<Void>produce(null));	
 	}
-	
+
 	public static AreaBreakComposer getNextPage() {
 		return new AreaBreakComposer() {			
 			@Override
@@ -33,4 +33,5 @@ implements ElementComposer<AreaBreak>, DocumentComponent{
 			}
 		};
 	}
+	
 }

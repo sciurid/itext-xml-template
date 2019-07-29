@@ -10,24 +10,22 @@ import org.dom4j.Node;
 
 import com.itextpdf.layout.element.Paragraph;
 
+import me.chenqiang.pdf.composer.ComposerDirectory;
 import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.composer.ParagraphComposer;
 import me.chenqiang.pdf.composer.StringComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
-import me.chenqiang.pdf.xml.context.AttributeRegistry;
-import me.chenqiang.pdf.xml.context.ComposerDirectory;
 import me.chenqiang.pdf.xml.context.TemplateContext;
 
 public class ParagraphHandler extends BasicTemplateElementHandler<ParagraphComposer, Paragraph> {
-//	private static final Logger LOGGER = LoggerFactory.getLogger(ParagraphNode.class);
 	private ParagraphComposer tplPara;
 
-	public ParagraphHandler(TemplateContext context, DocumentComposer tplDoc) {
-		super(context, tplDoc::append);
+	public ParagraphHandler(TemplateContext context, ComposerDirectory directory, DocumentComposer tplDoc) {
+		super(context, directory, tplDoc::append);
 	}
 
-	public ParagraphHandler(TemplateContext context, TableCellComposer tplCell) {
-		super(context, tplCell::append);
+	public ParagraphHandler(TemplateContext context, ComposerDirectory directory, TableCellComposer tplCell) {
+		super(context, directory, tplCell::append);
 	}
 
 	@Override
@@ -54,17 +52,10 @@ public class ParagraphHandler extends BasicTemplateElementHandler<ParagraphCompo
 	@Override
 	public void onStart(ElementPath elementPath) {
 		super.onStart(elementPath);
-		this.tplPara = new ParagraphComposer();
-		Element current = elementPath.getCurrent();
-		String id = current.attributeValue(AttributeRegistry.ID);
-		if(id != null) {
-			ComposerDirectory dir = this.context.getComposerDirectory();
-			dir.registerIdentifiable(id, this.tplPara);
-		}		
-		
-		elementPath.addHandler("text", new TextHandler(this.context, this.tplPara));
-		elementPath.addHandler("image", new ImageHandler(this.context, this.tplPara));
-		elementPath.addHandler("barcode", new BarcodeHandler(this.context, this.tplPara));
+		this.tplPara = new ParagraphComposer();		
+		elementPath.addHandler("text", new TextHandler(this.context, this.directory, this.tplPara));
+		elementPath.addHandler("image", new ImageHandler(this.context, this.directory, this.tplPara));
+		elementPath.addHandler("barcode", new BarcodeHandler(this.context, this.directory, this.tplPara));
 	}
 
 	@Override

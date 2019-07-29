@@ -52,13 +52,13 @@ public class WatermarkTextHandler implements ElementHandler {
 					}
 					break;
 				case "offset-x":
-					parser.setLengthInPoints(setting::setOffsetX);
+					parser.setLength(setting::setOffsetX);
 					break;
 				case "offset-y":
-					parser.setLengthInPoints(setting::setOffsetY);
+					parser.setLength(setting::setOffsetY);
 					break;
 				case "width":
-					parser.setLengthInPoints(setting::setWidth);
+					parser.setLength(setting::setWidth);
 					break;
 				case "font-size":
 					parser.setUnitValue(setting::setFontSize);
@@ -93,9 +93,9 @@ public class WatermarkTextHandler implements ElementHandler {
 		
 		String text = current.getTextTrim();
 		if (text != null && text.length() > 0) {
-			this.watermark.addRenderer((pdf, page, canvas) -> {
-				WatermarkMaker.renderText(pdf, page, canvas, text, setting);
-			});
+			this.watermark.addRenderer((pdf, page, canvas) -> 
+				WatermarkMaker.renderText(pdf, page, canvas, text, setting)
+			);
 		} else {
 			LOGGER.error("Watermark text is not specified.");
 		}

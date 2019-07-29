@@ -76,7 +76,7 @@ public class WatermarkMaker implements IEventHandler {
 		}
 	}
 
-	public static void renderImage(PdfDocument pdfDoc, PdfPage page, PdfCanvas pdfCanvas, ImageData image,
+	public static void renderImage(PdfPage page, PdfCanvas pdfCanvas, ImageData image,
 			ImageWatermarkSetting setting) {
 		pdfCanvas.saveState();
 		Rectangle pageSize = page.getPageSize();
@@ -194,5 +194,11 @@ public class WatermarkMaker implements IEventHandler {
 		pdfCanvas.saveState().setFillColor(colors[pageNumber % colors.length])
 				.rectangle(pageSize.getLeft(), pageSize.getBottom(), pageSize.getWidth(), pageSize.getHeight()).fill()
 				.restoreState();
+	}
+	
+	public WatermarkMaker deepCopy() {
+		WatermarkMaker wmm = new WatermarkMaker();
+		wmm.renderers.addAll(this.renderers);
+		return wmm;
 	}
 }

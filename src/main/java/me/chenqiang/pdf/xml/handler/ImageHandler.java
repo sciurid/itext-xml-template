@@ -10,26 +10,26 @@ import org.dom4j.ElementPath;
 
 import com.itextpdf.layout.element.Image;
 
+import me.chenqiang.pdf.composer.ComposerDirectory;
 import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.composer.ImageComposer;
 import me.chenqiang.pdf.composer.ParagraphComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
 import me.chenqiang.pdf.xml.context.AttributeRegistry;
-import me.chenqiang.pdf.xml.context.ComposerDirectory;
 import me.chenqiang.pdf.xml.context.TemplateContext;
 
 public class ImageHandler extends BasicTemplateElementHandler<ImageComposer, Image> {
 
-	public ImageHandler(TemplateContext context, DocumentComposer doc) {
-		super(context, doc::append);
+	public ImageHandler(TemplateContext context, ComposerDirectory directory, DocumentComposer doc) {
+		super(context, directory, doc::append);
 	}
 
-	public ImageHandler(TemplateContext context, ParagraphComposer para) {
-		super(context, para::append);
+	public ImageHandler(TemplateContext context, ComposerDirectory directory, ParagraphComposer para) {
+		super(context, directory, para::append);
 	}
 
-	public ImageHandler(TemplateContext context, TableCellComposer cell) {
-		super(context, cell::append);
+	public ImageHandler(TemplateContext context, ComposerDirectory directory, TableCellComposer cell) {
+		super(context, directory, cell::append);
 	}
 
 	@Override
@@ -50,9 +50,8 @@ public class ImageHandler extends BasicTemplateElementHandler<ImageComposer, Ima
 				tplImg.setImageData(this.context.getResourceRepository().getImage(value));
 				break;
 			case AttributeRegistry.ID:
-				ComposerDirectory dir = this.context.getComposerDirectory();
-				dir.registerIdentifiable(value, tplImg);
-				dir.registerDataPlaceholder(value, tplImg);
+				this.directory.registerIdentifiable(value, tplImg);
+				this.directory.registerDataPlaceholder(value, tplImg);
 				break;
 			default:
 			}

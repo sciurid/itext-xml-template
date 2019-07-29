@@ -1,4 +1,4 @@
-package me.chenqiang.pdf.composer;
+package me.chenqiang.pdf.configurability;
 
 import java.util.Map;
 

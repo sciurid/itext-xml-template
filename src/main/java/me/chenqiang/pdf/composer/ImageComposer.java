@@ -9,8 +9,10 @@ import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.layout.element.Image;
 
+import me.chenqiang.pdf.configurability.DataParameterPlaceholder;
+
 public class ImageComposer extends BasicImageComposer<ImageComposer>
-implements ParameterPlaceholder<byte []>{
+implements DataParameterPlaceholder{
 	private static final Logger LOGGER = LoggerFactory.getLogger(ImageComposer.class);
 	
 	@Override

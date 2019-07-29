@@ -6,33 +6,52 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itextpdf.kernel.events.IEventHandler;
+import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 
+import me.chenqiang.pdf.WatermarkMaker;
 import me.chenqiang.pdf.composer.DocumentComposer.DocumentComponent;
+import me.chenqiang.pdf.configurability.DataParameterPlaceholder;
+import me.chenqiang.pdf.configurability.StringParameterPlaceholder;
+import me.chenqiang.pdf.configurability.StringStub;
 
 public class DocumentComposer implements StringStub, Iterable<DocumentComponent> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DocumentComposer.class);
-	
+
 	public static interface DocumentComponent {
 		public void process(Document doc, PdfDocument pdf, PdfWriter writer);
 	}
-	
-	protected String id;
+
 	protected List<DocumentComponent> components;
 	protected List<Consumer<? super Document>> attributes;
-	protected List<Pair<String, IEventHandler>> handlers;	
+	protected WatermarkMaker watermarkMaker;
+	protected ComposerDirectory directory;
+	protected PaperLayout paperLayout;
 
 	public DocumentComposer() {
 		this.components = new ArrayList<>();
 		this.attributes = new ArrayList<>();
-		this.handlers = new ArrayList<>();
+		this.watermarkMaker = new WatermarkMaker();
+		this.directory = new ComposerDirectory();
+		this.paperLayout = new PaperLayout();
+	}
+
+	public ComposerDirectory getDirectory() {
+		return directory;
+	}
+
+	public WatermarkMaker getWatermarkMaker() {
+		return watermarkMaker;
+	}
+	
+	public DocumentComposer setPaperLayout(PaperLayout paperLayout) {
+		this.paperLayout = paperLayout;
+		return this;
 	}
 
 	public DocumentComposer append(DocumentComponent component) {
@@ -44,16 +63,12 @@ public class DocumentComposer implements StringStub, Iterable<DocumentComponent>
 		this.attributes.add(attribute);
 		return this;
 	}
-	
-	public DocumentComposer registerEventHandler(String event, IEventHandler handler) {
-		this.handlers.add(Pair.of(event, handler));
-		return this;
-	}
 
-	public void process(Document doc, PdfDocument pdf, PdfWriter writer) {
-		this.handlers.forEach(pair -> {
-			pdf.addEventHandler(pair.getKey(), pair.getValue());
-		});
+	public Document compose(PdfDocument pdf, PdfWriter writer, boolean close) {
+		Document doc = new Document(pdf, this.paperLayout.getPageSize());
+		doc.setMargins(this.paperLayout.getMarginTop(), this.paperLayout.getMarginRight(),
+				this.paperLayout.getMarginBottom(), this.paperLayout.getMarginLeft());
+		pdf.addEventHandler(PdfDocumentEvent.END_PAGE, watermarkMaker);
 		this.attributes.forEach(attr -> attr.accept(doc));
 		if (this.components.isEmpty()) {
 			LOGGER.warn("Empty document found.");
@@ -61,14 +76,40 @@ public class DocumentComposer implements StringStub, Iterable<DocumentComponent>
 		} else {
 			this.components.forEach(component -> component.process(doc, pdf, writer));
 		}
+		if(close) {
+			doc.close();
+		}
+		return doc;
 	}
 
 	@Override
 	public void substitute(Map<String, String> params) {
-		this.components.stream()
-		.filter(comp -> comp instanceof StringStub)
-		.forEach(comp -> ((StringStub)comp).substitute(params));
+		this.components.stream().filter(comp -> comp instanceof StringStub)
+				.forEach(comp -> ((StringStub) comp).substitute(params));
 	}
+	
+	public void parameterize(Map<String, String> strs, Map<String, byte []> data) {
+		if(strs != null) {
+			for(Map.Entry<String, String> entry : strs.entrySet()) {
+				List<StringParameterPlaceholder> placeholders = this.directory.getStringPlaceholders(entry.getKey());
+				if(placeholders != null) {
+					for(StringParameterPlaceholder placeholder : placeholders) {
+						placeholder.setParameter(entry.getValue());
+					}
+				}
+			}
+		}
+		if(data != null) {
+			for(Map.Entry<String, byte []> entry : data.entrySet()) {
+				List<DataParameterPlaceholder> placeholders = this.directory.getDataPlaceholders(entry.getKey());
+				if(placeholders != null) {
+					for(DataParameterPlaceholder placeholder : placeholders) {
+						placeholder.setParameter(entry.getValue());
+					}
+				}
+			}
+		}
+	}	
 
 	@Override
 	public Iterator<DocumentComponent> iterator() {

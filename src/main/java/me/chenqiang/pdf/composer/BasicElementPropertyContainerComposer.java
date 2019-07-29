@@ -50,7 +50,7 @@ public abstract class BasicElementPropertyContainerComposer<T extends ElementPro
 			
 		}
 	}
-
+	
 	protected void setBorderAttribute(BorderAttribute borderAttr, BiConsumer<T, Border> setter) {
 		if (borderAttr != null) {
 			Consumer<T> attr = borderAttr.createAttribute(setter);

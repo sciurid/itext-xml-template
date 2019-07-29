@@ -7,6 +7,8 @@ import java.util.function.Consumer;
 
 import com.itextpdf.layout.element.Cell;
 
+import me.chenqiang.pdf.configurability.StringStub;
+
 public class TableCellComposer extends BasicElementPropertyContainerComposer<Cell, TableCellComposer>
 implements ElementComposer<Cell>{
 	

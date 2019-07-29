@@ -77,16 +77,6 @@
 			<artifactId>pdfa</artifactId>
 			<version>${itext-version}</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.itextpdf/barcodes -->
-		<!-- <dependency> <groupId>com.itextpdf</groupId> <artifactId>barcodes</artifactId> <version>${itext-version}</version> 
-			</dependency> -->
-
-		<!-- https://mvnrepository.com/artifact/com.itextpdf/font-asian -->
-		<dependency>
-			<groupId>com.itextpdf</groupId>
-			<artifactId>font-asian</artifactId>
-			<version>${itext-version}</version>
-		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.dom4j/dom4j -->
 		<dependency>
 			<groupId>org.dom4j</groupId>
@@ -111,8 +101,6 @@
 			<artifactId>barcode4j</artifactId>
 			<version>2.1</version>
 		</dependency>
-
-
 	</dependencies>
 	<build>
 		<pluginManagement>

@@ -5,8 +5,6 @@ import org.dom4j.ElementPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itextpdf.kernel.events.PdfDocumentEvent;
-
 import me.chenqiang.pdf.WatermarkMaker;
 import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.xml.context.TemplateContext;
@@ -24,9 +22,7 @@ public class WatermarkHandler implements ElementHandler {
 	@Override
 	public void onStart(ElementPath elementPath) {
 		LOGGER.debug("[START] {}", elementPath.getPath());
-		WatermarkMaker wmm = new WatermarkMaker();
-		this.tplDoc.registerEventHandler(PdfDocumentEvent.END_PAGE, wmm);
-
+		WatermarkMaker wmm = this.tplDoc.getWatermarkMaker();
 		elementPath.addHandler("image", new WatermarkImageHandler(this.context, wmm));
 		elementPath.addHandler("text", new WatermarkTextHandler(this.context, wmm));
 	}

@@ -11,6 +11,7 @@ import org.dom4j.Node;
 
 import com.itextpdf.layout.element.Cell;
 
+import me.chenqiang.pdf.composer.ComposerDirectory;
 import me.chenqiang.pdf.composer.StringComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
 import me.chenqiang.pdf.composer.TableRowComposer;
@@ -19,11 +20,10 @@ import me.chenqiang.pdf.xml.context.AttributeValueParser;
 import me.chenqiang.pdf.xml.context.TemplateContext;
 
 public class TableCellHandler extends BasicTemplateElementHandler<TableCellComposer, Cell> {
-//	private static final Logger LOGGER = LoggerFactory.getLogger(TableCellNode.class);
 	private TableCellComposer tplCell;
 
-	public TableCellHandler(TemplateContext context, TableRowComposer row) {
-		super(context, row::add);
+	public TableCellHandler(TemplateContext context, ComposerDirectory directory, TableRowComposer row) {
+		super(context, directory, row::add);
 	}
 
 	@Override
@@ -56,11 +56,7 @@ public class TableCellHandler extends BasicTemplateElementHandler<TableCellCompo
 		Element current = elementPath.getCurrent();
 		for (Attribute attr : current.attributes()) {
 			String attrName = attr.getName();
-			if(AttributeRegistry.ID.equals(attrName)) {
-				String id = attr.getValue();
-				this.context.getComposerDirectory().registerIdentifiable(id, this.tplCell);
-			}
-			else if (AttributeRegistry.ROW_SPAN.equals(attrName)) {
+			if (AttributeRegistry.ROW_SPAN.equals(attrName)) {
 				AttributeValueParser parser = new AttributeValueParser(attr.getName(), attr.getValue());
 				Integer rowspan = parser.getInteger();
 				if (rowspan != null && rowspan > 1) {
@@ -75,10 +71,10 @@ public class TableCellHandler extends BasicTemplateElementHandler<TableCellCompo
 			}
 		}
 		
-		elementPath.addHandler("text", new TextHandler(this.context, this.tplCell));
-		elementPath.addHandler("paragraph", new ParagraphHandler(this.context, this.tplCell));
-		elementPath.addHandler("image", new ImageHandler(this.context, this.tplCell));
-		elementPath.addHandler("barcode", new BarcodeHandler(this.context, this.tplCell));
+		elementPath.addHandler("text", new TextHandler(this.context, this.directory, this.tplCell));
+		elementPath.addHandler("paragraph", new ParagraphHandler(this.context, this.directory, this.tplCell));
+		elementPath.addHandler("image", new ImageHandler(this.context, this.directory, this.tplCell));
+		elementPath.addHandler("barcode", new BarcodeHandler(this.context, this.directory, this.tplCell));
 	}
 
 	@Override

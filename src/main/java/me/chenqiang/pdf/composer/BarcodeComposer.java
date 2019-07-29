@@ -23,10 +23,10 @@ import com.google.zxing.pdf417.PDF417Writer;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.itextpdf.layout.element.Image;
 
-import me.chenqiang.pdf.utils.Substitution;
+import me.chenqiang.pdf.configurability.StringParameterPlaceholder;
+import me.chenqiang.pdf.configurability.Substitution;
 
-public class BarcodeComposer extends BasicImageComposer<BarcodeComposer>
-implements ParameterPlaceholder<String> {
+public final class BarcodeComposer extends BasicImageComposer<BarcodeComposer> implements StringParameterPlaceholder {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BarcodeComposer.class);
 	protected String message;
 	protected String output = "PNG";
@@ -97,7 +97,7 @@ implements ParameterPlaceholder<String> {
 			return os.toByteArray();
 		} catch (IOException e) {
 			LOGGER.error(IMAGE_ERROR, e);
-			return null;
+			throw new IllegalStateException(e);
 		}
 	}
 
@@ -122,4 +122,5 @@ implements ParameterPlaceholder<String> {
 	public void substitute(Map<String, String> params) {
 		this.setMessage(Substitution.substitute(this.message, params));
 	}
+
 }

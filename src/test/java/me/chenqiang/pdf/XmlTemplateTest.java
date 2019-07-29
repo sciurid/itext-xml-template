@@ -11,24 +11,21 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import me.chenqiang.pdf.xml.XMLTemplateLoader;
-
 public class XmlTemplateTest {
 	private static final Logger LOGGER = LoggerFactory.getLogger(XmlTemplateTest.class);
 	@Test
-	public void doDocDefTest() throws DocumentException {
+	public void doDocDefTest() throws DocumentException, IOException {
 		InputStream stream = XmlTemplateTest.class.getResourceAsStream("/DocDef.xml");
-		XMLTemplateLoader engine = new XMLTemplateLoader();
-		engine.read(stream);
+		File file = File.createTempFile("TEST", ".pdf");
 		
-		try {
-			File file = File.createTempFile("TEST", ".pdf");
-			FileOutputStream fos = new FileOutputStream(file);
-			DocumentFactory.produce(engine.getComposer("test1"), fos);
-			fos.close();
-			Desktop.getDesktop().open(file);
+		try (FileOutputStream fos = new FileOutputStream(file)) {			
+			DocumentEngine.produce(stream, "test", null, null, fos);
 		} catch (IOException e) {
 			LOGGER.error("Template failed.", e);
+		}
+		
+		if(Desktop.isDesktopSupported()) {
+			Desktop.getDesktop().open(file);
 		}
 	}
 	

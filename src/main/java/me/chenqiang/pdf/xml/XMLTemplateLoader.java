@@ -2,6 +2,8 @@ package me.chenqiang.pdf.xml;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -15,16 +17,18 @@ import me.chenqiang.pdf.xml.handler.FontDefinitionHandler;
 import me.chenqiang.pdf.xml.handler.ImageDefinitionHandler;
 import me.chenqiang.pdf.xml.handler.SimpleLoggingHanlder;
 
-public class XMLTemplateLoader {
+public class XmlTemplateLoader {
 	protected TemplateContext context;
-	protected Map<String, DocumentComposer> templates;
+	protected Map<String, DocumentComposer> composerMap;
+	protected List<DocumentComposer> composers;
 	protected org.dom4j.Document xml;
-	
-	public XMLTemplateLoader() {
+
+	public XmlTemplateLoader() {
 		this.context = new TemplateContext();
-		this.templates = new TreeMap<>();
+		this.composerMap = new TreeMap<>();
+		this.composers = new ArrayList<>();
 	}
-	
+
 	protected SAXReader init() {
 		SAXReader reader = new SAXReader();
 		reader.setDefaultHandler(new SimpleLoggingHanlder());
@@ -34,23 +38,26 @@ public class XMLTemplateLoader {
 		return reader;
 	}
 
-	public void read(File file) throws DocumentException {
+	public void load(File file) throws DocumentException {
 		this.xml = this.init().read(file);
 	}
-	
-	public void read(InputStream is) throws DocumentException {
+
+	public void load(InputStream is) throws DocumentException {
 		this.xml = this.init().read(is);
 	}
-		
+
 	protected void doTemplatePostProcess(String docId, DocumentComposer tplDoc) {
-		if(docId == null) {
-			return;
+		this.composers.add(tplDoc);
+		if (docId != null) {
+			this.composerMap.put(docId, tplDoc);
 		}
-		
-		this.templates.put(docId, tplDoc);
 	}
-	
-	public DocumentComposer getComposer(String id) {
-		return this.templates.get(id);
+
+	public DocumentComposer getDocumentComposer(String id) {
+		return this.composerMap.get(id);
+	}
+
+	public List<DocumentComposer> getDocumentComposers() {
+		return this.composers;
 	}
 }

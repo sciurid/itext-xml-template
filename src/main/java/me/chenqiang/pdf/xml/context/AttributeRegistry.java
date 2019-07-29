@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.ElementPropertyContainer;
 import com.itextpdf.layout.element.BlockElement;
@@ -25,6 +26,8 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
+
+import me.chenqiang.pdf.composer.PaperLayout;
 
 public final class AttributeRegistry {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AttributeRegistry.class);
@@ -56,16 +59,19 @@ public final class AttributeRegistry {
 		this.mapImage = new TreeMap<>();
 		this.initImageMap();
 	}
-	
-	protected static final BiFunction<String, String, ? extends Consumer<Object>> DO_NOTHING = (name, value) -> {return item -> {};};
-	
+
+	protected static final BiFunction<String, String, ? extends Consumer<Object>> DO_NOTHING = (name, value) -> {
+		return item -> {
+		};
+	};
+
 	public static final String ID = "id";
 
 	public static final String FONT_FAMILY = "font-family";
 	public static final String FONT_SIZE = "font-size";
 	public static final String FONT_VARIANT = "font-variant";
 	public static final String TEXT_ALIGN = "text-align";
-	
+
 	protected void initElementPropertyContainerMap() {
 		this.mapElementPropertyContainer.put(FONT_FAMILY, (name, value) -> {
 			AttributeValueParser parser = new AttributeValueParser(name, value);
@@ -113,13 +119,14 @@ public final class AttributeRegistry {
 			TextAlignment alignment = parser.getTextAlign();
 			return alignment == null ? null : element -> element.setTextAlignment(alignment);
 		});
-		this.mapElementPropertyContainer.put(BACKGROUND_COLOR, doRgbColor(ElementPropertyContainer::setBackgroundColor));
+		this.mapElementPropertyContainer.put(BACKGROUND_COLOR,
+				doRgbColor(ElementPropertyContainer::setBackgroundColor));
 	}
 
 	public Map<String, BiFunction<String, String, ? extends Consumer<? super ElementPropertyContainer<?>>>> getElementPropertyContainerMap() {
 		return Collections.unmodifiableMap(this.mapElementPropertyContainer);
 	}
-	
+
 	public Map<String, BiFunction<String, String, ? extends Consumer<? super Document>>> getDocumentMap() {
 		return Collections.unmodifiableMap(this.mapElementPropertyContainer);
 	}
@@ -131,7 +138,7 @@ public final class AttributeRegistry {
 	public static final String MARGIN_TOP = "margin-top";
 	public static final String MARGIN_BOTTOM = "margin-bottom";
 	public static final String MARGIN_LEFT = "margin-left";
-	public static final String MARGIN_RIGIHT = "margin-right";
+	public static final String MARGIN_RIGHT = "margin-right";
 	public static final String PADDING = "padding";
 	public static final String PADDINGS = "paddings";
 	public static final String PADDING_TOP = "padding-top";
@@ -158,7 +165,7 @@ public final class AttributeRegistry {
 		this.mapBlockElement.put(MARGIN_TOP, doFloat(BlockElement::setMarginTop));
 		this.mapBlockElement.put(MARGIN_BOTTOM, doFloat(BlockElement::setMarginBottom));
 		this.mapBlockElement.put(MARGIN_LEFT, AttributeRegistry.doFloat(BlockElement::setMarginLeft));
-		this.mapBlockElement.put(MARGIN_RIGIHT, doFloat(BlockElement::setMarginRight));
+		this.mapBlockElement.put(MARGIN_RIGHT, doFloat(BlockElement::setMarginRight));
 		this.mapBlockElement.put(PADDINGS, doQuadFloat(BlockElement::setPaddings));
 		this.mapBlockElement.put(PADDING, doFloat(BlockElement::setPadding));
 		this.mapBlockElement.put(PADDING_TOP, doFloat(BlockElement::setPaddingTop));
@@ -207,7 +214,7 @@ public final class AttributeRegistry {
 		this.mapImage.put(MARGIN_TOP, doFloat(Image::setMarginTop));
 		this.mapImage.put(MARGIN_BOTTOM, doFloat(Image::setMarginBottom));
 		this.mapImage.put(MARGIN_LEFT, AttributeRegistry.doFloat(Image::setMarginLeft));
-		this.mapImage.put(MARGIN_RIGIHT, doFloat(Image::setMarginRight));
+		this.mapImage.put(MARGIN_RIGHT, doFloat(Image::setMarginRight));
 		this.mapImage.put(PADDINGS, doQuadFloat(Image::setPaddings));
 		this.mapImage.put(PADDING, doFloat(Image::setPadding));
 		this.mapImage.put(PADDING_TOP, doFloat(Image::setPaddingTop));
@@ -221,7 +228,7 @@ public final class AttributeRegistry {
 		this.mapImage.put(AUTO_SCALE, doBoolean(Image::setAutoScale));
 		this.mapImage.put(AUTO_SCALE_HEIGHT, doBoolean(Image::setAutoScaleHeight));
 		this.mapImage.put(AUTO_SCALE_WIDTH, doBoolean(Image::setAutoScaleWidth));
-		
+
 		this.mapImage.put(REF, DO_NOTHING);
 		this.mapImage.put(FILE, DO_NOTHING);
 		this.mapImage.put(RESOURCE, DO_NOTHING);
@@ -262,12 +269,12 @@ public final class AttributeRegistry {
 
 	public static final String ROW_SPAN = "rowspan";
 	public static final String COL_SPAN = "colspan";
-	
+
 	protected void initCellMap() {
 		this.mapCell.put(ROW_SPAN, DO_NOTHING);
 		this.mapCell.put(COL_SPAN, DO_NOTHING);
 	}
-	
+
 	public Map<String, BiFunction<String, String, ? extends Consumer<? super Cell>>> getCellMap() {
 		return Collections.unmodifiableMap(this.mapCell);
 	}
@@ -286,147 +293,168 @@ public final class AttributeRegistry {
 	public Map<String, BiFunction<String, String, ? extends Consumer<? super Text>>> getTextMap() {
 		return Collections.unmodifiableMap(this.mapText);
 	}
-	
-	
 
-	public static final String FONT_COLOR= "font-color";
-	public static final String FONT_OPACITY= "font-opacity";
+	public static final String FONT_COLOR = "font-color";
+	public static final String FONT_OPACITY = "font-opacity";
 	public static final String BACKGROUND_COLOR = "background-color";
 	public static final String BACKGROUND_OPACITY = "background-opacity";
-	
+
 	public static final String BORDER_TYPE = "border-type";
 	public static final String BORDER_WIDTH = "border-width";
 	public static final String BORDER_COLOR = "border-color";
 	public static final String BORDER_OPACITY = "border-opacity";
-	
+
 	public static final String BORDER_TYPE_TOP = "border-type-top";
 	public static final String BORDER_WIDTH_TOP = "border-width-top";
 	public static final String BORDER_COLOR_TOP = "border-color-top";
 	public static final String BORDER_OPACITY_TOP = "border-opacity-top";
-	
+
 	public static final String BORDER_TYPE_RIGHT = "border-type-right";
 	public static final String BORDER_WIDTH_RIGHT = "border-width-right";
 	public static final String BORDER_COLOR_RIGHT = "border-color-right";
 	public static final String BORDER_OPACITY_RIGHT = "border-opacity-right";
-	
+
 	public static final String BORDER_TYPE_BOTTOM = "border-type-bottom";
 	public static final String BORDER_WIDTH_BOTTOM = "border-width-bottom";
 	public static final String BORDER_COLOR_BOTTOM = "border-color-bottom";
 	public static final String BORDER_OPACITY_BOTTOM = "border-opacity-bottom";
-	
+
 	public static final String BORDER_TYPE_LEFT = "border-type-left";
 	public static final String BORDER_WIDTH_LEFT = "border-width-left";
 	public static final String BORDER_COLOR_LEFT = "border-color-left";
 	public static final String BORDER_OPACITY_LEFT = "border-opacity-left";
-	
+
 	public CompositeAttribute getCompositeAttribute(List<Attribute> attributes) {
 		CompositeAttribute attribute = new CompositeAttribute();
-		
-		for(Attribute attr : attributes) {
+
+		for (Attribute attr : attributes) {
 			String attrName = attr.getName();
 			String attrValue = attr.getValue();
-			switch(attrName) {
+			AttributeValueParser parser = new AttributeValueParser(attrName, attrValue);
+			switch (attrName) {
 			case FONT_COLOR:
-				attribute.createAndGetFontColor().setFontColor(new AttributeValueParser(attrName, attrValue).getDeviceRgb());
+				attribute.createAndGetFontColor().setFontColor(parser.getDeviceRgb());
 				break;
 			case FONT_OPACITY:
-				attribute.createAndGetFontColor().setOpacity(new AttributeValueParser(attrName, attrValue).getFloat());
+				attribute.createAndGetFontColor().setOpacity(parser.getFloat());
 				break;
 			case BACKGROUND_COLOR:
-				attribute.createAndGetBackgroundColor().setFontColor(new AttributeValueParser(attrName, attrValue).getDeviceRgb());
+				attribute.createAndGetBackgroundColor().setFontColor(parser.getDeviceRgb());
 				break;
 			case BACKGROUND_OPACITY:
-				attribute.createAndGetBackgroundColor().setOpacity(new AttributeValueParser(attrName, attrValue).getFloat());
+				attribute.createAndGetBackgroundColor().setOpacity(parser.getFloat());
 				break;
-				
+
 			case BORDER_TYPE:
-				attribute.createAndGetBorder().setType(new AttributeValueParser(attrName, attrValue).getString());
+				attribute.createAndGetBorder().setType(parser.getString());
 				break;
 			case BORDER_WIDTH:
-				attribute.createAndGetBorder().setWidth(new AttributeValueParser(attrName, attrValue).getFloat());
+				attribute.createAndGetBorder().setWidth(parser.getFloat());
 				break;
 			case BORDER_COLOR:
-				attribute.createAndGetBorder().setColor(new AttributeValueParser(attrName, attrValue).getDeviceRgb());
+				attribute.createAndGetBorder().setColor(parser.getDeviceRgb());
 				break;
 			case BORDER_OPACITY:
-				attribute.createAndGetBorder().setOpacity(new AttributeValueParser(attrName, attrValue).getFloat());
+				attribute.createAndGetBorder().setOpacity(parser.getFloat());
 				break;
-				
+
 			case BORDER_TYPE_TOP:
-				attribute.createAndGetTopBorder().setType(new AttributeValueParser(attrName, attrValue).getString());
+				attribute.createAndGetTopBorder().setType(parser.getString());
 				break;
 			case BORDER_WIDTH_TOP:
-				attribute.createAndGetTopBorder().setWidth(new AttributeValueParser(attrName, attrValue).getFloat());
+				attribute.createAndGetTopBorder().setWidth(parser.getFloat());
 				break;
 			case BORDER_COLOR_TOP:
-				attribute.createAndGetTopBorder().setColor(new AttributeValueParser(attrName, attrValue).getDeviceRgb());
+				attribute.createAndGetTopBorder().setColor(parser.getDeviceRgb());
 				break;
 			case BORDER_OPACITY_TOP:
-				attribute.createAndGetTopBorder().setOpacity(new AttributeValueParser(attrName, attrValue).getFloat());
+				attribute.createAndGetTopBorder().setOpacity(parser.getFloat());
 				break;
-				
+
 			case BORDER_TYPE_RIGHT:
-				attribute.createAndGetRightBorder().setType(new AttributeValueParser(attrName, attrValue).getString());
+				attribute.createAndGetRightBorder().setType(parser.getString());
 				break;
 			case BORDER_WIDTH_RIGHT:
-				attribute.createAndGetRightBorder().setWidth(new AttributeValueParser(attrName, attrValue).getFloat());
+				attribute.createAndGetRightBorder().setWidth(parser.getFloat());
 				break;
 			case BORDER_COLOR_RIGHT:
-				attribute.createAndGetRightBorder().setColor(new AttributeValueParser(attrName, attrValue).getDeviceRgb());
+				attribute.createAndGetRightBorder().setColor(parser.getDeviceRgb());
 				break;
 			case BORDER_OPACITY_RIGHT:
-				attribute.createAndGetRightBorder().setOpacity(new AttributeValueParser(attrName, attrValue).getFloat());
+				attribute.createAndGetRightBorder().setOpacity(parser.getFloat());
 				break;
-				
+
 			case BORDER_TYPE_BOTTOM:
-				attribute.createAndGetBottomBorder().setType(new AttributeValueParser(attrName, attrValue).getString());
+				attribute.createAndGetBottomBorder().setType(parser.getString());
 				break;
 			case BORDER_WIDTH_BOTTOM:
-				attribute.createAndGetBottomBorder().setWidth(new AttributeValueParser(attrName, attrValue).getFloat());
+				attribute.createAndGetBottomBorder().setWidth(parser.getFloat());
 				break;
 			case BORDER_COLOR_BOTTOM:
-				attribute.createAndGetBottomBorder().setColor(new AttributeValueParser(attrName, attrValue).getDeviceRgb());
+				attribute.createAndGetBottomBorder().setColor(parser.getDeviceRgb());
 				break;
 			case BORDER_OPACITY_BOTTOM:
-				attribute.createAndGetBottomBorder().setOpacity(new AttributeValueParser(attrName, attrValue).getFloat());
+				attribute.createAndGetBottomBorder().setOpacity(parser.getFloat());
 				break;
 
 			case BORDER_TYPE_LEFT:
-				attribute.createAndGetLeftBorder().setType(new AttributeValueParser(attrName, attrValue).getString());
+				attribute.createAndGetLeftBorder().setType(parser.getString());
 				break;
 			case BORDER_WIDTH_LEFT:
-				attribute.createAndGetLeftBorder().setWidth(new AttributeValueParser(attrName, attrValue).getFloat());
+				attribute.createAndGetLeftBorder().setWidth(parser.getFloat());
 				break;
 			case BORDER_COLOR_LEFT:
-				attribute.createAndGetLeftBorder().setColor(new AttributeValueParser(attrName, attrValue).getDeviceRgb());
+				attribute.createAndGetLeftBorder().setColor(parser.getDeviceRgb());
 				break;
 			case BORDER_OPACITY_LEFT:
-				attribute.createAndGetLeftBorder().setOpacity(new AttributeValueParser(attrName, attrValue).getFloat());
+				attribute.createAndGetLeftBorder().setOpacity(parser.getFloat());
 				break;
 			}
 		}
 		return attribute;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+	protected static final Map<String, PageSize> STANDARD_PAGE_SIZE = Map.ofEntries(Map.entry("a4", PageSize.A4),
+			Map.entry("a4r", PageSize.A4.rotate()), Map.entry("a3", PageSize.A3), Map.entry("a3r", PageSize.A3.rotate()),
+			Map.entry("b5", PageSize.B5), Map.entry("b5r", PageSize.B5.rotate()));
+	public static final String PAGE_SIZE = "page-size";
+
+	public PaperLayout getPaperLayout(List<Attribute> attributes) {
+		PaperLayout paper = new PaperLayout();
+		for (Attribute attr : attributes) {
+			String attrName = attr.getName();
+			String attrValue = attr.getValue();
+			AttributeValueParser parser = new AttributeValueParser(attrName, attrValue);
+			switch (attrName) {
+			case PAGE_SIZE:
+				PageSize ps = STANDARD_PAGE_SIZE.get(parser.getString().toLowerCase());
+				if(ps == null) {
+					LOGGER.warn("Page size ({}) is not predefined. Default to A4.", attrValue);
+					continue;
+				}
+				else {
+					paper.setPs(ps);
+				}
+				break;
+			case MARGIN:
+				parser.setLength(paper::setMargin);				
+				break;
+			case MARGIN_LEFT:
+				parser.setLength(paper::setMarginLeft);
+				break;
+			case MARGIN_RIGHT:
+				parser.setLength(paper::setMarginRight);
+				break;
+			case MARGIN_TOP:
+				parser.setLength(paper::setMarginTop);
+				break;
+			case MARGIN_BOTTOM:
+				parser.setLength(paper::setMarginBottom);
+				break;
+			}
+		}
+		return paper;
+	}
 
 	@FunctionalInterface
 	protected static interface FloatFunction<T> {
@@ -505,12 +533,12 @@ public final class AttributeRegistry {
 					: element -> function.apply(element, fvals[0], fvals[1], fvals[2], fvals[4]);
 		};
 	}
-	
+
 	@FunctionalInterface
 	protected static interface ColorFunction<T> {
 		public void apply(T element, Color color);
 	}
-	
+
 	protected static <T> BiFunction<String, String, Consumer<T>> doRgbColor(ColorFunction<T> function) {
 		return (name, value) -> {
 			AttributeValueParser parser = new AttributeValueParser(name, value);
@@ -518,7 +546,7 @@ public final class AttributeRegistry {
 			return color == null ? null : element -> function.apply(element, color);
 		};
 	}
-	
+
 	protected static <T> BiFunction<String, String, Consumer<T>> doCmykColor(ColorFunction<T> function) {
 		return (name, value) -> {
 			AttributeValueParser parser = new AttributeValueParser(name, value);

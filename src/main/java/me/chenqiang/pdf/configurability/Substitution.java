@@ -1,4 +1,4 @@
-package me.chenqiang.pdf.utils;
+package me.chenqiang.pdf.configurability;
 
 import java.util.Map;
 import java.util.regex.Matcher;

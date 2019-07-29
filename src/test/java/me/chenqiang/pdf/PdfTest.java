@@ -11,13 +11,15 @@ import org.junit.Before;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
 
 import me.chenqiang.pdf.composer.DocumentComposer;
 
 public abstract class PdfTest {
-	private PdfFont songti;
-	private PdfFont heiti;
-	private PdfFont fangsong;
+	protected PdfFont songti;
+	protected PdfFont heiti;
+	protected PdfFont fangsong;
 	@Before
 	public void registerFonts() throws IOException {
 		ClassLoader loader = ProducePdfDocument.class.getClassLoader();
@@ -37,7 +39,13 @@ public abstract class PdfTest {
 	protected void render(DocumentComposer template, String prefix) throws IOException {
 		File file = File.createTempFile(prefix, ".pdf");
 		FileOutputStream fos = new FileOutputStream(file);
-		DocumentFactory.produce(template, fos);
+		PdfWriter writer = new PdfWriter(fos);
+//		PdfDocument pdf = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3A, 
+//				new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", DocumentFactory.class.getResourceAsStream("/sRGB_CS_profile.icm")));
+		PdfDocument pdf = new PdfDocument(writer);
+		pdf.setTagged();
+		template.compose(pdf, writer, true);
+		writer.close();
 		fos.close();
 		Desktop.getDesktop().open(file);
 	}

@@ -55,16 +55,16 @@ public class WatermarkImageHandler implements ElementHandler {
 					imageData = this.context.getResourceRepository().getImage(parser.getString());
 					break;
 				case "offset-x":
-					parser.setLengthInPoints(setting::setOffsetX);
+					parser.setLength(setting::setOffsetX);
 					break;
 				case "offset-y":
-					parser.setLengthInPoints(setting::setOffsetY);
+					parser.setLength(setting::setOffsetY);
 					break;
 				case "width":
-					parser.setLengthInPoints(setting::setWidth);
+					parser.setLength(setting::setWidth);
 					break;
 				case "opacity":
-					parser.setLengthInPoints(setting::setOpacity);
+					parser.setLength(setting::setOpacity);
 					break;
 				default:
 				}
@@ -74,9 +74,9 @@ public class WatermarkImageHandler implements ElementHandler {
 		}
 		if (imageData != null) {
 			final ImageData image = imageData;
-			this.watermark.addRenderer((pdf, page, canvas) -> {
-				WatermarkMaker.renderImage(pdf, page, canvas, image, setting);
-			});
+			this.watermark.addRenderer((pdf, page, canvas) -> 
+				WatermarkMaker.renderImage(page, canvas, image, setting)
+			);
 		} else {
 			LOGGER.error("Watermark image is not specified.");
 		}

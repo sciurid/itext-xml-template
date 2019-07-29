@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import me.chenqiang.pdf.utils.Substitution;
+import me.chenqiang.pdf.configurability.Substitution;
 
 public class SubstitutionTest {
 	@Test

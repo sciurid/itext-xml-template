@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.function.Consumer;
 
+import me.chenqiang.pdf.configurability.StringStub;
+
 public abstract class BasicElementComposer<T, S extends BasicElementComposer<T, S>>
 implements ElementComposer<T>, StringStub, AttributedComposer<T> {
 	protected String id;
@@ -42,5 +44,11 @@ implements ElementComposer<T>, StringStub, AttributedComposer<T> {
 		T instance = this.create();
 		this.attributes.forEach(attribute -> attribute.accept(instance));
 		return instance;
+	}
+	
+	public static <T, S extends BasicElementComposer<T, S>> 
+	void deepCopy(BasicElementComposer<T, S> origin, BasicElementComposer<T, S> target) {
+		target.attributes.clear();
+		target.attributes.addAll(origin.attributes);
 	}
 }

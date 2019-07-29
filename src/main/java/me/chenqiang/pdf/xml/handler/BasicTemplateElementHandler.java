@@ -17,6 +17,9 @@ import me.chenqiang.pdf.attribute.BackgroundColorAttribute;
 import me.chenqiang.pdf.attribute.BorderAttribute;
 import me.chenqiang.pdf.attribute.FontColorAttribute;
 import me.chenqiang.pdf.composer.AttributedComposer;
+import me.chenqiang.pdf.composer.ComposerDirectory;
+import me.chenqiang.pdf.configurability.DataParameterPlaceholder;
+import me.chenqiang.pdf.configurability.StringParameterPlaceholder;
 import me.chenqiang.pdf.xml.context.AttributeRegistry;
 import me.chenqiang.pdf.xml.context.CompositeAttribute;
 import me.chenqiang.pdf.xml.context.TemplateContext;
@@ -25,11 +28,13 @@ public abstract class BasicTemplateElementHandler<T, E> implements ElementHandle
 	private static final Logger LOGGER = LoggerFactory.getLogger(BasicTemplateElementHandler.class);
 
 	protected TemplateContext context;
+	protected ComposerDirectory directory;
 	protected int count;
 	protected Consumer<? super T> consumer;	
 	
-	protected BasicTemplateElementHandler(TemplateContext context, Consumer<? super T> consumer) {
+	protected BasicTemplateElementHandler(TemplateContext context, ComposerDirectory directory, Consumer<? super T> consumer) {
 		this.context = context;
+		this.directory = directory;
 		this.consumer = consumer;
 		this.count = 0;
 	}
@@ -47,6 +52,18 @@ public abstract class BasicTemplateElementHandler<T, E> implements ElementHandle
 	public void onEnd(ElementPath elementPath) {
 		T element = this.produce(elementPath);
 		Element current = elementPath.getCurrent();
+		
+		String composerId = current.attributeValue(AttributeRegistry.ID);
+		if(composerId != null) {
+			this.directory.registerIdentifiable(composerId, element);
+			if(element instanceof StringParameterPlaceholder) {
+				this.directory.registerStringPlaceholder(composerId, (StringParameterPlaceholder)element);
+			}
+			if(element instanceof DataParameterPlaceholder) {
+				this.directory.registerDataPlaceholder(composerId, (DataParameterPlaceholder)element);
+			}
+		}
+		
 		AttributeRegistry attributeRegistry = this.context.getAttributeRegistry();
 		CompositeAttribute compositeAttribute = attributeRegistry.getCompositeAttribute(current.attributes());
 		if(element instanceof FontColorAttribute.Acceptor) {

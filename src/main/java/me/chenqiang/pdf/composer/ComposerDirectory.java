@@ -1,4 +1,4 @@
-package me.chenqiang.pdf.xml.context;
+package me.chenqiang.pdf.composer;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -9,13 +9,14 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import me.chenqiang.pdf.composer.ParameterPlaceholder;
+import me.chenqiang.pdf.configurability.DataParameterPlaceholder;
+import me.chenqiang.pdf.configurability.StringParameterPlaceholder;
 
 public class ComposerDirectory {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ComposerDirectory.class);
 	protected final Map<String, LinkedList<Object>> mapIdentifiable;
-	protected final Map<String, LinkedList<ParameterPlaceholder<String>>> mapStringPlaceholder;
-	protected final Map<String, LinkedList<ParameterPlaceholder<byte []>>> mapDataPlaceholder;
+	protected final Map<String, LinkedList<StringParameterPlaceholder>> mapStringPlaceholder;
+	protected final Map<String, LinkedList<DataParameterPlaceholder>> mapDataPlaceholder;
 	
 	public ComposerDirectory() {
 		this.mapIdentifiable = new TreeMap<>();
@@ -51,21 +52,21 @@ public class ComposerDirectory {
 		return Collections.unmodifiableList(this.mapIdentifiable.get(id));
 	}
 	
-	public void registerStringPlaceholder(String id, ParameterPlaceholder<String> placeholder) {
+	public void registerStringPlaceholder(String id, StringParameterPlaceholder placeholder) {
 		this.mapStringPlaceholder.computeIfAbsent(id, k -> new LinkedList<>()).add(placeholder);
 	}
 	
-	public List<ParameterPlaceholder<String>> getStringPlaceholders(String id) {
-		LinkedList<ParameterPlaceholder<String>> list = this.mapStringPlaceholder.get(id);
+	public List<StringParameterPlaceholder> getStringPlaceholders(String id) {
+		LinkedList<StringParameterPlaceholder> list = this.mapStringPlaceholder.get(id);
 		return list == null ? null : Collections.unmodifiableList(list);
 	}
 	
-	public void registerDataPlaceholder(String id, ParameterPlaceholder<byte []> placeholder) {
+	public void registerDataPlaceholder(String id, DataParameterPlaceholder placeholder) {
 		this.mapDataPlaceholder.computeIfAbsent(id, k -> new LinkedList<>()).add(placeholder);
 	}
 	
-	public List<ParameterPlaceholder<byte []>> getDataPlaceholders(String id) {
-		LinkedList<ParameterPlaceholder<byte[]>> list = this.mapDataPlaceholder.get(id);
+	public List<DataParameterPlaceholder> getDataPlaceholders(String id) {
+		LinkedList<DataParameterPlaceholder> list = this.mapDataPlaceholder.get(id);
 		return list == null ? null : Collections.unmodifiableList(list);
 	}
 	
