@@ -22,8 +22,8 @@ public abstract class PdfTest {
 	protected PdfFont fangsong;
 	@Before
 	public void registerFonts() throws IOException {
-		ClassLoader loader = ProducePdfDocument.class.getClassLoader();
-		URL root = ProducePdfDocument.class.getResource("/simsun.ttc");
+		ClassLoader loader = PdfTest.class.getClassLoader();
+		URL root = PdfTest.class.getResource("/simsun.ttc");
 		System.out.println(root);
 		this.songti = PdfFontFactory.createTtcFont(
 				loader.getResourceAsStream("simsun.ttc").readAllBytes(), 0, 

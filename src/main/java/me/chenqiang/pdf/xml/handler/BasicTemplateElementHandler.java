@@ -105,7 +105,7 @@ public abstract class BasicTemplateElementHandler<T, E> implements ElementHandle
 				}
 			}
 			else {
-				LOGGER.error("Not recognized attribute: {}", attr.getName());
+				LOGGER.info("Unrecognized attribute: {}", attr.getName());
 			}
 		}
 		return res;
