@@ -5,11 +5,12 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
-import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.ElementPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.itextpdf.layout.Document;
 
 import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.xml.context.AttributeRegistry;
@@ -53,12 +54,12 @@ public final class DocumentHandler extends BasicTemplateElementHandler<DocumentC
 			this.postprocessor.accept(docId, this.tplDoc);
 		}
 		LOGGER.debug("[END] {} - {}", elementPath.getPath(), this.count++);
+		
+		super.onEnd(elementPath);
 	}
 
 	@Override
 	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Document>>> getAttributeMap() {
-		return null;
-	}
-	
-	
+		return this.context.getAttributeRegistry().getDocumentMap();
+	}	
 }

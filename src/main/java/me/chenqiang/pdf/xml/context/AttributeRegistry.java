@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.layout.Document;
 import com.itextpdf.layout.ElementPropertyContainer;
 import com.itextpdf.layout.element.BlockElement;
 import com.itextpdf.layout.element.Cell;
@@ -116,6 +117,10 @@ public final class AttributeRegistry {
 	}
 
 	public Map<String, BiFunction<String, String, ? extends Consumer<? super ElementPropertyContainer<?>>>> getElementPropertyContainerMap() {
+		return Collections.unmodifiableMap(this.mapElementPropertyContainer);
+	}
+	
+	public Map<String, BiFunction<String, String, ? extends Consumer<? super Document>>> getDocumentMap() {
 		return Collections.unmodifiableMap(this.mapElementPropertyContainer);
 	}
 
@@ -287,7 +292,33 @@ public final class AttributeRegistry {
 	public static final String FONT_COLOR= "font-color";
 	public static final String FONT_OPACITY= "font-opacity";
 	public static final String BACKGROUND_COLOR = "background-color";
-	public static final String BACKGROUND_OPACITY = "background-opacity";	
+	public static final String BACKGROUND_OPACITY = "background-opacity";
+	
+	public static final String BORDER_TYPE = "border-type";
+	public static final String BORDER_WIDTH = "border-width";
+	public static final String BORDER_COLOR = "border-color";
+	public static final String BORDER_OPACITY = "border-opacity";
+	
+	public static final String BORDER_TYPE_TOP = "border-type-top";
+	public static final String BORDER_WIDTH_TOP = "border-width-top";
+	public static final String BORDER_COLOR_TOP = "border-color-top";
+	public static final String BORDER_OPACITY_TOP = "border-opacity-top";
+	
+	public static final String BORDER_TYPE_RIGHT = "border-type-right";
+	public static final String BORDER_WIDTH_RIGHT = "border-width-right";
+	public static final String BORDER_COLOR_RIGHT = "border-color-right";
+	public static final String BORDER_OPACITY_RIGHT = "border-opacity-right";
+	
+	public static final String BORDER_TYPE_BOTTOM = "border-type-bottom";
+	public static final String BORDER_WIDTH_BOTTOM = "border-width-bottom";
+	public static final String BORDER_COLOR_BOTTOM = "border-color-bottom";
+	public static final String BORDER_OPACITY_BOTTOM = "border-opacity-bottom";
+	
+	public static final String BORDER_TYPE_LEFT = "border-type-left";
+	public static final String BORDER_WIDTH_LEFT = "border-width-left";
+	public static final String BORDER_COLOR_LEFT = "border-color-left";
+	public static final String BORDER_OPACITY_LEFT = "border-opacity-left";
+	
 	public CompositeAttribute getCompositeAttribute(List<Attribute> attributes) {
 		CompositeAttribute attribute = new CompositeAttribute();
 		
@@ -296,16 +327,81 @@ public final class AttributeRegistry {
 			String attrValue = attr.getValue();
 			switch(attrName) {
 			case FONT_COLOR:
-				attribute.getFontColor().setFontColor(new AttributeValueParser(attrName, attrValue).getDeviceRgb());
+				attribute.createAndGetFontColor().setFontColor(new AttributeValueParser(attrName, attrValue).getDeviceRgb());
 				break;
 			case FONT_OPACITY:
-				attribute.getFontColor().setOpacity(new AttributeValueParser(attrName, attrValue).getFloat());
+				attribute.createAndGetFontColor().setOpacity(new AttributeValueParser(attrName, attrValue).getFloat());
 				break;
 			case BACKGROUND_COLOR:
-				attribute.getBackgroundColor().setFontColor(new AttributeValueParser(attrName, attrValue).getDeviceRgb());
+				attribute.createAndGetBackgroundColor().setFontColor(new AttributeValueParser(attrName, attrValue).getDeviceRgb());
 				break;
 			case BACKGROUND_OPACITY:
-				attribute.getBackgroundColor().setOpacity(new AttributeValueParser(attrName, attrValue).getFloat());
+				attribute.createAndGetBackgroundColor().setOpacity(new AttributeValueParser(attrName, attrValue).getFloat());
+				break;
+				
+			case BORDER_TYPE:
+				attribute.createAndGetBorder().setType(new AttributeValueParser(attrName, attrValue).getString());
+				break;
+			case BORDER_WIDTH:
+				attribute.createAndGetBorder().setWidth(new AttributeValueParser(attrName, attrValue).getFloat());
+				break;
+			case BORDER_COLOR:
+				attribute.createAndGetBorder().setColor(new AttributeValueParser(attrName, attrValue).getDeviceRgb());
+				break;
+			case BORDER_OPACITY:
+				attribute.createAndGetBorder().setOpacity(new AttributeValueParser(attrName, attrValue).getFloat());
+				break;
+				
+			case BORDER_TYPE_TOP:
+				attribute.createAndGetTopBorder().setType(new AttributeValueParser(attrName, attrValue).getString());
+				break;
+			case BORDER_WIDTH_TOP:
+				attribute.createAndGetTopBorder().setWidth(new AttributeValueParser(attrName, attrValue).getFloat());
+				break;
+			case BORDER_COLOR_TOP:
+				attribute.createAndGetTopBorder().setColor(new AttributeValueParser(attrName, attrValue).getDeviceRgb());
+				break;
+			case BORDER_OPACITY_TOP:
+				attribute.createAndGetTopBorder().setOpacity(new AttributeValueParser(attrName, attrValue).getFloat());
+				break;
+				
+			case BORDER_TYPE_RIGHT:
+				attribute.createAndGetRightBorder().setType(new AttributeValueParser(attrName, attrValue).getString());
+				break;
+			case BORDER_WIDTH_RIGHT:
+				attribute.createAndGetRightBorder().setWidth(new AttributeValueParser(attrName, attrValue).getFloat());
+				break;
+			case BORDER_COLOR_RIGHT:
+				attribute.createAndGetRightBorder().setColor(new AttributeValueParser(attrName, attrValue).getDeviceRgb());
+				break;
+			case BORDER_OPACITY_RIGHT:
+				attribute.createAndGetRightBorder().setOpacity(new AttributeValueParser(attrName, attrValue).getFloat());
+				break;
+				
+			case BORDER_TYPE_BOTTOM:
+				attribute.createAndGetBottomBorder().setType(new AttributeValueParser(attrName, attrValue).getString());
+				break;
+			case BORDER_WIDTH_BOTTOM:
+				attribute.createAndGetBottomBorder().setWidth(new AttributeValueParser(attrName, attrValue).getFloat());
+				break;
+			case BORDER_COLOR_BOTTOM:
+				attribute.createAndGetBottomBorder().setColor(new AttributeValueParser(attrName, attrValue).getDeviceRgb());
+				break;
+			case BORDER_OPACITY_BOTTOM:
+				attribute.createAndGetBottomBorder().setOpacity(new AttributeValueParser(attrName, attrValue).getFloat());
+				break;
+
+			case BORDER_TYPE_LEFT:
+				attribute.createAndGetLeftBorder().setType(new AttributeValueParser(attrName, attrValue).getString());
+				break;
+			case BORDER_WIDTH_LEFT:
+				attribute.createAndGetLeftBorder().setWidth(new AttributeValueParser(attrName, attrValue).getFloat());
+				break;
+			case BORDER_COLOR_LEFT:
+				attribute.createAndGetLeftBorder().setColor(new AttributeValueParser(attrName, attrValue).getDeviceRgb());
+				break;
+			case BORDER_OPACITY_LEFT:
+				attribute.createAndGetLeftBorder().setOpacity(new AttributeValueParser(attrName, attrValue).getFloat());
 				break;
 			}
 		}

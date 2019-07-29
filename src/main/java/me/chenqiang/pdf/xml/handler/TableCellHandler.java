@@ -21,11 +21,9 @@ import me.chenqiang.pdf.xml.context.TemplateContext;
 public class TableCellHandler extends BasicTemplateElementHandler<TableCellComposer, Cell> {
 //	private static final Logger LOGGER = LoggerFactory.getLogger(TableCellNode.class);
 	private TableCellComposer tplCell;
-	private TableRowComposer row;
 
 	public TableCellHandler(TemplateContext context, TableRowComposer row) {
 		super(context, row::add);
-		this.row = row;
 	}
 
 	@Override
@@ -76,7 +74,6 @@ public class TableCellHandler extends BasicTemplateElementHandler<TableCellCompo
 				}
 			}
 		}
-		this.tplCell.inheritAttributes(this.row.getAttributes());
 		
 		elementPath.addHandler("text", new TextHandler(this.context, this.tplCell));
 		elementPath.addHandler("paragraph", new ParagraphHandler(this.context, this.tplCell));

@@ -7,16 +7,18 @@ import java.util.function.Consumer;
 
 import com.itextpdf.layout.element.Cell;
 
+import me.chenqiang.pdf.attribute.BackgroundColorAttribute;
+import me.chenqiang.pdf.attribute.BorderAttribute;
+import me.chenqiang.pdf.attribute.FontColorAttribute;
 import me.chenqiang.pdf.composer.ParagraphComposer.ParagraphComponent;
 import me.chenqiang.pdf.composer.TableCellComposer.TableCellComponent;
 
-public class TableRowComposer implements AttributedComposer<Cell> {
+public class TableRowComposer implements AttributedComposer<Cell>,
+FontColorAttribute.Acceptor, BackgroundColorAttribute.Acceptor, BorderAttribute.Acceptor {
 	protected final List<TableCellComposer> components;
-	protected final List<Consumer<? super Cell>> attributes;
 
 	public TableRowComposer() {
 		this.components = new ArrayList<>();
-		this.attributes = new ArrayList<>();
 	}
 
 	public TableRowComposer add(TableCellComposer tplCell) {
@@ -51,28 +53,39 @@ public class TableRowComposer implements AttributedComposer<Cell> {
 
 	@Override
 	public void setAttribute(Consumer<? super Cell> attribute) {
-		this.attributes.add(attribute);
+		this.components.forEach(cell -> cell.setAttribute(attribute));
 	}
 
 	@Override
 	public void setAllAttributes(Collection<? extends Consumer<? super Cell>> attribute) {
-		this.attributes.addAll(attribute);
+		this.components.forEach(cell -> cell.setAllAttributes(attribute));
 	}
 
-	@SuppressWarnings("unchecked")
 	public TableRowComposer set(Consumer<? super Cell> attribute) {
 		this.setAttribute(attribute);
 		return this;
 	}
 
-	@SuppressWarnings("unchecked")
 	public TableRowComposer setAll(Collection<? extends Consumer<? super Cell>> attributes) {
 		this.setAllAttributes(attributes);
 		return this;
 	}
 
-	public List<Consumer<? super Cell>> getAttributes() {
-		return attributes;
+	@Override
+	public void accept(BorderAttribute common, BorderAttribute top, BorderAttribute right, BorderAttribute bottom,
+			BorderAttribute left) {
+		this.components.forEach(cell -> cell.accept(common, top, right, bottom, left));		
 	}
 
+	@Override
+	public void accept(BackgroundColorAttribute fontColorAttr) {
+		this.components.forEach(cell -> cell.accept(fontColorAttr));
+	}
+
+	@Override
+	public void accept(FontColorAttribute fontColorAttr) {
+		this.components.forEach(cell -> cell.accept(fontColorAttr));		
+	}
+	
+	
 }

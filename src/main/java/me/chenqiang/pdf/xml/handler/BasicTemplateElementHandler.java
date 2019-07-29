@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import me.chenqiang.pdf.attribute.BackgroundColorAttribute;
+import me.chenqiang.pdf.attribute.BorderAttribute;
 import me.chenqiang.pdf.attribute.FontColorAttribute;
 import me.chenqiang.pdf.composer.AttributedComposer;
 import me.chenqiang.pdf.xml.context.AttributeRegistry;
@@ -44,23 +45,27 @@ public abstract class BasicTemplateElementHandler<T, E> implements ElementHandle
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onEnd(ElementPath elementPath) {
-		if(this.consumer != null) {
-			T element = this.produce(elementPath);
-			Element current = elementPath.getCurrent();
-			AttributeRegistry attributeRegistry = this.context.getAttributeRegistry();
-			CompositeAttribute compositeAttribute = attributeRegistry.getCompositeAttribute(current.attributes());
-			if(element instanceof FontColorAttribute.Acceptor) {
-				compositeAttribute.applyFontColor((FontColorAttribute.Acceptor)element);
+		T element = this.produce(elementPath);
+		Element current = elementPath.getCurrent();
+		AttributeRegistry attributeRegistry = this.context.getAttributeRegistry();
+		CompositeAttribute compositeAttribute = attributeRegistry.getCompositeAttribute(current.attributes());
+		if(element instanceof FontColorAttribute.Acceptor) {
+			compositeAttribute.applyFontColor((FontColorAttribute.Acceptor)element);
+		}
+		if(element instanceof BackgroundColorAttribute.Acceptor) {
+			compositeAttribute.applyBackgroundColor((BackgroundColorAttribute.Acceptor)element);
+		}
+		if(element instanceof BorderAttribute.Acceptor) {
+			compositeAttribute.applyBorder((BorderAttribute.Acceptor)element);
+		}
+		if(element instanceof AttributedComposer) {
+			Map<String, BiFunction<String, String, ? extends Consumer<? super E>>> attributeMap = this.getAttributeMap();
+			if(attributeMap != null) {
+				((AttributedComposer<E>) element).setAllAttributes(getModifiers(current, attributeMap));
 			}
-			if(element instanceof BackgroundColorAttribute.Acceptor) {
-				compositeAttribute.applyBackgroundColor((BackgroundColorAttribute.Acceptor)element);
-			}
-			if(element instanceof AttributedComposer) {
-				Map<String, BiFunction<String, String, ? extends Consumer<? super E>>> attributeMap = this.getAttributeMap();
-				if(attributeMap != null) {
-					((AttributedComposer<E>) element).setAllAttributes(getModifiers(current, attributeMap));
-				}
-			}
+		}
+		
+		if(this.consumer != null) {			
 			this.consumer.accept(element);	
 		}
 		else {

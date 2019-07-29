@@ -26,6 +26,6 @@ public class BackgroundColorAttribute {
 	}
 	
 	public static interface Acceptor {
-		public void accept(BackgroundColorAttribute fontColorAttr);
+		public void accept(BackgroundColorAttribute backgroundColorAttr);
 	}
 }

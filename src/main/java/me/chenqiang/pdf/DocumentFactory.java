@@ -9,6 +9,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 
+import me.chenqiang.pdf.composer.ChineseSplitCharacters;
 import me.chenqiang.pdf.composer.DocumentComposer;
 
 public class DocumentFactory {
@@ -55,6 +56,7 @@ public class DocumentFactory {
 		pdf.setTagged();
 		
 		Document document = new Document(pdf, paper.ps);
+		document.setSplitCharacters(new ChineseSplitCharacters());
 		document.setMargins(paper.marginTop, paper.marginRight, paper.marginBottom, paper.marginLeft);
 		template.process(document, pdf, writer);
 		document.close();

@@ -285,7 +285,7 @@ public class AttributeValueParser {
 	}
 	
 	public DeviceRgb getDeviceRgb() {
-		DeviceRgb color = ColorMap.getDeviceRgb(attrName);
+		DeviceRgb color = ColorMap.getDeviceRgb(this.attrValue);
 		if(color == null) {
 			LOGGER.error("Attribute '{}' value is not valid rgb color: '{}'.", this.attrName, this.originalValue);
 		}
@@ -293,7 +293,7 @@ public class AttributeValueParser {
 	}
 	
 	public DeviceCmyk getDeviceCmyk() {
-		DeviceCmyk color = ColorMap.getDeviceCmyk(attrName);
+		DeviceCmyk color = ColorMap.getDeviceCmyk(this.attrValue);
 		if(color == null) {
 			LOGGER.error("Attribute '{}' value is not valid cmyk color: '{}'.", this.attrName, this.originalValue);
 		}
