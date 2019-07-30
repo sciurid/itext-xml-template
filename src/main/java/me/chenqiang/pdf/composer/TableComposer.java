@@ -19,13 +19,17 @@ import com.itextpdf.layout.property.UnitValue;
 
 import me.chenqiang.pdf.composer.DocumentComposer.DocumentComponent;
 
-public class TableComposer extends BasicElementPropertyContainerComposer<Table, TableComposer>
+public class TableComposer extends BasicElementComposer<Table, TableComposer>
 		implements DocumentComponent, Iterable<TableCellComposer> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TableComposer.class);
 	protected Supplier<Table> creator;
 	protected TableRowComposer header = new TableRowComposer();
 	protected TableRowComposer body = new TableRowComposer();
 	protected TableRowComposer footer = new TableRowComposer();
+	
+	public TableComposer() {
+		super(Table.class);
+	}
 
 	public void setColumns(int numColumns) {
 		this.creator = () -> new Table(numColumns);

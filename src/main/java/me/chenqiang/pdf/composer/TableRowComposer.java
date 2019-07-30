@@ -7,14 +7,10 @@ import java.util.function.Consumer;
 
 import com.itextpdf.layout.element.Cell;
 
-import me.chenqiang.pdf.attribute.BackgroundColorAttribute;
-import me.chenqiang.pdf.attribute.BorderAttribute;
-import me.chenqiang.pdf.attribute.FontColorAttribute;
 import me.chenqiang.pdf.composer.ParagraphComposer.ParagraphComponent;
 import me.chenqiang.pdf.composer.TableCellComposer.TableCellComponent;
 
-public class TableRowComposer implements AttributedComposer<Cell>,
-FontColorAttribute.Acceptor, BackgroundColorAttribute.Acceptor, BorderAttribute.Acceptor {
+public class TableRowComposer implements PdfElementComposer<Cell> {
 	protected final List<TableCellComposer> components;
 
 	public TableRowComposer() {
@@ -24,6 +20,11 @@ FontColorAttribute.Acceptor, BackgroundColorAttribute.Acceptor, BorderAttribute.
 	public TableRowComposer add(TableCellComposer tplCell) {
 		this.components.add(tplCell);
 		return this;
+	}
+	
+	@Override
+	public Class<Cell> getElementClass() {
+		return Cell.class;
 	}
 
 	public TableRowComposer add(TableCellComponent tplCellComp) {
@@ -72,20 +73,7 @@ FontColorAttribute.Acceptor, BackgroundColorAttribute.Acceptor, BorderAttribute.
 	}
 
 	@Override
-	public void accept(BorderAttribute common, BorderAttribute top, BorderAttribute right, BorderAttribute bottom,
-			BorderAttribute left) {
-		this.components.forEach(cell -> cell.accept(common, top, right, bottom, left));		
+	public <C> Cell produce(C context) {
+		throw new UnsupportedOperationException();
 	}
-
-	@Override
-	public void accept(BackgroundColorAttribute fontColorAttr) {
-		this.components.forEach(cell -> cell.accept(fontColorAttr));
-	}
-
-	@Override
-	public void accept(FontColorAttribute fontColorAttr) {
-		this.components.forEach(cell -> cell.accept(fontColorAttr));		
-	}
-	
-	
 }

@@ -20,7 +20,7 @@ import me.chenqiang.pdf.composer.ParagraphComposer.ParagraphComponent;
 import me.chenqiang.pdf.composer.TableCellComposer.TableCellComponent;
 import me.chenqiang.pdf.configurability.StringStub;
 
-public class ParagraphComposer extends BasicElementPropertyContainerComposer<Paragraph, ParagraphComposer>
+public class ParagraphComposer extends BasicElementComposer<Paragraph, ParagraphComposer>
 		implements DocumentComponent, TableCellComponent, Iterable<ParagraphComponent> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ParagraphComposer.class);
 	protected Supplier<Paragraph> creator;
@@ -31,6 +31,7 @@ public class ParagraphComposer extends BasicElementPropertyContainerComposer<Par
 	protected List<ParagraphComponent> components;
 
 	public ParagraphComposer(Supplier<Paragraph> creator) {
+		super(Paragraph.class);
 		this.creator = creator;
 		this.components = new ArrayList<>();
 	}

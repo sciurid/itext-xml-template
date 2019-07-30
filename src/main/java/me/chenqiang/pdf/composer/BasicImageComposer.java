@@ -19,18 +19,20 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 
-import me.chenqiang.pdf.attribute.BackgroundColorAttribute;
-import me.chenqiang.pdf.attribute.FontColorAttribute;
 import me.chenqiang.pdf.composer.DocumentComposer.DocumentComponent;
 import me.chenqiang.pdf.composer.ParagraphComposer.ParagraphComponent;
 import me.chenqiang.pdf.composer.TableCellComposer.TableCellComponent;
 
 public abstract class BasicImageComposer<T extends BasicImageComposer<T>>
-		extends BasicElementPropertyContainerComposer<Image, BasicImageComposer<T>>
-		implements DocumentComponent, ParagraphComponent, TableCellComponent, FontColorAttribute.Acceptor, BackgroundColorAttribute.Acceptor {
+		extends BasicElementComposer<Image, BasicImageComposer<T>>
+		implements DocumentComponent, ParagraphComponent, TableCellComponent {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BasicImageComposer.class);
 	public static final String IMAGE_ERROR = "Error loading image.";
 	protected ImageData imageData = null;
+	
+	public BasicImageComposer() {
+		super(Image.class);
+	}
 
 	public void setImageData(byte[] data) {
 		this.imageData = ImageDataFactory.create(data);

@@ -15,18 +15,14 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 
-import me.chenqiang.pdf.attribute.BackgroundColorAttribute;
-import me.chenqiang.pdf.attribute.BorderAttribute;
-import me.chenqiang.pdf.attribute.FontColorAttribute;
 import me.chenqiang.pdf.attribute.PaperLayout;
 import me.chenqiang.pdf.composer.DocumentComposer.DocumentComponent;
 import me.chenqiang.pdf.configurability.DataParameterPlaceholder;
 import me.chenqiang.pdf.configurability.StringParameterPlaceholder;
 import me.chenqiang.pdf.configurability.StringStub;
 
-public class DocumentComposer extends BasicElementPropertyContainerComposer<Document, DocumentComposer>
-implements StringStub, Iterable<DocumentComponent>, AttributedComposer<Document>,
-FontColorAttribute.Acceptor, BackgroundColorAttribute.Acceptor, BorderAttribute.Acceptor {
+public class DocumentComposer extends BasicElementComposer<Document, DocumentComposer>
+implements StringStub, Iterable<DocumentComponent> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DocumentComposer.class);
 
 	public static interface DocumentComponent {
@@ -34,14 +30,13 @@ FontColorAttribute.Acceptor, BackgroundColorAttribute.Acceptor, BorderAttribute.
 	}
 
 	protected List<DocumentComponent> components;
-	protected List<Consumer<? super Document>> attributes;
 	protected WatermarkMaker watermarkMaker;
 	protected ComposerDirectory directory;
 	protected PaperLayout paperLayout;
 
 	public DocumentComposer() {
+		super(Document.class);
 		this.components = new ArrayList<>();
-		this.attributes = new ArrayList<>();
 		this.watermarkMaker = new WatermarkMaker();
 		this.directory = new ComposerDirectory();
 		this.paperLayout = new PaperLayout();
@@ -65,10 +60,10 @@ FontColorAttribute.Acceptor, BackgroundColorAttribute.Acceptor, BorderAttribute.
 		return this;
 	}
 
+	@Override
 	public void setAttribute(Consumer<? super Document> attribute) {
 		this.attributes.add(attribute);
 	}
-	
 
 	@Override
 	public void setAllAttributes(Collection<? extends Consumer<? super Document>> attributes) {

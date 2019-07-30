@@ -9,8 +9,8 @@ import com.itextpdf.layout.element.Cell;
 
 import me.chenqiang.pdf.configurability.StringStub;
 
-public class TableCellComposer extends BasicElementPropertyContainerComposer<Cell, TableCellComposer>
-implements ElementComposer<Cell>{
+public class TableCellComposer extends BasicElementComposer<Cell, TableCellComposer>
+implements PdfElementComposer<Cell>{
 	
 	public static interface TableCellComponent {
 		public void process(Cell cell);
@@ -21,6 +21,7 @@ implements ElementComposer<Cell>{
 	protected int rowspan = 1;
 
 	public TableCellComposer() {
+		super(Cell.class);
 		this.components = new ArrayList<>();
 	}
 	

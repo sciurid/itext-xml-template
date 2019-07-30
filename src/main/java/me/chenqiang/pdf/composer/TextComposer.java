@@ -12,12 +12,12 @@ import me.chenqiang.pdf.composer.TableCellComposer.TableCellComponent;
 import me.chenqiang.pdf.configurability.StringParameterPlaceholder;
 import me.chenqiang.pdf.configurability.Substitution;
 
-public class TextComposer extends BasicElementPropertyContainerComposer<Text, TextComposer>
+public class TextComposer extends BasicElementComposer<Text, TextComposer>
 implements ParagraphComponent, TableCellComponent, StringParameterPlaceholder{
 	private StringBuilder content;
 	
 	public TextComposer() {
-		super();
+		super(Text.class);
 		this.content = new StringBuilder();
 	}
 	

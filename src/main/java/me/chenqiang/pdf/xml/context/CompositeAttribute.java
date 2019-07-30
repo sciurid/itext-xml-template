@@ -9,6 +9,7 @@ import com.itextpdf.layout.borders.Border;
 import me.chenqiang.pdf.attribute.BackgroundColorAttribute;
 import me.chenqiang.pdf.attribute.BorderAttribute;
 import me.chenqiang.pdf.attribute.FontColorAttribute;
+import me.chenqiang.pdf.composer.PdfElementComposer;
 
 public class CompositeAttribute {
 	protected FontColorAttribute fontColor = null;
@@ -67,26 +68,31 @@ public class CompositeAttribute {
 		}
 		return this.left;
 	}
-
-	public CompositeAttribute applyFontColor(FontColorAttribute.Acceptor acceptor) {
-		if (this.fontColor != null) {
-			acceptor.accept(this.fontColor);
-		}
-		return this;
-	}
-
-	public CompositeAttribute applyBackgroundColor(BackgroundColorAttribute.Acceptor acceptor) {
-		if (this.backgroundColor != null) {
-			acceptor.accept(this.backgroundColor);
-		}
-		return this;
-	}
-
-	public CompositeAttribute applyBorder(BorderAttribute.Acceptor acceptor) {
-		acceptor.accept(common, top, right, bottom, left);
-		return this;
-	}
 	
+	public <E extends ElementPropertyContainer<E>> void setComposerAttribute(PdfElementComposer<E> composer) {
+		if(this.fontColor != null) {
+			composer.setAttribute(this.fontColor.createAttribute());
+		}
+		if(this.backgroundColor != null) {
+			composer.setAttribute(this.backgroundColor.createAttribute());
+		}
+		if(this.common != null) {
+			composer.setAttribute(this.common.<E>createAttribute(ElementPropertyContainer::setBorder));
+		}
+		if(this.top != null) {
+			composer.setAttribute(this.top.<E>createAttribute(ElementPropertyContainer::setBorderTop));
+		}
+		if(this.right != null) {
+			composer.setAttribute(this.right.<E>createAttribute(ElementPropertyContainer::setBorderRight));
+		}
+		if(this.bottom != null) {
+			composer.setAttribute(this.bottom.<E>createAttribute(ElementPropertyContainer::setBorderBottom));
+		}
+		if(this.left != null) {
+			composer.setAttribute(this.left.<E>createAttribute(ElementPropertyContainer::setBorderLeft));
+		}
+	}
+
 	public static <T extends ElementPropertyContainer<T>> 
 	Consumer<T> createBorderAttribute(BorderAttribute borderAttr, BiConsumer<T , Border> setter) {
 		if(borderAttr != null) {

@@ -14,6 +14,7 @@ import com.itextpdf.layout.Document;
 
 import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.xml.context.AttributeRegistry;
+import me.chenqiang.pdf.xml.context.AttributeUtils;
 import me.chenqiang.pdf.xml.context.TemplateContext;
 
 public final class DocumentHandler extends BasicTemplateElementHandler<DocumentComposer, Document> {
@@ -48,7 +49,7 @@ public final class DocumentHandler extends BasicTemplateElementHandler<DocumentC
 	public void onEnd(ElementPath elementPath) {
 		Element current = elementPath.getCurrent();
 		
-		this.tplDoc.setPaperLayout(this.context.getAttributeRegistry().getPaperLayout(current.attributes()));		
+		this.tplDoc.setPaperLayout(AttributeUtils.getPaperLayout(current.attributes()));		
 		String docId = current.attributeValue(AttributeRegistry.ID);
 		if (docId == null) {
 			LOGGER.warn("Attribute 'id' is not set for document. @{}", this.count);

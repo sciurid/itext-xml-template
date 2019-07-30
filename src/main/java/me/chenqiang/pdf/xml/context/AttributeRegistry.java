@@ -2,19 +2,16 @@ package me.chenqiang.pdf.xml.context;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
-import org.dom4j.Attribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.ElementPropertyContainer;
 import com.itextpdf.layout.element.BlockElement;
@@ -26,8 +23,6 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
-
-import me.chenqiang.pdf.attribute.PaperLayout;
 
 public final class AttributeRegistry {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AttributeRegistry.class);
@@ -59,11 +54,6 @@ public final class AttributeRegistry {
 		this.mapImage = new TreeMap<>();
 		this.initImageMap();
 	}
-
-	protected static final BiFunction<String, String, ? extends Consumer<Object>> DO_NOTHING = (name, value) -> {
-		return item -> {
-		};
-	};
 
 	public static final String ID = "id";
 
@@ -234,9 +224,9 @@ public final class AttributeRegistry {
 		this.mapImage.put(AUTO_SCALE_HEIGHT, doBoolean(Image::setAutoScaleHeight));
 		this.mapImage.put(AUTO_SCALE_WIDTH, doBoolean(Image::setAutoScaleWidth));
 
-		this.mapImage.put(REF, DO_NOTHING);
-		this.mapImage.put(FILE, DO_NOTHING);
-		this.mapImage.put(RESOURCE, DO_NOTHING);
+		this.mapImage.put(REF, AttributeUtils.DO_NOTHING);
+		this.mapImage.put(FILE, AttributeUtils.DO_NOTHING);
+		this.mapImage.put(RESOURCE, AttributeUtils.DO_NOTHING);
 	}
 
 	public Map<String, BiFunction<String, String, ? extends Consumer<? super Image>>> getImageMap() {
@@ -264,8 +254,8 @@ public final class AttributeRegistry {
 
 	protected void initTableMap() {
 		this.mapTable.putAll(this.mapBlockElement);
-		this.mapCell.put(WIDTHS, DO_NOTHING);
-		this.mapCell.put(COLUMNS, DO_NOTHING);
+		this.mapCell.put(WIDTHS, AttributeUtils.DO_NOTHING);
+		this.mapCell.put(COLUMNS, AttributeUtils.DO_NOTHING);
 	}
 
 	public Map<String, BiFunction<String, String, ? extends Consumer<? super Table>>> getTableMap() {
@@ -276,8 +266,8 @@ public final class AttributeRegistry {
 	public static final String COL_SPAN = "colspan";
 
 	protected void initCellMap() {
-		this.mapCell.put(ROW_SPAN, DO_NOTHING);
-		this.mapCell.put(COL_SPAN, DO_NOTHING);
+		this.mapCell.put(ROW_SPAN, AttributeUtils.DO_NOTHING);
+		this.mapCell.put(COL_SPAN, AttributeUtils.DO_NOTHING);
 	}
 
 	public Map<String, BiFunction<String, String, ? extends Consumer<? super Cell>>> getCellMap() {
@@ -329,137 +319,7 @@ public final class AttributeRegistry {
 	public static final String BORDER_COLOR_LEFT = "border-color-left";
 	public static final String BORDER_OPACITY_LEFT = "border-opacity-left";
 
-	public CompositeAttribute getCompositeAttribute(List<Attribute> attributes) {
-		CompositeAttribute attribute = new CompositeAttribute();
-
-		for (Attribute attr : attributes) {
-			String attrName = attr.getName();
-			String attrValue = attr.getValue();
-			AttributeValueParser parser = new AttributeValueParser(attrName, attrValue);
-			switch (attrName) {
-			case FONT_COLOR:
-				attribute.createAndGetFontColor().setFontColor(parser.getDeviceRgb());
-				break;
-			case FONT_OPACITY:
-				attribute.createAndGetFontColor().setOpacity(parser.getFloat());
-				break;
-			case BACKGROUND_COLOR:
-				attribute.createAndGetBackgroundColor().setFontColor(parser.getDeviceRgb());
-				break;
-			case BACKGROUND_OPACITY:
-				attribute.createAndGetBackgroundColor().setOpacity(parser.getFloat());
-				break;
-
-			case BORDER_TYPE:
-				attribute.createAndGetBorder().setType(parser.getString());
-				break;
-			case BORDER_WIDTH:
-				attribute.createAndGetBorder().setWidth(parser.getFloat());
-				break;
-			case BORDER_COLOR:
-				attribute.createAndGetBorder().setColor(parser.getDeviceRgb());
-				break;
-			case BORDER_OPACITY:
-				attribute.createAndGetBorder().setOpacity(parser.getFloat());
-				break;
-
-			case BORDER_TYPE_TOP:
-				attribute.createAndGetTopBorder().setType(parser.getString());
-				break;
-			case BORDER_WIDTH_TOP:
-				attribute.createAndGetTopBorder().setWidth(parser.getFloat());
-				break;
-			case BORDER_COLOR_TOP:
-				attribute.createAndGetTopBorder().setColor(parser.getDeviceRgb());
-				break;
-			case BORDER_OPACITY_TOP:
-				attribute.createAndGetTopBorder().setOpacity(parser.getFloat());
-				break;
-
-			case BORDER_TYPE_RIGHT:
-				attribute.createAndGetRightBorder().setType(parser.getString());
-				break;
-			case BORDER_WIDTH_RIGHT:
-				attribute.createAndGetRightBorder().setWidth(parser.getFloat());
-				break;
-			case BORDER_COLOR_RIGHT:
-				attribute.createAndGetRightBorder().setColor(parser.getDeviceRgb());
-				break;
-			case BORDER_OPACITY_RIGHT:
-				attribute.createAndGetRightBorder().setOpacity(parser.getFloat());
-				break;
-
-			case BORDER_TYPE_BOTTOM:
-				attribute.createAndGetBottomBorder().setType(parser.getString());
-				break;
-			case BORDER_WIDTH_BOTTOM:
-				attribute.createAndGetBottomBorder().setWidth(parser.getFloat());
-				break;
-			case BORDER_COLOR_BOTTOM:
-				attribute.createAndGetBottomBorder().setColor(parser.getDeviceRgb());
-				break;
-			case BORDER_OPACITY_BOTTOM:
-				attribute.createAndGetBottomBorder().setOpacity(parser.getFloat());
-				break;
-
-			case BORDER_TYPE_LEFT:
-				attribute.createAndGetLeftBorder().setType(parser.getString());
-				break;
-			case BORDER_WIDTH_LEFT:
-				attribute.createAndGetLeftBorder().setWidth(parser.getFloat());
-				break;
-			case BORDER_COLOR_LEFT:
-				attribute.createAndGetLeftBorder().setColor(parser.getDeviceRgb());
-				break;
-			case BORDER_OPACITY_LEFT:
-				attribute.createAndGetLeftBorder().setOpacity(parser.getFloat());
-				break;
-			}
-		}
-		return attribute;
-	}
-
-	protected static final Map<String, PageSize> STANDARD_PAGE_SIZE = Map.ofEntries(Map.entry("a4", PageSize.A4),
-			Map.entry("a4r", PageSize.A4.rotate()), Map.entry("a3", PageSize.A3), Map.entry("a3r", PageSize.A3.rotate()),
-			Map.entry("b5", PageSize.B5), Map.entry("b5r", PageSize.B5.rotate()));
 	public static final String PAGE_SIZE = "page-size";
-
-	public PaperLayout getPaperLayout(List<Attribute> attributes) {
-		PaperLayout paper = new PaperLayout();
-		for (Attribute attr : attributes) {
-			String attrName = attr.getName();
-			String attrValue = attr.getValue();
-			AttributeValueParser parser = new AttributeValueParser(attrName, attrValue);
-			switch (attrName) {
-			case PAGE_SIZE:
-				PageSize ps = STANDARD_PAGE_SIZE.get(parser.getString().toLowerCase());
-				if(ps == null) {
-					LOGGER.warn("Page size ({}) is not predefined. Default to A4.", attrValue);
-					continue;
-				}
-				else {
-					paper.setPs(ps);
-				}
-				break;
-			case MARGIN:
-				parser.setLength(paper::setMargin);				
-				break;
-			case MARGIN_LEFT:
-				parser.setLength(paper::setMarginLeft);
-				break;
-			case MARGIN_RIGHT:
-				parser.setLength(paper::setMarginRight);
-				break;
-			case MARGIN_TOP:
-				parser.setLength(paper::setMarginTop);
-				break;
-			case MARGIN_BOTTOM:
-				parser.setLength(paper::setMarginBottom);
-				break;
-			}
-		}
-		return paper;
-	}
 
 	@FunctionalInterface
 	protected static interface FloatFunction<T> {

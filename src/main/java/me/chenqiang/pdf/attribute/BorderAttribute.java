@@ -105,8 +105,4 @@ public class BorderAttribute {
 			return null;
 		}
 	}
-	
-	public static interface Acceptor {
-		public void accept(BorderAttribute common, BorderAttribute top, BorderAttribute right, BorderAttribute bottom, BorderAttribute left);
-	}
 }

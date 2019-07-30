@@ -1,5 +1,7 @@
 package me.chenqiang.pdf.attribute;
 
+import java.util.function.Consumer;
+
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.layout.ElementPropertyContainer;
 
@@ -26,7 +28,7 @@ public class FontColorAttribute {
 		
 	}
 	
-	public static interface Acceptor {
-		public void accept(FontColorAttribute fontColorAttr);
+	public <T extends ElementPropertyContainer<T>> Consumer<T> createAttribute() {
+		return element -> this.apply(element);
 	}
 }

@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 public class XmlTemplateTest {
 	private static final Logger LOGGER = LoggerFactory.getLogger(XmlTemplateTest.class);
-//	@Test
+	@Test
 	public void doDocDefTest() throws DocumentException, IOException {
 		InputStream stream = XmlTemplateTest.class.getResourceAsStream("/DocDef.xml");
 		File file = File.createTempFile("TEST", ".pdf");

@@ -7,14 +7,23 @@ import java.util.function.Consumer;
 import me.chenqiang.pdf.configurability.StringStub;
 
 public abstract class BasicElementComposer<T, S extends BasicElementComposer<T, S>>
-implements ElementComposer<T>, StringStub, AttributedComposer<T> {
+implements PdfElementComposer<T>, StringStub {
 	protected String id;
-	protected LinkedList<Consumer<? super T>> attributes;	
+	protected final LinkedList<Consumer<? super T>> attributes;
+	protected final Class<T> elementClass;
 	
-	protected BasicElementComposer() {
+	protected BasicElementComposer(Class<T> elementClass) {
 		this.attributes = new LinkedList<>();
+		this.elementClass = elementClass;
 	}
+
 	
+	@Override
+	public Class<T> getElementClass() {
+		return this.elementClass;
+	}
+
+
 	@Override
 	public void setAttribute(Consumer<? super T> attribute) {
 		this.attributes.addFirst(attribute);
