@@ -16,10 +16,12 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.ElementPropertyContainer;
 import com.itextpdf.layout.element.BlockElement;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
@@ -56,11 +58,13 @@ public final class AttributeRegistry {
 	}
 
 	public static final String ID = "id";
+	public static final String STYLE = "style";
 
 	public static final String FONT_FAMILY = "font-family";
 	public static final String FONT_SIZE = "font-size";
 	public static final String FONT_VARIANT = "font-variant";
 	public static final String TEXT_ALIGN = "text-align";
+	public static final String HORIZONTAL_ALIGNMENT = "horizontal-alignment";
 
 	protected void initElementPropertyContainerMap() {
 		this.mapElementPropertyContainer.put(FONT_FAMILY, (name, value) -> {
@@ -111,6 +115,11 @@ public final class AttributeRegistry {
 		});
 		this.mapElementPropertyContainer.put(BACKGROUND_COLOR,
 				doRgbColor(ElementPropertyContainer::setBackgroundColor));
+		this.mapElementPropertyContainer.put(HORIZONTAL_ALIGNMENT, (name, value) -> {
+			AttributeValueParser parser = new AttributeValueParser(name, value);
+			HorizontalAlignment alignment = parser.getHorizontalAlignment();
+			return alignment == null ? null : element -> element.setHorizontalAlignment(alignment);
+		});
 	}
 
 	public Map<String, BiFunction<String, String, ? extends Consumer<? super ElementPropertyContainer<?>>>> getElementPropertyContainerMap() {
@@ -178,6 +187,10 @@ public final class AttributeRegistry {
 	}
 
 	public Map<String, BiFunction<String, String, ? extends Consumer<? super BlockElement<?>>>> getBlockElementMap() {
+		return Collections.unmodifiableMap(this.mapBlockElement);
+	}
+	
+	public Map<String, BiFunction<String, String, ? extends Consumer<? super Div>>> getDivMap() {
 		return Collections.unmodifiableMap(this.mapBlockElement);
 	}
 
@@ -266,6 +279,7 @@ public final class AttributeRegistry {
 	public static final String COL_SPAN = "colspan";
 
 	protected void initCellMap() {
+		this.mapCell.putAll(this.mapBlockElement);
 		this.mapCell.put(ROW_SPAN, AttributeUtils.DO_NOTHING);
 		this.mapCell.put(COL_SPAN, AttributeUtils.DO_NOTHING);
 	}

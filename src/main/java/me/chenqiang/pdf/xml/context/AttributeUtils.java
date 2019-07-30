@@ -1,10 +1,12 @@
 package me.chenqiang.pdf.xml.context;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.dom4j.Attribute;
 import org.slf4j.Logger;
@@ -24,32 +26,69 @@ public final class AttributeUtils {
 	protected static final Set<String> WARNING_FREE = Set.of(
 			AttributeRegistry.ID);
 	
-	public static <E> void setComposerAttributes(List<Attribute> xmlAttrs, 
+//	public static <E> void setComposerAttributes(List<Attribute> xmlAttrs, 
+//			Map<String, BiFunction<String, String, Consumer<? super E>> > registryMap, 
+//			PdfElementComposer<E> composer) {		
+//		assignAttributes(xmlAttrs, Attribute::getName, Attribute::getValue, registryMap,  composer::setAttribute,  composer.getClass());
+//	}
+	
+	public static <E> void setComposerAttributes(Iterable<String[]> attrs, 
 			Map<String, BiFunction<String, String, ? extends Consumer<? super E>> > registryMap, 
 			PdfElementComposer<E> composer) {		
-		for(Attribute attr : xmlAttrs) {
-			String name = attr.getName();
-			String value = attr.getValue();
+		AttributeUtils.<E, String[]>assignAttributes(
+				attrs, arr -> arr[0], arr -> arr[1], 
+				registryMap, composer::setAttribute, composer.getClass());
+	}
+	
+	public static <E> List<Consumer<? super E>> getComposerAttributes(List<Attribute> xmlAttrs, 
+			Map<String, BiFunction<String, String, ? extends Consumer<? super E>> > registryMap, Class<?> clazz) {
+		List<Consumer<? super E>> list = new ArrayList<>();
+		assignAttributes(xmlAttrs, registryMap, list::add, clazz);
+		return list;
+	}
+	
+	protected static <E> void assignAttributes(List<Attribute> xmlAttrs, 
+			Map<String, BiFunction<String, String, ? extends Consumer<? super E>> > registryMap, 
+			Consumer<Consumer<? super E>> collector, Class<?> clazz) {	
+		assignAttributes(xmlAttrs, Attribute::getName, Attribute::getValue, registryMap, collector, clazz);
+	}
+	
+	protected static <E, A> void assignAttributes(
+			Iterable<A> attrs, Function<A, String> nameGetter, Function<A, String> valueGetter,
+			Map<String, BiFunction<String, String, ? extends Consumer<? super E>> > registryMap, 
+			Consumer<Consumer<? super E>> collector, Class<?> clazz) {		
+		for(A attr : attrs) {
+			String name = nameGetter.apply(attr);
+			String value = valueGetter.apply(attr);
 			if(registryMap.containsKey(name)) {
 				Consumer<? super E> modifier = registryMap.get(name).apply(name, value);
 				if(modifier != null) {
-					composer.setAttribute((registryMap.get(name).apply(name, value)));
+					collector.accept(registryMap.get(name).apply(name, value));
 				}
 			}
 			else {
 				if(!WARNING_FREE.contains(name)) {
-					LOGGER.info("Unrecognized attribute '{}' for {}", attr.getName(), composer.getClass());
+					LOGGER.info("Unrecognized attribute '{}' for {}", name, clazz);
 				}
 			}
 		}		
 	}
 	
 	public static CompositeAttribute getCompositeAttribute(List<Attribute> attributes) {
+		return getCompositeAttribute(attributes, Attribute::getName, Attribute::getValue);
+	}
+	
+	public static CompositeAttribute getCompositeAttribute(Iterable<String []> attributes) {
+		return getCompositeAttribute(attributes, arr -> arr[0], arr -> arr[1]);
+	}
+	
+	
+	public static <A> CompositeAttribute getCompositeAttribute(Iterable<A> attributes, 
+			Function<A, String> nameGetter, Function<A, String> valueGetter) {
 		CompositeAttribute attribute = new CompositeAttribute();
-
-		for (Attribute attr : attributes) {
-			String attrName = attr.getName();
-			String attrValue = attr.getValue();
+		for (A attr : attributes) {
+			String attrName = nameGetter.apply(attr);
+			String attrValue = valueGetter.apply(attr);
 			AttributeValueParser parser = new AttributeValueParser(attrName, attrValue);
 			switch (attrName) {
 			case AttributeRegistry.FONT_COLOR:
@@ -69,7 +108,7 @@ public final class AttributeUtils {
 				attribute.createAndGetBorder().setType(parser.getString());
 				break;
 			case AttributeRegistry.BORDER_WIDTH:
-				attribute.createAndGetBorder().setWidth(parser.getFloat());
+				attribute.createAndGetBorder().setWidth(parser.getLength());
 				break;
 			case AttributeRegistry.BORDER_COLOR:
 				attribute.createAndGetBorder().setColor(parser.getDeviceRgb());
@@ -82,7 +121,7 @@ public final class AttributeUtils {
 				attribute.createAndGetTopBorder().setType(parser.getString());
 				break;
 			case AttributeRegistry.BORDER_WIDTH_TOP:
-				attribute.createAndGetTopBorder().setWidth(parser.getFloat());
+				attribute.createAndGetTopBorder().setWidth(parser.getLength());
 				break;
 			case AttributeRegistry.BORDER_COLOR_TOP:
 				attribute.createAndGetTopBorder().setColor(parser.getDeviceRgb());
@@ -95,7 +134,7 @@ public final class AttributeUtils {
 				attribute.createAndGetRightBorder().setType(parser.getString());
 				break;
 			case AttributeRegistry.BORDER_WIDTH_RIGHT:
-				attribute.createAndGetRightBorder().setWidth(parser.getFloat());
+				attribute.createAndGetRightBorder().setWidth(parser.getLength());
 				break;
 			case AttributeRegistry.BORDER_COLOR_RIGHT:
 				attribute.createAndGetRightBorder().setColor(parser.getDeviceRgb());
@@ -108,7 +147,7 @@ public final class AttributeUtils {
 				attribute.createAndGetBottomBorder().setType(parser.getString());
 				break;
 			case AttributeRegistry.BORDER_WIDTH_BOTTOM:
-				attribute.createAndGetBottomBorder().setWidth(parser.getFloat());
+				attribute.createAndGetBottomBorder().setWidth(parser.getLength());
 				break;
 			case AttributeRegistry.BORDER_COLOR_BOTTOM:
 				attribute.createAndGetBottomBorder().setColor(parser.getDeviceRgb());
@@ -121,7 +160,7 @@ public final class AttributeUtils {
 				attribute.createAndGetLeftBorder().setType(parser.getString());
 				break;
 			case AttributeRegistry.BORDER_WIDTH_LEFT:
-				attribute.createAndGetLeftBorder().setWidth(parser.getFloat());
+				attribute.createAndGetLeftBorder().setWidth(parser.getLength());
 				break;
 			case AttributeRegistry.BORDER_COLOR_LEFT:
 				attribute.createAndGetLeftBorder().setColor(parser.getDeviceRgb());

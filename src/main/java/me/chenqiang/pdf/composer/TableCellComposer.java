@@ -7,15 +7,12 @@ import java.util.function.Consumer;
 
 import com.itextpdf.layout.element.Cell;
 
-import me.chenqiang.pdf.configurability.StringStub;
+import me.chenqiang.pdf.component.TableCellComponent;
+import me.chenqiang.pdf.configurability.Substitution;
 
 public class TableCellComposer extends BasicElementComposer<Cell, TableCellComposer>
 implements PdfElementComposer<Cell>{
-	
-	public static interface TableCellComponent {
-		public void process(Cell cell);
-	}
-	
+
 	protected final List<TableCellComponent> components;
 	protected int colspan = 1;
 	protected int rowspan = 1;
@@ -94,9 +91,11 @@ implements PdfElementComposer<Cell>{
 
 	@Override
 	public void substitute(Map<String, String> params) {
-		this.components.stream()
-		.filter(comp -> comp instanceof StringStub)
-		.forEach(comp -> ((StringStub)comp).substitute(params));
+		Substitution.substitute(components, params);
 	}
 	
+	@Override
+	public void reset() {
+		Substitution.reset(this.components);
+	}
 }

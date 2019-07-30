@@ -7,8 +7,8 @@ import java.util.function.Consumer;
 
 import com.itextpdf.layout.element.Cell;
 
-import me.chenqiang.pdf.composer.ParagraphComposer.ParagraphComponent;
-import me.chenqiang.pdf.composer.TableCellComposer.TableCellComponent;
+import me.chenqiang.pdf.component.ParagraphComponent;
+import me.chenqiang.pdf.component.TableCellComponent;
 
 public class TableRowComposer implements PdfElementComposer<Cell> {
 	protected final List<TableCellComposer> components;

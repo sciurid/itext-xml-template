@@ -91,7 +91,7 @@ public class WatermarkTextHandler implements ElementHandler {
 			}
 		}
 		
-		String text = current.getTextTrim();
+		String text = current.getTextTrim().replaceAll("(?:\\\\r)?\\\\n", "\n");
 		if (text != null && text.length() > 0) {
 			this.watermark.addRenderer((pdf, page, canvas) -> 
 				WatermarkMaker.renderText(pdf, page, canvas, text, setting)

@@ -22,7 +22,7 @@ import me.chenqiang.pdf.xml.XmlTemplateLoader;
 public final class DocumentEngine {
 	private DocumentEngine() {}
 	private static final Logger LOGGER = LoggerFactory.getLogger(DocumentEngine.class);
-	public static void produce(InputStream xml, String documentId, 
+	public static void produce(InputStream xml, String documentId, Map<String, String> subMap,
 			Map<String, String> textParams, Map<String, byte []> dataParams,
 			OutputStream os) throws DocumentException, IOException {
 		XmlTemplateLoader loader = new XmlTemplateLoader();
@@ -32,6 +32,7 @@ public final class DocumentEngine {
 			LOGGER.error("Document id '{}' does not exist.", documentId);
 			return;
 		}
+		composer.substitute(subMap);
 		composer.parameterize(textParams, dataParams);
 		
 		PdfWriter writer = new PdfWriter(os);

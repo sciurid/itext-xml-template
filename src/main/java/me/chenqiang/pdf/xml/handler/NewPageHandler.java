@@ -20,7 +20,7 @@ public class NewPageHandler extends BasicTemplateElementHandler<AreaBreakCompose
 	}
 
 	@Override
-	protected AreaBreakComposer produce(ElementPath elementPath) {
+	protected AreaBreakComposer create(ElementPath elementPath) {
 		return AreaBreakComposer.getNextPage();
 	}
 
@@ -28,7 +28,7 @@ public class NewPageHandler extends BasicTemplateElementHandler<AreaBreakCompose
 	protected Map<String, BiFunction<String, String, ? extends Consumer<? super AreaBreak>>> getAttributeMap() {
 		return null;
 	}
-
+	
 	@Override
 	public void register(ElementPath path) {
 		path.addHandler("newpage", this);

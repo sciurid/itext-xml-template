@@ -69,4 +69,7 @@ public class ImageResourceHandler implements ElementHandler {
 		this.count++;
 	}
 
+	public void register(ElementPath path) {
+		path.addHandler("image-resource", this);
+	}
 }

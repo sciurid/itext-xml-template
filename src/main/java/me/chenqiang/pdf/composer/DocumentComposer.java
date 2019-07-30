@@ -16,18 +16,15 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 
 import me.chenqiang.pdf.attribute.PaperLayout;
-import me.chenqiang.pdf.composer.DocumentComposer.DocumentComponent;
+import me.chenqiang.pdf.component.DocumentComponent;
 import me.chenqiang.pdf.configurability.DataParameterPlaceholder;
 import me.chenqiang.pdf.configurability.StringParameterPlaceholder;
 import me.chenqiang.pdf.configurability.StringStub;
+import me.chenqiang.pdf.configurability.Substitution;
 
 public class DocumentComposer extends BasicElementComposer<Document, DocumentComposer>
 implements StringStub, Iterable<DocumentComponent> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DocumentComposer.class);
-
-	public static interface DocumentComponent {
-		public void process(Document doc, PdfDocument pdf, PdfWriter writer);
-	}
 
 	protected List<DocumentComponent> components;
 	protected WatermarkMaker watermarkMaker;
@@ -75,8 +72,10 @@ implements StringStub, Iterable<DocumentComponent> {
 		throw new UnsupportedOperationException();
 	}
 
+	protected static final ChineseSplitCharacters CHINESE_SPLIT_CHARATERS = new ChineseSplitCharacters();
 	public Document compose(PdfDocument pdf, PdfWriter writer, boolean close) {
 		Document doc = new Document(pdf, this.paperLayout.getPageSize());
+		doc.setSplitCharacters(CHINESE_SPLIT_CHARATERS);
 		doc.setMargins(this.paperLayout.getMarginTop(), this.paperLayout.getMarginRight(),
 				this.paperLayout.getMarginBottom(), this.paperLayout.getMarginLeft());
 		pdf.addEventHandler(PdfDocumentEvent.END_PAGE, watermarkMaker);
@@ -95,8 +94,12 @@ implements StringStub, Iterable<DocumentComponent> {
 
 	@Override
 	public void substitute(Map<String, String> params) {
-		this.components.stream().filter(comp -> comp instanceof StringStub)
-				.forEach(comp -> ((StringStub) comp).substitute(params));
+		Substitution.substitute(this.components, params);
+	}
+	
+	@Override
+	public void reset() {
+		Substitution.reset(this.components);
 	}
 	
 	public void parameterize(Map<String, String> strs, Map<String, byte []> data) {

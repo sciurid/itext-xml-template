@@ -1,14 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
 	<image-resource id="hawk" resource="/hawk.png" />
-	<document id="test" font-family="宋体" font-size="10.5">
-		<paragraph font-family="思源宋体" font-size="14" text-align="right">内部资料<br/>注意保存</paragraph>
-		<para font-family="黑体" font-size="20" text-align="center">标题格式</para>
-		<p margin="0">正常的文档默认字体（宋体）:</p>
-		<p first-line-indent="21" margin="0">此行首行缩进两个汉字。《滁州西涧》（韦应物）“独怜幽草涧边生，上有黄鹂深树鸣。春潮带雨晚来急，野渡无人舟自横。”</p>
+	<style id="red-color" font-color="red" opacity="0.2" />
+	<style id="warning" font-family="思源宋体" font-size="14" multiplied-leading="1.0" first-line-indent="0"
+		text-align="center" width="3cm" font-color="red" border-color="red" border-type="solid" border-width="3"
+		margin-left="12cm" padding="2mm" />
+
+	<document id="test" font-family="宋体" font-size="10.5" text-align="justified">
+		<default-paragraph-style multiplied-leading="1.5" margin="0" first-line-indent="21" />
+		<div><p style="warning">内部资料\r\n注意保存
+		
+		
+		</p></div>
+		<para font-family="黑体" font-size="20" text-align="center" padding-bottom="2cm">标题格式</para>
+		<p first-line-indent="0" font-family="黑体">【顶格黑体】题目：</p>
+		<p>
+			【默认首行缩进】“独怜幽草涧边生，上有黄鹂深树鸣。春潮带雨晚来急，野渡无人舟自横。”
+			<text font-size="6" text-rise="6" text-horizontal-scaling="0.8">（《唐诗三百首》第XX页）</text>
+		</p>
+		<p text-align="left">【注意中文换行】“独怜幽草涧边生，上有黄鹂深树鸣。春潮带雨晚来急，野渡无人舟自横。”</p>
+		<p>
+			【字体变体】该首唐诗是
+			<text font-variant="bold">唐朝诗人</text>
+			<text font-variant="underline">韦应物</text>
+			的
+			<text font-variant="italic">《滁州西涧》</text>
+			。
+		</p>
+		<p>【段落中间换行】</p>
+		<p first-line-indent="0" text-align="center">
+		<text font-family="思源黑体" font-size="14">滁州西涧</text>\n
+		<text font-family="楷体" font-size="10.5">唐·韦应物</text>\n
+		独怜幽草涧边生，上有黄鹂深树鸣。\n春潮带雨晚来急，野渡无人舟自横。
+		</p>
+		<newpage />
+		<table widths="50%, 20%, 30%" width="100%" text-align="center" border-width="2">
+			<header border-color="green" min-height="2cm" vertical-alignment="middle" font-family="黑体">
+				<cell>A</cell>
+				<cell>B</cell>
+				<cell>C</cell>
+			</header>
+			<body vertical-alignment="middle">
+				<cell rowspan="3" text-align="center">
+					<image horizontal-alignment="center" resource="/books.png" scale-to-fit="5cm,5cm" />
+				</cell>
+				<cell colspan="2">B1</cell>
+				<cell>C1</cell>
+				<cell>C2</cell>
+				<cell>C2</cell>
+				<cell>C3</cell>
+			</body>
+			<footer border-color="blue">
+				<cell>甲</cell>
+				<cell>乙</cell>
+				<cell>丙</cell>
+			</footer>
+		</table>
+		<paragraph border-type="solid" first-line-indent="0" vertical-alignment="middle" text-align="center" margin-top="8mm" padding-bottom="2mm">
+			<image ref="hawk" width="20%"/>
+		</paragraph>
+		<image ref="hawk" width="5cm"  horizontal-alignment="center"/>
+		<barcode format="qrcode" horizontal-alignment="center" width="80%">https://www.tsinghua.edu.cn</barcode>
+		<barcode format="pdf417" horizontal-alignment="center" width="80%">f516d2dc2c7aa8e28b1266191bb9d842805dd6869be35effb6d13fcb33288937</barcode>
+		<newpage/>
+		<table columns="3">
+			<header><cell>类型</cell><cell>文本</cell><cell>图片</cell></header>
+			<body>
+				<cell>文本替换</cell><cell>文本替换结果：${文本替换}</cell><cell><barcode width="2cm">${文本替换}</barcode></cell>
+				<cell>元素替换</cell><cell>元素替换结果：<text id="元素替换" /></cell><cell><barcode id="元素替换" width="2cm"/></cell>
+				<cell>数据替换</cell><cell colspan="2"><image id="数据替换" width="8cm"/></cell>
+			</body>
+		</table>
 		<watermark>
 			<image ref="hawk" opacity="0.2" offset-y="2cm" width="-0.5" />
-			<text font-family="思源粗宋" font-size="24" font-color="red" opacity="0.3" offset-y="-2cm">内部资料</text>
+			<text font-family="思源粗宋" font-size="24" font-color="red" opacity="0.3" offset-y="-3cm">内部资料\n注意保存</text>
 		</watermark>
 	</document>
 </root>

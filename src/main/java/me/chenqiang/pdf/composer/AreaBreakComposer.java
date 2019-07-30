@@ -10,7 +10,7 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.property.AreaBreakType;
 
-import me.chenqiang.pdf.composer.DocumentComposer.DocumentComponent;
+import me.chenqiang.pdf.component.DocumentComponent;
 
 public abstract class AreaBreakComposer implements PdfElementComposer<AreaBreak>, DocumentComponent {
 	@Override

@@ -3,11 +3,9 @@ package me.chenqiang.pdf.xml.handler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
-import org.dom4j.Attribute;
 import org.dom4j.Element;
 import org.dom4j.ElementHandler;
 import org.dom4j.ElementPath;
@@ -41,7 +39,7 @@ public abstract class BasicTemplateElementHandler<T extends PdfElementComposer<E
 		this.count = 0;
 	}
 
-	protected abstract T produce(ElementPath elementPath);
+	protected abstract T create(ElementPath elementPath);
 
 	protected abstract Map<String, BiFunction<String, String, ? extends Consumer<? super E>>> getAttributeMap();
 
@@ -50,11 +48,16 @@ public abstract class BasicTemplateElementHandler<T extends PdfElementComposer<E
 	@Override
 	public void onStart(ElementPath elementPath) {
 		LOGGER.debug("[START] {} - {}", elementPath.getPath(), this.count);
+		this.context.startScope();
 	}
 
 	@Override
 	public void onEnd(ElementPath elementPath) {
-		T composer = this.produce(elementPath);
+		LOGGER.debug("[END] {} - {}", elementPath.getPath(), this.count++);
+		T composer = this.create(elementPath);
+		if(composer == null) {
+			return;
+		}
 		Element current = elementPath.getCurrent();
 
 		String composerId = current.attributeValue(AttributeRegistry.ID);
@@ -68,9 +71,23 @@ public abstract class BasicTemplateElementHandler<T extends PdfElementComposer<E
 			}
 		}
 
-		AttributeUtils.setComposerAttributes(current.attributes(), this.getAttributeMap(), composer);
-		AttributeUtils.getCompositeAttribute(current.attributes()).setComposerAttribute(composer);
-
+		String styleId = current.attributeValue(AttributeRegistry.STYLE);
+		List<String []> attributes = new ArrayList<>();
+		if(styleId != null){
+			List<String []> styleAttributes = this.context.getPredefinedStyle(styleId);
+			if(styleAttributes != null) {
+				attributes.addAll(styleAttributes);
+//				List<String[]> filtered = styleAttributes.stream().filter(attr -> attributeMap.containsKey(attr[0])).collect(Collectors.toList());
+//				AttributeUtils.setComposerAttributes(styleAttributes, cellMap, this.row);
+//				AttributeUtils.getCompositeAttribute(styleAttributes).setComposerAttribute(this.row);
+			}
+		}
+		current.attributes().forEach(attr -> attributes.add(new String[] {attr.getName(), attr.getValue()}));
+		
+		Map<String, BiFunction<String, String, ? extends Consumer<? super E>>> attributeMap = this.getAttributeMap();
+		AttributeUtils.setComposerAttributes(attributes, attributeMap, composer);
+		AttributeUtils.getCompositeAttribute(attributes).setComposerAttribute(composer);
+		
 		if (this.consumer != null) {
 			this.consumer.accept(composer);
 		} else {
@@ -78,30 +95,6 @@ public abstract class BasicTemplateElementHandler<T extends PdfElementComposer<E
 				LOGGER.warn("No consumer of element {} - {} found.", elementPath.getPath(), this.count);
 			}
 		}
-		LOGGER.debug("[END] {} - {}", elementPath.getPath(), this.count++);
+		this.context.endScope();
 	}
-
-	protected static final Set<String> WARNING_FREE = Set.of(AttributeRegistry.ID);
-
-	public static <E> List<Consumer<? super E>> getModifiers(Element current,
-			Map<String, BiFunction<String, String, ? extends Consumer<? super E>>> registryMap, Class<?> clazz) {
-		List<Consumer<? super E>> res = new ArrayList<>(current.attributes().size());
-
-		for (Attribute attr : current.attributes()) {
-			String name = attr.getName();
-			String value = attr.getValue();
-			if (registryMap.containsKey(name)) {
-				Consumer<? super E> modifier = registryMap.get(name).apply(name, value);
-				if (modifier != null) {
-					res.add(registryMap.get(name).apply(name, value));
-				}
-			} else {
-				if (!WARNING_FREE.contains(name)) {
-					LOGGER.info("Unrecognized attribute '{}' for {}", attr.getName(), clazz);
-				}
-			}
-		}
-		return res;
-	}
-
 }

@@ -99,4 +99,7 @@ public class FontResourceHandler implements ElementHandler{
 		// No content of the <font/> element is needed.
 	}
 
+	public void register(ElementPath path) {
+		path.addHandler("font", this);
+	}
 }

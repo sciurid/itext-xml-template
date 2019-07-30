@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
@@ -136,6 +137,20 @@ public class AttributeValueParser {
 			return TextAlignment.JUSTIFIED_ALL;
 		default:
 			LOGGER.error("Text-align not valid: '{}'", this.originalValue);
+			return null;
+		}
+	}
+	
+	public HorizontalAlignment getHorizontalAlignment() {
+		switch (this.attrValue) {
+		case "center":
+			return HorizontalAlignment.CENTER;
+		case "left":
+			return HorizontalAlignment.LEFT;
+		case "right":
+			return HorizontalAlignment.RIGHT;
+		default:
+			LOGGER.error("Vertical-alignment not valid: '{}'", this.originalValue);
 			return null;
 		}
 	}

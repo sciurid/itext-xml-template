@@ -10,12 +10,12 @@ public class SimpleLoggingHanlder implements ElementHandler{
 
 	@Override
 	public void onStart(ElementPath elementPath) {
-		LOGGER.info("[START] {} - {}", elementPath.getPath(), elementPath.getCurrent());
+		LOGGER.warn("[START] Unhandled element: {}, {}", elementPath.getPath(), elementPath.getCurrent());
 	}
 
 	@Override
 	public void onEnd(ElementPath elementPath) {
-		LOGGER.info("[END] {} - {}", elementPath.getPath(), elementPath.getCurrent());
+		LOGGER.debug("[END] Unhandled element: {}, {}", elementPath.getPath(), elementPath.getCurrent());
 	}	
 }
 

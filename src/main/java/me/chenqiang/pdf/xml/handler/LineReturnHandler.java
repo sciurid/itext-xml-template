@@ -1,5 +1,8 @@
 package me.chenqiang.pdf.xml.handler;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.dom4j.ElementHandler;
 import org.dom4j.ElementPath;
 
@@ -21,7 +24,12 @@ public class LineReturnHandler implements ElementHandler{
 		this.tplPara.append(new StringComposer("\r\n"));
 	}
 
+	public static final List<String> getElementNames() {
+		return Arrays.asList("br");
+	}	
 	public void register(ElementPath path) {
-		path.addHandler("br", this);
+		for(String name : getElementNames()) {
+			path.addHandler(name, this);
+		}
 	}
 }

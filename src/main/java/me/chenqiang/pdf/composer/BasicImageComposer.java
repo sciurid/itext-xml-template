@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,16 +13,18 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 
-import me.chenqiang.pdf.composer.DocumentComposer.DocumentComponent;
-import me.chenqiang.pdf.composer.ParagraphComposer.ParagraphComponent;
-import me.chenqiang.pdf.composer.TableCellComposer.TableCellComponent;
+import me.chenqiang.pdf.component.DivComponent;
+import me.chenqiang.pdf.component.DocumentComponent;
+import me.chenqiang.pdf.component.ParagraphComponent;
+import me.chenqiang.pdf.component.TableCellComponent;
 
 public abstract class BasicImageComposer<T extends BasicImageComposer<T>>
 		extends BasicElementComposer<Image, BasicImageComposer<T>>
-		implements DocumentComponent, ParagraphComponent, TableCellComponent {
+		implements DocumentComponent, ParagraphComponent, TableCellComponent, DivComponent {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BasicImageComposer.class);
 	public static final String IMAGE_ERROR = "Error loading image.";
 	protected ImageData imageData = null;
@@ -43,22 +42,6 @@ public abstract class BasicImageComposer<T extends BasicImageComposer<T>>
 		try {
 			this.imageData = ImageDataFactory.create(is.readAllBytes());
 		} catch (IOException e) {
-			LOGGER.error(IMAGE_ERROR, e);
-		}
-		return (T) this;
-	}
-
-	@SuppressWarnings("unchecked")
-	public T setImageDataBase64(String base64) {
-		this.setImageData(Base64.decodeBase64(base64));
-		return (T) this;
-	}
-
-	@SuppressWarnings("unchecked")
-	public T setImageDataHex(String base64) {
-		try {
-			this.setImageData(Hex.decodeHex(base64.toCharArray()));
-		} catch (DecoderException e) {
 			LOGGER.error(IMAGE_ERROR, e);
 		}
 		return (T) this;
@@ -96,9 +79,23 @@ public abstract class BasicImageComposer<T extends BasicImageComposer<T>>
 			doc.add(image);
 		}
 	}
+	
+	@Override
+	public void process(Div div) {
+		Image image = this.<Void>produce(null);
+		if(image != null) {
+			div.add(image);
+		}
+	}
 
 	@Override
 	public void substitute(Map<String, String> params) {
 		// Do nothing.
 	}
+
+	@Override
+	public void reset() {
+		// Do nothing.
+		
+	}	
 }

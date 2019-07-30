@@ -51,11 +51,14 @@ implements PdfElementComposer<T>, StringStub {
 	@Override
 	public <C> T produce(C context) {
 		T instance = this.create();
+		if(instance == null) {
+			return null;
+		}
 		this.attributes.forEach(attribute -> attribute.accept(instance));
 		return instance;
 	}
 	
-	public static <T, S extends BasicElementComposer<T, S>> 
+	public static <T, S extends BasicElementComposer<T, S>>
 	void deepCopy(BasicElementComposer<T, S> origin, BasicElementComposer<T, S> target) {
 		target.attributes.clear();
 		target.attributes.addAll(origin.attributes);

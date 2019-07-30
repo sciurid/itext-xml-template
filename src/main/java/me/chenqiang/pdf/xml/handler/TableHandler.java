@@ -1,5 +1,7 @@
 package me.chenqiang.pdf.xml.handler;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -53,7 +55,7 @@ public class TableHandler extends BasicTemplateElementHandler<TableComposer, Tab
 	}
 
 	@Override
-	protected TableComposer produce(ElementPath elementPath) {
+	protected TableComposer create(ElementPath elementPath) {
 		return this.tplTbl;
 	}
 
@@ -62,10 +64,13 @@ public class TableHandler extends BasicTemplateElementHandler<TableComposer, Tab
 		return this.context.getAttributeRegistry().getTableMap();
 	}
 
+	public static List<String> getElementNames() {
+		return Arrays.asList("table");
+	}
 	@Override
 	public void register(ElementPath path) {
-		path.addHandler("table", this);
-	}
-	
-	
+		for(String name : getElementNames()) {
+			path.addHandler(name, this);
+		}
+	}	
 }

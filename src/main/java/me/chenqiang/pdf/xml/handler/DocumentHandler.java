@@ -16,6 +16,8 @@ import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.xml.context.AttributeRegistry;
 import me.chenqiang.pdf.xml.context.AttributeUtils;
 import me.chenqiang.pdf.xml.context.TemplateContext;
+import me.chenqiang.pdf.xml.handler.resource.DefaultParagraphHandler;
+import me.chenqiang.pdf.xml.handler.resource.PredefinedStyleHandler;
 
 public final class DocumentHandler extends BasicTemplateElementHandler<DocumentComposer, Document> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DocumentHandler.class);
@@ -30,18 +32,24 @@ public final class DocumentHandler extends BasicTemplateElementHandler<DocumentC
 	@Override
 	public void onStart(ElementPath elementPath) {
 		super.onStart(elementPath);
-		this.tplDoc = new DocumentComposer();		
+		this.tplDoc = new DocumentComposer();
+		
 		this.directory = this.tplDoc.getDirectory();
+		
+		new DefaultParagraphHandler(this.context).register(elementPath);
+		new PredefinedStyleHandler(this.context).register(elementPath);
+		
 		new ParagraphHandler(this.context, this.directory, this.tplDoc).register(elementPath);
 		new TableHandler(this.context, this.directory, this.tplDoc).register(elementPath);
 		new ImageHandler(this.context, this.directory, this.tplDoc).register(elementPath);
 		new BarcodeHandler(this.context, this.directory, this.tplDoc).register(elementPath);
+		new DivHandler(this.context, this.directory, this.tplDoc).register(elementPath);
 		new NewPageHandler(this.context, this.directory, this.tplDoc).register(elementPath);
 		new WatermarkHandler(this.context, this.tplDoc).register(elementPath);
 	}
 
 	@Override
-	protected DocumentComposer produce(ElementPath elementPath) {
+	protected DocumentComposer create(ElementPath elementPath) {
 		return this.tplDoc;
 	}
 
@@ -68,7 +76,7 @@ public final class DocumentHandler extends BasicTemplateElementHandler<DocumentC
 
 	@Override
 	public void register(ElementPath path) {
-		throw new UnsupportedOperationException();
+		path.addHandler("document", this);
 	}	
 	
 	

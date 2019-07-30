@@ -5,9 +5,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.itextpdf.layout.element.Paragraph;
 
 import me.chenqiang.pdf.configurability.DataParameterPlaceholder;
 import me.chenqiang.pdf.configurability.StringParameterPlaceholder;
@@ -69,5 +72,16 @@ public class ComposerDirectory {
 		LinkedList<DataParameterPlaceholder> list = this.mapDataPlaceholder.get(id);
 		return list == null ? null : Collections.unmodifiableList(list);
 	}
+	
+	protected Supplier<Paragraph> defaultParagraph;
+
+	public Supplier<Paragraph> getDefaultParagraph() {
+		return defaultParagraph;
+	}
+
+	public void setDefaultParagraph(Supplier<Paragraph> defaultParagrah) {
+		this.defaultParagraph = defaultParagrah;
+	}
+	
 	
 }

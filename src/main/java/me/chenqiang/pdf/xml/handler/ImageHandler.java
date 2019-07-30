@@ -1,5 +1,7 @@
 package me.chenqiang.pdf.xml.handler;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -11,6 +13,7 @@ import org.dom4j.ElementPath;
 import com.itextpdf.layout.element.Image;
 
 import me.chenqiang.pdf.composer.ComposerDirectory;
+import me.chenqiang.pdf.composer.DivComposer;
 import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.composer.ImageComposer;
 import me.chenqiang.pdf.composer.ParagraphComposer;
@@ -31,9 +34,13 @@ public class ImageHandler extends BasicTemplateElementHandler<ImageComposer, Ima
 	public ImageHandler(TemplateContext context, ComposerDirectory directory, TableCellComposer cell) {
 		super(context, directory, cell::append);
 	}
+	
+	public ImageHandler(TemplateContext context, ComposerDirectory directory, DivComposer tplDiv) {
+		super(context, directory, tplDiv::append);
+	}
 
 	@Override
-	protected ImageComposer produce(ElementPath elementPath) {
+	protected ImageComposer create(ElementPath elementPath) {
 		ImageComposer tplImg = new ImageComposer();
 		Element current = elementPath.getCurrent();
 		for (Attribute attr : current.attributes()) {
@@ -64,9 +71,13 @@ public class ImageHandler extends BasicTemplateElementHandler<ImageComposer, Ima
 		return this.context.getAttributeRegistry().getImageMap();
 	}
 
+	public static final List<String> getElementNames() {
+		return Arrays.asList("image", "img");
+	}
 	@Override
 	public void register(ElementPath path) {
-		path.addHandler("image", this);
-		path.addHandler("img", this);
-	}
+		for(String name : getElementNames()) {
+			path.addHandler(name, this);
+		}
+	}	
 }

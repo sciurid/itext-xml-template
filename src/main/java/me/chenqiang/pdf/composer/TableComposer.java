@@ -17,7 +17,8 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.UnitValue;
 
-import me.chenqiang.pdf.composer.DocumentComposer.DocumentComponent;
+import me.chenqiang.pdf.component.DocumentComponent;
+import me.chenqiang.pdf.configurability.Substitution;
 
 public class TableComposer extends BasicElementComposer<Table, TableComposer>
 		implements DocumentComponent, Iterable<TableCellComposer> {
@@ -98,12 +99,19 @@ public class TableComposer extends BasicElementComposer<Table, TableComposer>
 			doc.add(tbl);
 		}
 	}
-
+	
 	@Override
 	public void substitute(Map<String, String> params) {
-		this.header.components.forEach(comp -> comp.substitute(params));
-		this.body.components.forEach(comp -> comp.substitute(params));
-		this.footer.components.forEach(comp -> comp.substitute(params));
+		Substitution.substitute(this.header.components, params);
+		Substitution.substitute(this.body.components, params);
+		Substitution.substitute(this.footer.components, params);
+	}
+	
+	@Override
+	public void reset() {
+		Substitution.reset(this.header.components);
+		Substitution.reset(this.body.components);
+		Substitution.reset(this.footer.components);
 	}
 
 	@Override

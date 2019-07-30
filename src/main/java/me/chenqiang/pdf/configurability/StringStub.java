@@ -4,4 +4,5 @@ import java.util.Map;
 
 public interface StringStub {
 	public void substitute(Map<String, String> params);
+	public void reset();
 }

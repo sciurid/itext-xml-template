@@ -1,5 +1,7 @@
 package me.chenqiang.pdf.xml.handler;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -11,6 +13,7 @@ import org.dom4j.Node;
 import com.itextpdf.layout.element.Text;
 
 import me.chenqiang.pdf.composer.ComposerDirectory;
+import me.chenqiang.pdf.composer.DivComposer;
 import me.chenqiang.pdf.composer.ParagraphComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
 import me.chenqiang.pdf.composer.TextComposer;
@@ -27,9 +30,13 @@ public class TextHandler extends BasicTemplateElementHandler<TextComposer, Text>
 	public TextHandler(TemplateContext context, ComposerDirectory directory, TableCellComposer tplCell) {
 		super(context, directory, tplCell::append);
 	}
+	
+	public TextHandler(TemplateContext context, ComposerDirectory directory, DivComposer tplDiv) {
+		super(context, directory, tplDiv::append);
+	}
 
 	@Override
-	protected TextComposer produce(ElementPath elementPath) {
+	protected TextComposer create(ElementPath elementPath) {
 		Element current = elementPath.getCurrent();
 		for (Node node : current.content()) {
 			if (node.getNodeType() == Node.TEXT_NODE) {
@@ -50,9 +57,13 @@ public class TextHandler extends BasicTemplateElementHandler<TextComposer, Text>
 		return this.context.getAttributeRegistry().getTextMap();
 	}
 
+	public static final List<String> getElementNames() {
+		return Arrays.asList("text", "span");
+	}
 	@Override
 	public void register(ElementPath path) {
-		path.addHandler("text", this);
-		path.addHandler("span", this);
-	}
+		for(String name : getElementNames()) {
+			path.addHandler(name, this);
+		}
+	}	
 }
