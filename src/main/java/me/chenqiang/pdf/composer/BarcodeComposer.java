@@ -24,13 +24,14 @@ import com.google.zxing.pdf417.PDF417Writer;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.itextpdf.layout.element.Image;
 
-import me.chenqiang.pdf.configurability.StringParameterPlaceholder;
-import me.chenqiang.pdf.configurability.Substitution;
+import me.chenqiang.pdf.component.StringParameterPlaceholder;
+import me.chenqiang.pdf.component.StringStub;
+import me.chenqiang.pdf.utils.Substitution;
 
-public final class BarcodeComposer extends BasicImageComposer<BarcodeComposer> implements StringParameterPlaceholder {
+public final class BarcodeComposer extends BasicImageComposer<BarcodeComposer> 
+implements StringParameterPlaceholder, StringStub{
 	private static final Logger LOGGER = LoggerFactory.getLogger(BarcodeComposer.class);
 	protected String text;
-	protected ThreadLocal<String> substituted = new ThreadLocal<>();
 	protected String output = "PNG";
 	protected BarcodeFormat format = BarcodeFormat.QR_CODE;
 	public static final int BASE_SIZE = 300;
@@ -44,34 +45,45 @@ public final class BarcodeComposer extends BasicImageComposer<BarcodeComposer> i
 
 	@FunctionalInterface
 	private static interface Creator {
-		BitMatrix create(String text) throws WriterException;
+		BitMatrix create(String text, BarcodeFormat format) throws WriterException;
 	}
 
-	protected final Map<BarcodeFormat, Creator> creators;
+	protected static final Map<BarcodeFormat, Creator> CREATORS;
 	protected static final Map<EncodeHintType, ?> DEFAULT_HINTS = Map.of(EncodeHintType.MARGIN, 1);
-
-	public BarcodeComposer() {
-		this.creators = Map.<BarcodeFormat, Creator>ofEntries(
+	static {
+		CREATORS = Map.<BarcodeFormat, Creator>ofEntries(
 				Map.entry(BarcodeFormat.QR_CODE,
-						(str) -> new QRCodeWriter().encode(str, this.format, BASE_SIZE, BASE_SIZE, DEFAULT_HINTS)),
+						(str, format) -> new QRCodeWriter().encode(str, format, BASE_SIZE, BASE_SIZE, DEFAULT_HINTS)),
 				Map.entry(BarcodeFormat.PDF_417,
-						(str) -> new PDF417Writer().encode(str, this.format, BASE_SIZE, BASE_SIZE, DEFAULT_HINTS)),
+						(str, format) -> new PDF417Writer().encode(str, format, BASE_SIZE, BASE_SIZE, DEFAULT_HINTS)),
 				Map.entry(BarcodeFormat.EAN_13,
-						(str) -> new EAN13Writer().encode(str, this.format, BASE_SIZE, BASE_SIZE, DEFAULT_HINTS)),
+						(str, format) -> new EAN13Writer().encode(str, format, BASE_SIZE, BASE_SIZE, DEFAULT_HINTS)),
 				Map.entry(BarcodeFormat.EAN_8,
-						(str) -> new EAN8Writer().encode(str, this.format, BASE_SIZE, BASE_SIZE, DEFAULT_HINTS)),
+						(str, format) -> new EAN8Writer().encode(str, format, BASE_SIZE, BASE_SIZE, DEFAULT_HINTS)),
 				Map.entry(BarcodeFormat.CODABAR,
-						(str) -> new CodaBarWriter().encode(str, this.format, BASE_SIZE, BASE_SIZE, DEFAULT_HINTS)),
+						(str, format) -> new CodaBarWriter().encode(str, format, BASE_SIZE, BASE_SIZE, DEFAULT_HINTS)),
 				Map.entry(BarcodeFormat.CODE_39,
-						(str) -> new Code39Writer().encode(str, this.format, BASE_SIZE, BASE_SIZE, DEFAULT_HINTS)),
+						(str, format) -> new Code39Writer().encode(str, format, BASE_SIZE, BASE_SIZE, DEFAULT_HINTS)),
 				Map.entry(BarcodeFormat.CODE_93,
-						(str) -> new Code93Writer().encode(str, this.format, BASE_SIZE, BASE_SIZE, DEFAULT_HINTS)),
+						(str, format) -> new Code93Writer().encode(str, format, BASE_SIZE, BASE_SIZE, DEFAULT_HINTS)),
 				Map.entry(BarcodeFormat.CODE_128,
-						(str) -> new Code128Writer().encode(str, this.format, BASE_SIZE, BASE_SIZE, DEFAULT_HINTS)),
+						(str, format) -> new Code128Writer().encode(str, format, BASE_SIZE, BASE_SIZE, DEFAULT_HINTS)),
 				Map.entry(BarcodeFormat.UPC_A,
-						(str) -> new UPCAWriter().encode(str, this.format, BASE_SIZE, BASE_SIZE, DEFAULT_HINTS)),
+						(str, format) -> new UPCAWriter().encode(str, format, BASE_SIZE, BASE_SIZE, DEFAULT_HINTS)),
 				Map.entry(BarcodeFormat.UPC_E,
-						(str) -> new UPCEWriter().encode(str, this.format, BASE_SIZE, BASE_SIZE, DEFAULT_HINTS)));
+						(str, format) -> new UPCEWriter().encode(str, format, BASE_SIZE, BASE_SIZE, DEFAULT_HINTS)));
+	}
+	
+	public BarcodeComposer() {
+		super();
+	}
+	
+
+	protected BarcodeComposer(BarcodeComposer origin) {
+		super(origin);
+		this.text = origin.text;
+		this.output = origin.output;
+		this.format = origin.format;
 	}
 
 	public BarcodeComposer setText(String text) {
@@ -107,34 +119,30 @@ public final class BarcodeComposer extends BasicImageComposer<BarcodeComposer> i
 	@Override
 	protected Image create() {
 		try {
-			if (this.creators.containsKey(this.format)) {
-				String dataText = this.substituted.get();
-				if(dataText == null) {
-					dataText = this.text;
-				}
-				BitMatrix matrix = this.creators.get(this.format).create(dataText);
+			if(this.text != null && this.text.length() != 0 && CREATORS.containsKey(this.format)) {
+				BitMatrix matrix = CREATORS.get(this.format).create(this.text, this.format);
 				if (matrix == null) {
-					this.setImageData((byte[]) null);
+					this.imageData = null;
 				} else {
 					this.setImageData(this.getImageData(matrix));
 				}
+			}
+			else {
+				this.imageData = null;
 			}
 		} catch (WriterException we) {
 			LOGGER.error(IMAGE_ERROR, we);
 		}
 		return super.create();
 	}
+	
+	@Override
+	public BarcodeComposer copy() {
+		return new BarcodeComposer(this);
+	}
 
 	@Override
 	public void substitute(Map<String, String> params) {
-		if(Substitution.isSubstitutable(this.text)) {
-			this.substituted.set(Substitution.substitute(this.text, params));
-		}
-	}
-
-	@Override
-	public void reset() {
-		this.substituted.remove();
-	}
-	
+		this.text = Substitution.substitute(this.text, params);
+	}	
 }

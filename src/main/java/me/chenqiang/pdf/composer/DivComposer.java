@@ -3,7 +3,6 @@ package me.chenqiang.pdf.composer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +14,13 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 
+import me.chenqiang.pdf.component.Copyable;
 import me.chenqiang.pdf.component.DivComponent;
 import me.chenqiang.pdf.component.DocumentComponent;
 import me.chenqiang.pdf.component.ParagraphComponent;
 import me.chenqiang.pdf.component.TableCellComponent;
-import me.chenqiang.pdf.configurability.Substitution;
 
-public class DivComposer extends BasicElementComposer<Div, DivComposer>
+public final class DivComposer extends BasicElementComposer<Div, DivComposer>
 		implements DocumentComponent, TableCellComponent, ParagraphComponent, Iterable<DivComponent> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DivComposer.class);
 	protected List<DivComponent> components;
@@ -29,6 +28,19 @@ public class DivComposer extends BasicElementComposer<Div, DivComposer>
 	public DivComposer() {
 		super(Div.class);
 		this.components = new ArrayList<>();
+	}
+	
+	protected DivComposer(DivComposer origin) {
+		super(origin);
+		this.components = new ArrayList<>(origin.components.size());
+		for(DivComponent comp : origin.components) {
+			if(comp instanceof Copyable) {
+				this.components.add((DivComponent)((Copyable<?>)comp).copy());
+			}
+			else {
+				this.components.add(comp);
+			}
+		}
 	}
 	
 	public DivComposer append(DivComponent component) {
@@ -76,18 +88,13 @@ public class DivComposer extends BasicElementComposer<Div, DivComposer>
 	}
 
 	@Override
-	public void substitute(Map<String, String> params) {
-		Substitution.substitute(components, params);
-	}
-	
-	@Override
-	public void reset() {
-		Substitution.reset(this.components);
+	public Iterator<DivComponent> iterator() {
+		return this.components.iterator();
 	}
 
 	@Override
-	public Iterator<DivComponent> iterator() {
-		return this.components.iterator();
+	public DivComposer copy() {
+		return new DivComposer(this);
 	}
 	
 }

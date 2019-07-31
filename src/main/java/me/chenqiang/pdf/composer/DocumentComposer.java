@@ -16,11 +16,9 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 
 import me.chenqiang.pdf.attribute.PaperLayout;
+import me.chenqiang.pdf.component.Copyable;
 import me.chenqiang.pdf.component.DocumentComponent;
-import me.chenqiang.pdf.configurability.DataParameterPlaceholder;
-import me.chenqiang.pdf.configurability.StringParameterPlaceholder;
-import me.chenqiang.pdf.configurability.StringStub;
-import me.chenqiang.pdf.configurability.Substitution;
+import me.chenqiang.pdf.component.StringStub;
 
 public class DocumentComposer extends BasicElementComposer<Document, DocumentComposer>
 implements StringStub, Iterable<DocumentComponent> {
@@ -37,6 +35,21 @@ implements StringStub, Iterable<DocumentComponent> {
 		this.watermarkMaker = new WatermarkMaker();
 		this.directory = new ComposerDirectory();
 		this.paperLayout = new PaperLayout();
+	}
+	
+	protected DocumentComposer(DocumentComposer origin) {
+		super(origin);
+		this.components = new ArrayList<>(origin.components.size());
+		for(DocumentComponent comp : origin.components) {
+			if(comp instanceof Copyable) {
+				this.components.add((DocumentComponent)((Copyable<?>)comp).copy());
+			}
+			else {
+				this.components.add(comp);
+			}
+		}
+		this.paperLayout = origin.paperLayout == null ? null : origin.paperLayout.copy();
+		this.watermarkMaker = origin.watermarkMaker == null ? null : origin.watermarkMaker.copy();
 	}
 
 	public ComposerDirectory getDirectory() {
@@ -94,39 +107,16 @@ implements StringStub, Iterable<DocumentComponent> {
 
 	@Override
 	public void substitute(Map<String, String> params) {
-		Substitution.substitute(this.components, params);
+		throw new UnsupportedOperationException();
 	}
-	
-	@Override
-	public void reset() {
-		Substitution.reset(this.components);
-	}
-	
-	public void parameterize(Map<String, String> strs, Map<String, byte []> data) {
-		if(strs != null) {
-			for(Map.Entry<String, String> entry : strs.entrySet()) {
-				List<StringParameterPlaceholder> placeholders = this.directory.getStringPlaceholders(entry.getKey());
-				if(placeholders != null) {
-					for(StringParameterPlaceholder placeholder : placeholders) {
-						placeholder.setParameter(entry.getValue());
-					}
-				}
-			}
-		}
-		if(data != null) {
-			for(Map.Entry<String, byte []> entry : data.entrySet()) {
-				List<DataParameterPlaceholder> placeholders = this.directory.getDataPlaceholders(entry.getKey());
-				if(placeholders != null) {
-					for(DataParameterPlaceholder placeholder : placeholders) {
-						placeholder.setParameter(entry.getValue());
-					}
-				}
-			}
-		}
-	}	
 
 	@Override
 	public Iterator<DocumentComponent> iterator() {
 		return this.components.iterator();
+	}
+
+	@Override
+	public DocumentComposer copy() {
+		return new DocumentComposer(this);
 	}
 }

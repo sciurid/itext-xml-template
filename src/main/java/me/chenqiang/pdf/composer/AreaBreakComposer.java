@@ -11,8 +11,10 @@ import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.property.AreaBreakType;
 
 import me.chenqiang.pdf.component.DocumentComponent;
+import me.chenqiang.pdf.component.PdfElementComposer;
 
-public abstract class AreaBreakComposer implements PdfElementComposer<AreaBreak>, DocumentComponent {
+public abstract class AreaBreakComposer implements PdfElementComposer<AreaBreak, AreaBreakComposer>, DocumentComponent {
+	protected String id;
 	@Override
 	public void process(Document doc, PdfDocument pdf, PdfWriter writer) {
 		doc.add(this.<Void>produce(null));
@@ -29,8 +31,21 @@ public abstract class AreaBreakComposer implements PdfElementComposer<AreaBreak>
 
 	@Override
 	public void setAllAttributes(Collection<? extends Consumer<? super AreaBreak>> attributes) {
+		
+	}
+	public String getId() {
+		return id;
 	}
 
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	@Override
+	public AreaBreakComposer copy() {
+		return this;
+	}
+	
 	public static AreaBreakComposer getNextPage() {
 		return new AreaBreakComposer() {
 			@Override
@@ -48,5 +63,4 @@ public abstract class AreaBreakComposer implements PdfElementComposer<AreaBreak>
 			}
 		};
 	}
-
 }

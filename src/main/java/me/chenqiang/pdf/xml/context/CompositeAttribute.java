@@ -9,7 +9,7 @@ import com.itextpdf.layout.borders.Border;
 import me.chenqiang.pdf.attribute.BackgroundColorAttribute;
 import me.chenqiang.pdf.attribute.BorderAttribute;
 import me.chenqiang.pdf.attribute.FontColorAttribute;
-import me.chenqiang.pdf.composer.PdfElementComposer;
+import me.chenqiang.pdf.component.PdfElementComposer;
 
 public class CompositeAttribute {
 	protected FontColorAttribute fontColor = null;
@@ -69,7 +69,7 @@ public class CompositeAttribute {
 		return this.left;
 	}
 	
-	public <E extends ElementPropertyContainer<E>> void setComposerAttribute(PdfElementComposer<E> composer) {
+	public <E extends ElementPropertyContainer<E>, S extends PdfElementComposer<E, S>> void setComposerAttribute(PdfElementComposer<E, S> composer) {
 		if(this.fontColor != null) {
 			composer.setAttribute(this.fontColor.createAttribute());
 		}

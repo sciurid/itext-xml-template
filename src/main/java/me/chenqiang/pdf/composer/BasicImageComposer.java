@@ -2,7 +2,6 @@ package me.chenqiang.pdf.composer;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,15 +21,19 @@ import me.chenqiang.pdf.component.DocumentComponent;
 import me.chenqiang.pdf.component.ParagraphComponent;
 import me.chenqiang.pdf.component.TableCellComponent;
 
-public abstract class BasicImageComposer<T extends BasicImageComposer<T>>
-		extends BasicElementComposer<Image, BasicImageComposer<T>>
+public abstract class BasicImageComposer<S extends BasicImageComposer<S>>
+		extends BasicElementComposer<Image, S>
 		implements DocumentComponent, ParagraphComponent, TableCellComponent, DivComponent {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BasicImageComposer.class);
 	public static final String IMAGE_ERROR = "Error loading image.";
 	protected ImageData imageData = null;
 	
-	public BasicImageComposer() {
+	protected BasicImageComposer() {
 		super(Image.class);
+	}
+	
+	protected BasicImageComposer(BasicImageComposer<S> origin) {
+		super(origin);
 	}
 
 	public void setImageData(byte[] data) {
@@ -38,13 +41,13 @@ public abstract class BasicImageComposer<T extends BasicImageComposer<T>>
 	}
 
 	@SuppressWarnings("unchecked")
-	public T setImageData(InputStream is) {
+	public S setImageData(InputStream is) {
 		try {
 			this.imageData = ImageDataFactory.create(is.readAllBytes());
 		} catch (IOException e) {
 			LOGGER.error(IMAGE_ERROR, e);
 		}
-		return (T) this;
+		return (S) this;
 	}
 
 	@Override
@@ -87,15 +90,4 @@ public abstract class BasicImageComposer<T extends BasicImageComposer<T>>
 			div.add(image);
 		}
 	}
-
-	@Override
-	public void substitute(Map<String, String> params) {
-		// Do nothing.
-	}
-
-	@Override
-	public void reset() {
-		// Do nothing.
-		
-	}	
 }

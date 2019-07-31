@@ -9,12 +9,19 @@ import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.layout.element.Image;
 
-import me.chenqiang.pdf.configurability.DataParameterPlaceholder;
+import me.chenqiang.pdf.component.DataParameterPlaceholder;
 
-public class ImageComposer extends BasicImageComposer<ImageComposer>
+public final class ImageComposer extends BasicImageComposer<ImageComposer>
 implements DataParameterPlaceholder{
 	private static final Logger LOGGER = LoggerFactory.getLogger(ImageComposer.class);
 	
+	public ImageComposer() {
+		
+	}
+	
+	protected ImageComposer(ImageComposer origin) {
+		super(origin);
+	}
 	@Override
 	public void setParameter(byte [] parameter) {
 		this.setImageData(parameter);
@@ -54,5 +61,10 @@ implements DataParameterPlaceholder{
 		else {
 			return new Image(this.imageData);
 		}
+	}
+
+	@Override
+	public ImageComposer copy() {
+		return new ImageComposer(this);
 	}
 }

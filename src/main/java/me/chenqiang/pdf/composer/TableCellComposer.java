@@ -2,17 +2,15 @@ package me.chenqiang.pdf.composer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import com.itextpdf.layout.element.Cell;
 
+import me.chenqiang.pdf.component.Copyable;
 import me.chenqiang.pdf.component.TableCellComponent;
-import me.chenqiang.pdf.configurability.Substitution;
 
 public class TableCellComposer extends BasicElementComposer<Cell, TableCellComposer>
-implements PdfElementComposer<Cell>{
-
+{
 	protected final List<TableCellComponent> components;
 	protected int colspan = 1;
 	protected int rowspan = 1;
@@ -20,6 +18,21 @@ implements PdfElementComposer<Cell>{
 	public TableCellComposer() {
 		super(Cell.class);
 		this.components = new ArrayList<>();
+	}
+	
+	protected TableCellComposer(TableCellComposer origin) {
+		super(origin);
+		this.components = new ArrayList<>(origin.components.size());
+		for(TableCellComponent comp : origin.components) {
+			if(comp instanceof Copyable) {
+				this.components.add((TableCellComponent)((Copyable<?>)comp).copy());
+			}
+			else {
+				this.components.add(comp);
+			}
+		}
+		this.colspan = origin.colspan;
+		this.rowspan = origin.rowspan;
 	}
 	
 	public TableCellComposer setColspan(int colspan) {
@@ -90,12 +103,7 @@ implements PdfElementComposer<Cell>{
 	}
 
 	@Override
-	public void substitute(Map<String, String> params) {
-		Substitution.substitute(components, params);
-	}
-	
-	@Override
-	public void reset() {
-		Substitution.reset(this.components);
+	public TableCellComposer copy() {
+		return new TableCellComposer(this);
 	}
 }

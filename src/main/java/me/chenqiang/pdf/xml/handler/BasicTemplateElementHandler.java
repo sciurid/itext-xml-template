@@ -14,15 +14,15 @@ import org.slf4j.LoggerFactory;
 
 import com.itextpdf.layout.ElementPropertyContainer;
 
+import me.chenqiang.pdf.component.DataParameterPlaceholder;
+import me.chenqiang.pdf.component.PdfElementComposer;
+import me.chenqiang.pdf.component.StringParameterPlaceholder;
 import me.chenqiang.pdf.composer.ComposerDirectory;
-import me.chenqiang.pdf.composer.PdfElementComposer;
-import me.chenqiang.pdf.configurability.DataParameterPlaceholder;
-import me.chenqiang.pdf.configurability.StringParameterPlaceholder;
 import me.chenqiang.pdf.xml.context.AttributeRegistry;
 import me.chenqiang.pdf.xml.context.AttributeUtils;
 import me.chenqiang.pdf.xml.context.TemplateContext;
 
-public abstract class BasicTemplateElementHandler<T extends PdfElementComposer<E>, E extends ElementPropertyContainer<E>>
+public abstract class BasicTemplateElementHandler<T extends PdfElementComposer<E, T>, E extends ElementPropertyContainer<E>>
 		implements ElementHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BasicTemplateElementHandler.class);
 
@@ -62,6 +62,7 @@ public abstract class BasicTemplateElementHandler<T extends PdfElementComposer<E
 
 		String composerId = current.attributeValue(AttributeRegistry.ID);
 		if (composerId != null) {
+			composer.setId(composerId);
 			this.directory.registerIdentifiable(composerId, composer);
 			if (composer instanceof StringParameterPlaceholder) {
 				this.directory.registerStringPlaceholder(composerId, (StringParameterPlaceholder) composer);

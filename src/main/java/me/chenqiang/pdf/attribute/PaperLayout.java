@@ -2,7 +2,9 @@ package me.chenqiang.pdf.attribute;
 
 import com.itextpdf.kernel.geom.PageSize;
 
-public class PaperLayout {
+import me.chenqiang.pdf.component.Copyable;
+
+public class PaperLayout implements Copyable<PaperLayout>{
 	protected PageSize pageSize;
 	protected float marginLeft;
 	protected float marginRight;
@@ -12,8 +14,12 @@ public class PaperLayout {
 	public PaperLayout() {
 		this(PageSize.A4, 72, 72, 72, 72);
 	}
+	
+	protected PaperLayout(PaperLayout origin) {
+		this(origin.pageSize, origin.marginTop, origin.marginRight, origin.marginBottom, origin.marginLeft);
+	}
 
-	public PaperLayout(PageSize ps, float marginLeft, float marginRight, float marginTop, float marginBottom) {
+	public PaperLayout(PageSize ps, float marginTop, float marginRight, float marginBottom, float marginLeft) {
 		super();
 		this.pageSize = ps == null ? PageSize.A4 : ps;
 		this.marginLeft = marginLeft;
@@ -67,5 +73,10 @@ public class PaperLayout {
 		this.marginRight = margin;
 		this.marginTop = margin;
 		this.marginBottom = margin;
+	}
+
+	@Override
+	public PaperLayout copy() {
+		return new PaperLayout(this);
 	}
 }

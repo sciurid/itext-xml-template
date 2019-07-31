@@ -32,8 +32,14 @@ public final class DocumentEngine {
 			LOGGER.error("Document id '{}' does not exist.", documentId);
 			return;
 		}
-		composer.substitute(subMap);
-		composer.parameterize(textParams, dataParams);
+		
+		composer = Replacement.replace(composer, subMap, textParams, dataParams);
+		
+//		Replacement.substitute(composer, subMap);
+//		Replacement.parameterize(composer, textParams, dataParams);
+		
+//		composer.substitute(subMap);
+//		composer.parameterize(textParams, dataParams);
 		
 		PdfWriter writer = new PdfWriter(os);
 		PdfDocument pdf = new PdfDocument(writer);

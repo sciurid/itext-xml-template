@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.function.Consumer;
 
-import me.chenqiang.pdf.configurability.StringStub;
+import me.chenqiang.pdf.component.PdfElementComposer;
 
 public abstract class BasicElementComposer<T, S extends BasicElementComposer<T, S>>
-implements PdfElementComposer<T>, StringStub {
+implements PdfElementComposer<T, S> {
 	protected String id;
 	protected final LinkedList<Consumer<? super T>> attributes;
 	protected final Class<T> elementClass;
@@ -16,13 +16,25 @@ implements PdfElementComposer<T>, StringStub {
 		this.attributes = new LinkedList<>();
 		this.elementClass = elementClass;
 	}
-
 	
+	protected BasicElementComposer(BasicElementComposer<T, S> origin) {
+		this(origin.elementClass);
+		this.attributes.addAll(origin.attributes);
+		this.id = origin.id;
+	}
+	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	@Override
 	public Class<T> getElementClass() {
 		return this.elementClass;
 	}
-
 
 	@Override
 	public void setAttribute(Consumer<? super T> attribute) {
@@ -35,13 +47,13 @@ implements PdfElementComposer<T>, StringStub {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public S set(Consumer<? super T> attribute) {
+	public S chainSetAttribute(Consumer<? super T> attribute) {
 		this.setAttribute(attribute);
 		return (S)this;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public S setAll(Collection<? extends Consumer<? super T>> attributes) {
+	public S chainSetAllAttributes(Collection<? extends Consumer<? super T>> attributes) {
 		this.setAllAttributes(attributes);
 		return (S)this;
 	}
@@ -57,10 +69,5 @@ implements PdfElementComposer<T>, StringStub {
 		this.attributes.forEach(attribute -> attribute.accept(instance));
 		return instance;
 	}
-	
-	public static <T, S extends BasicElementComposer<T, S>>
-	void deepCopy(BasicElementComposer<T, S> origin, BasicElementComposer<T, S> target) {
-		target.attributes.clear();
-		target.attributes.addAll(origin.attributes);
-	}
+
 }

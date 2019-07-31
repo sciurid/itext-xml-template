@@ -56,10 +56,6 @@ public class ImageHandler extends BasicTemplateElementHandler<ImageComposer, Ima
 			case AttributeRegistry.REF:
 				tplImg.setImageData(this.context.getResourceRepository().getImage(value));
 				break;
-			case AttributeRegistry.ID:
-				this.directory.registerIdentifiable(value, tplImg);
-				this.directory.registerDataPlaceholder(value, tplImg);
-				break;
 			default:
 			}
 		}

@@ -7,24 +7,47 @@ import java.util.function.Consumer;
 
 import com.itextpdf.layout.element.Cell;
 
+import me.chenqiang.pdf.component.Copyable;
 import me.chenqiang.pdf.component.ParagraphComponent;
+import me.chenqiang.pdf.component.PdfElementComposer;
 import me.chenqiang.pdf.component.TableCellComponent;
 
-public class TableRowComposer implements PdfElementComposer<Cell> {
+public class TableRowComposer implements PdfElementComposer<Cell, TableRowComposer> {
+	protected String id;
 	protected final List<TableCellComposer> components;
 
 	public TableRowComposer() {
 		this.components = new ArrayList<>();
 	}
+	protected TableRowComposer(TableRowComposer origin) {
+		this.id = origin.id;
+		this.components = new ArrayList<>(origin.components.size());
+		for(TableCellComposer comp : origin.components) {
+			if(comp instanceof Copyable) {
+				this.components.add(comp.copy());
+			}
+			else {
+				this.components.add(comp);
+			}
+		}
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	@Override
+	public Class<Cell> getElementClass() {
+		return Cell.class;
+	}
 
 	public TableRowComposer add(TableCellComposer tplCell) {
 		this.components.add(tplCell);
 		return this;
-	}
-	
-	@Override
-	public Class<Cell> getElementClass() {
-		return Cell.class;
 	}
 
 	public TableRowComposer add(TableCellComponent tplCellComp) {
@@ -75,5 +98,9 @@ public class TableRowComposer implements PdfElementComposer<Cell> {
 	@Override
 	public <C> Cell produce(C context) {
 		throw new UnsupportedOperationException();
+	}
+	@Override
+	public TableRowComposer copy() {
+		return new TableRowComposer(this);
 	}
 }

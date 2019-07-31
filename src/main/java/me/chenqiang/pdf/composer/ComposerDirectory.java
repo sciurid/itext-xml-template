@@ -12,9 +12,10 @@ import org.slf4j.LoggerFactory;
 
 import com.itextpdf.layout.element.Paragraph;
 
-import me.chenqiang.pdf.configurability.DataParameterPlaceholder;
-import me.chenqiang.pdf.configurability.StringParameterPlaceholder;
+import me.chenqiang.pdf.component.DataParameterPlaceholder;
+import me.chenqiang.pdf.component.StringParameterPlaceholder;
 
+@Deprecated
 public class ComposerDirectory {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ComposerDirectory.class);
 	protected final Map<String, LinkedList<Object>> mapIdentifiable;

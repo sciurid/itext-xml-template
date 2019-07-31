@@ -3,7 +3,6 @@ package me.chenqiang.pdf.composer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +14,13 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 
+import me.chenqiang.pdf.component.Copyable;
 import me.chenqiang.pdf.component.DivComponent;
 import me.chenqiang.pdf.component.DocumentComponent;
 import me.chenqiang.pdf.component.ParagraphComponent;
 import me.chenqiang.pdf.component.TableCellComponent;
-import me.chenqiang.pdf.configurability.StringStub;
 
-public class ParagraphComposer extends BasicElementComposer<Paragraph, ParagraphComposer>
+public final class ParagraphComposer extends BasicElementComposer<Paragraph, ParagraphComposer>
 		implements DocumentComponent, TableCellComponent, DivComponent, Iterable<ParagraphComponent> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ParagraphComposer.class);
 	protected List<ParagraphComponent> components;
@@ -29,6 +28,19 @@ public class ParagraphComposer extends BasicElementComposer<Paragraph, Paragraph
 	public ParagraphComposer() {
 		super(Paragraph.class);
 		this.components = new ArrayList<>();
+	}
+	
+	protected ParagraphComposer(ParagraphComposer origin) {
+		super(origin);
+		this.components = new ArrayList<>(origin.components.size());
+		for(ParagraphComponent comp : origin.components) {
+			if(comp instanceof Copyable) {
+				this.components.add((ParagraphComponent)((Copyable<?>)comp).copy());
+			}
+			else {
+				this.components.add(comp);
+			}
+		}
 	}
 
 	public ParagraphComposer append(ParagraphComponent component) {
@@ -78,24 +90,13 @@ public class ParagraphComposer extends BasicElementComposer<Paragraph, Paragraph
 	}
 
 	@Override
-	public void substitute(Map<String, String> params) {
-		this.components.stream()
-		.filter(StringStub.class::isInstance)
-		.map(StringStub.class::cast)
-		.forEach(stub -> stub.substitute(params));
-	}
-	
-	@Override
-	public void reset() {
-		this.components.stream()
-		.filter(StringStub.class::isInstance)
-		.map(StringStub.class::cast)
-		.forEach(StringStub::reset);
+	public Iterator<ParagraphComponent> iterator() {
+		return this.components.iterator();
 	}
 
 	@Override
-	public Iterator<ParagraphComponent> iterator() {
-		return this.components.iterator();
+	public ParagraphComposer copy() {
+		return new ParagraphComposer(this);
 	}
 
 }

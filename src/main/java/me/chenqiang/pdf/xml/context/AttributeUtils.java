@@ -13,9 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.layout.ElementPropertyContainer;
 
 import me.chenqiang.pdf.attribute.PaperLayout;
-import me.chenqiang.pdf.composer.PdfElementComposer;
+import me.chenqiang.pdf.component.PdfElementComposer;
 
 public final class AttributeUtils {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AttributeUtils.class);
@@ -32,9 +33,9 @@ public final class AttributeUtils {
 //		assignAttributes(xmlAttrs, Attribute::getName, Attribute::getValue, registryMap,  composer::setAttribute,  composer.getClass());
 //	}
 	
-	public static <E> void setComposerAttributes(Iterable<String[]> attrs, 
+	public static <E extends ElementPropertyContainer<E>, S extends PdfElementComposer<E, S>> void setComposerAttributes(Iterable<String[]> attrs, 
 			Map<String, BiFunction<String, String, ? extends Consumer<? super E>> > registryMap, 
-			PdfElementComposer<E> composer) {		
+			PdfElementComposer<E, S> composer) {		
 		AttributeUtils.<E, String[]>assignAttributes(
 				attrs, arr -> arr[0], arr -> arr[1], 
 				registryMap, composer::setAttribute, composer.getClass());

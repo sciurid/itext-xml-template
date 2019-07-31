@@ -3,7 +3,6 @@ package me.chenqiang.pdf.composer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -18,7 +17,6 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.UnitValue;
 
 import me.chenqiang.pdf.component.DocumentComponent;
-import me.chenqiang.pdf.configurability.Substitution;
 
 public class TableComposer extends BasicElementComposer<Table, TableComposer>
 		implements DocumentComponent, Iterable<TableCellComposer> {
@@ -30,6 +28,14 @@ public class TableComposer extends BasicElementComposer<Table, TableComposer>
 	
 	public TableComposer() {
 		super(Table.class);
+	}
+	
+	public TableComposer(TableComposer origin) {
+		super(origin);
+		this.creator = origin.creator;
+		this.header = origin.header.copy();
+		this.body = origin.body.copy();
+		this.footer = origin.footer.copy();
 	}
 
 	public void setColumns(int numColumns) {
@@ -101,20 +107,6 @@ public class TableComposer extends BasicElementComposer<Table, TableComposer>
 	}
 	
 	@Override
-	public void substitute(Map<String, String> params) {
-		Substitution.substitute(this.header.components, params);
-		Substitution.substitute(this.body.components, params);
-		Substitution.substitute(this.footer.components, params);
-	}
-	
-	@Override
-	public void reset() {
-		Substitution.reset(this.header.components);
-		Substitution.reset(this.body.components);
-		Substitution.reset(this.footer.components);
-	}
-
-	@Override
 	public Iterator<TableCellComposer> iterator() {
 		List<TableCellComposer> all = new ArrayList<>(
 				this.header.components.size() + this.body.components.size() + this.footer.components.size());
@@ -122,5 +114,10 @@ public class TableComposer extends BasicElementComposer<Table, TableComposer>
 		all.addAll(this.body.components);
 		all.addAll(this.footer.components);
 		return all.iterator();
+	}
+
+	@Override
+	public TableComposer copy() {
+		return new TableComposer(this);
 	}
 }
