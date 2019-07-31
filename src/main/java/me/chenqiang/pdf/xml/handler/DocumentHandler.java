@@ -1,7 +1,6 @@
 package me.chenqiang.pdf.xml.handler;
 
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -22,11 +21,11 @@ import me.chenqiang.pdf.xml.handler.resource.PredefinedStyleHandler;
 public final class DocumentHandler extends BasicTemplateElementHandler<DocumentComposer, Document> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DocumentHandler.class);
 	protected DocumentComposer tplDoc;
-	protected BiConsumer<String, DocumentComposer> postprocessor;
+	protected Consumer<DocumentComposer> postprocessor;
 
-	public DocumentHandler(TemplateContext context, BiConsumer<String, DocumentComposer> postprocessor) {
+	public DocumentHandler(TemplateContext context, Consumer<DocumentComposer> consumer) {
 		super(context, null);
-		this.postprocessor = postprocessor;
+		this.postprocessor = consumer;
 	}
 
 	@Override
@@ -60,7 +59,8 @@ public final class DocumentHandler extends BasicTemplateElementHandler<DocumentC
 		if (docId == null) {
 			LOGGER.warn("Attribute 'id' is not set for document. @{}", this.count);
 		}
-		this.postprocessor.accept(docId, this.tplDoc);
+		this.tplDoc.setId(docId);
+		this.postprocessor.accept(this.tplDoc);
 		
 		LOGGER.debug("[END] {} - {}", elementPath.getPath(), this.count++);
 		
@@ -76,6 +76,4 @@ public final class DocumentHandler extends BasicTemplateElementHandler<DocumentC
 	public void register(ElementPath path) {
 		path.addHandler("document", this);
 	}	
-	
-	
 }

@@ -3,6 +3,7 @@ package me.chenqiang.pdf.xml;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -48,6 +49,10 @@ public class XmlTemplateLoader {
 	}
 
 	public List<DocumentComposer> getDocumentComposers() {
-		return this.composers;
+		return Collections.unmodifiableList(this.composers);
+	}
+	
+	public Map<String, DocumentComposer> getDocumentComposerMap() {
+		return Collections.unmodifiableMap(this.composerMap);
 	}
 }

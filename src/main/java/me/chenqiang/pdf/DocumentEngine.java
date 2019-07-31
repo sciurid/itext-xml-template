@@ -1,9 +1,12 @@
 package me.chenqiang.pdf;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.Function;
 
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentFactory;
@@ -20,29 +23,72 @@ import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.xml.XmlTemplateLoader;
 
 public final class DocumentEngine {
-	private DocumentEngine() {}
 	private static final Logger LOGGER = LoggerFactory.getLogger(DocumentEngine.class);
-	public static void produce(InputStream xml, String documentId, Map<String, String> subMap,
-			Map<String, String> textParams, Map<String, byte []> dataParams,
-			OutputStream os) throws DocumentException, IOException {
+	
+	protected Map<String, DocumentComposer> documentTemplates;
+	protected Function<PdfWriter, PdfDocument> documentCreator;
+	
+	public DocumentEngine() {
+		this(PdfDocument::new);
+	}
+	
+	public DocumentEngine(Function<PdfWriter, PdfDocument> documentCreator) {
+		this.documentTemplates = new TreeMap<>();
+		this.documentCreator = documentCreator;
+	}
+	
+	public void load(InputStream xml) throws DocumentException {
 		XmlTemplateLoader loader = new XmlTemplateLoader();
 		loader.load(xml);
-		DocumentComposer composer = loader.getDocumentComposer(documentId);
+		loader.getDocumentComposerMap().forEach((k, v) -> {
+			if(this.documentTemplates.containsKey(k)) {
+				LOGGER.warn("Document id conflict: {}", k);
+			}
+			else {
+				this.documentTemplates.put(k, v);
+			}
+		});
+	}
+	
+	public DocumentComposer getDocument(String docId) {
+		DocumentComposer composer = this.documentTemplates.get(docId);
+		if(composer != null) {
+			throw new IllegalArgumentException(String.format("Document with id '%s' does not exist.", docId));
+		}
+		return composer;
+	}
+	
+	public byte [] produce(String docId, Map<String, String> subMap,
+			Map<String, String> textParams, Map<String, byte []> dataParams) throws IOException {
+		if(docId == null) {
+			LOGGER.error("Document id '{}' does not exist.", docId);		
+			return null;
+		}
+		DocumentComposer composer = this.documentTemplates.get(docId);
 		if(composer == null) {
-			LOGGER.error("Document id '{}' does not exist.", documentId);
-			return;
+			LOGGER.error("Document width id '{}' does not exist.", docId);
+			return null;
 		}
 		
-		composer = Replacement.replace(composer, subMap, textParams, dataParams);
-				
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		produce(composer, subMap, textParams, dataParams, bos);
+		bos.close();
+		return bos.toByteArray();
+	}
+	
+	public static void produce(DocumentComposer composer, Map<String, String> subMap,
+			Map<String, String> textParams, Map<String, byte []> dataParams,
+			OutputStream os) throws IOException {
+		DocumentComposer sub = Replacement.replace(composer, subMap, textParams, dataParams);
+		
 		PdfWriter writer = new PdfWriter(os);
 		PdfDocument pdf = new PdfDocument(writer);
 		pdf.setTagged();
-		composer.compose(pdf, writer, true);
+		sub.compose(pdf, writer, true);
 		writer.close();
 	}
-	
-	protected PdfADocument getPdfADocument(PdfWriter writer) {
+
+	public static PdfADocument getPdfADocument(PdfWriter writer) {
 		InputStream icm = DocumentFactory.class.getResourceAsStream("/sRGB_CS_profile.icm");
 		return new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3A, 
 				new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icm));

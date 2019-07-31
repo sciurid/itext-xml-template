@@ -41,11 +41,10 @@ public class RootHandler implements ElementHandler{
 		
 	}
 
-
-	protected void doTemplatePostProcess(String docId, DocumentComposer tplDoc) {
+	protected void doTemplatePostProcess(DocumentComposer tplDoc) {
 		this.composers.add(tplDoc);
-		if (docId != null) {
-			this.composerMap.put(docId, tplDoc);
+		if (tplDoc.getId() != null) {
+			this.composerMap.put(tplDoc.getId(), tplDoc);
 		}
 	}
 }

@@ -10,7 +10,6 @@
 		<default-paragraph-style multiplied-leading="1.5" margin="0" first-line-indent="21" />
 		<div><p style="warning">内部资料\r\n注意保存
 		
-		
 		</p></div>
 		<para font-family="黑体" font-size="20" text-align="center" padding-bottom="2cm">标题格式</para>
 		<p first-line-indent="0" font-family="黑体">【顶格黑体】题目：</p>
