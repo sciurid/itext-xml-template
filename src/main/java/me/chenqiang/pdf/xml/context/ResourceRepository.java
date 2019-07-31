@@ -17,7 +17,7 @@ public class ResourceRepository {
 	protected Map<String, PdfFont> fonts;
 	protected Map<String, Style> styles;
 	protected Map<String, ImageData> images;
-		
+
 	public ResourceRepository() {
 		this.fonts = new TreeMap<>();
 		this.loadIntegratedPdfFonts();
