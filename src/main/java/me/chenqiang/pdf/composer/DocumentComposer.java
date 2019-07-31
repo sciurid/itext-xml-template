@@ -26,14 +26,12 @@ implements StringStub, Iterable<DocumentComponent> {
 
 	protected List<DocumentComponent> components;
 	protected WatermarkMaker watermarkMaker;
-	protected ComposerDirectory directory;
 	protected PaperLayout paperLayout;
 
 	public DocumentComposer() {
 		super(Document.class);
 		this.components = new ArrayList<>();
 		this.watermarkMaker = new WatermarkMaker();
-		this.directory = new ComposerDirectory();
 		this.paperLayout = new PaperLayout();
 	}
 	
@@ -50,10 +48,6 @@ implements StringStub, Iterable<DocumentComponent> {
 		}
 		this.paperLayout = origin.paperLayout == null ? null : origin.paperLayout.copy();
 		this.watermarkMaker = origin.watermarkMaker == null ? null : origin.watermarkMaker.copy();
-	}
-
-	public ComposerDirectory getDirectory() {
-		return directory;
 	}
 
 	public WatermarkMaker getWatermarkMaker() {

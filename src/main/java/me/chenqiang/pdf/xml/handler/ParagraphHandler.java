@@ -14,7 +14,6 @@ import org.dom4j.Node;
 
 import com.itextpdf.layout.element.Paragraph;
 
-import me.chenqiang.pdf.composer.ComposerDirectory;
 import me.chenqiang.pdf.composer.DivComposer;
 import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.composer.ParagraphComposer;
@@ -27,16 +26,16 @@ import me.chenqiang.pdf.xml.context.TemplateContext;
 public class ParagraphHandler extends BasicTemplateElementHandler<ParagraphComposer, Paragraph> {
 	private ParagraphComposer tplPara;
 
-	public ParagraphHandler(TemplateContext context, ComposerDirectory directory, DocumentComposer tplDoc) {
-		super(context, directory, tplDoc::append);
+	public ParagraphHandler(TemplateContext context, DocumentComposer tplDoc) {
+		super(context, tplDoc::append);
 	}
 
-	public ParagraphHandler(TemplateContext context, ComposerDirectory directory, TableCellComposer tplCell) {
-		super(context, directory, tplCell::append);
+	public ParagraphHandler(TemplateContext context, TableCellComposer tplCell) {
+		super(context, tplCell::append);
 	}
 	
-	public ParagraphHandler(TemplateContext context, ComposerDirectory directory, DivComposer tplDiv) {
-		super(context, directory, tplDiv::append);
+	public ParagraphHandler(TemplateContext context, DivComposer tplDiv) {
+		super(context, tplDiv::append);
 	}
 
 	@Override
@@ -71,10 +70,10 @@ public class ParagraphHandler extends BasicTemplateElementHandler<ParagraphCompo
 		super.onStart(elementPath);
 		this.tplPara = new ParagraphComposer();
 		
-		new TextHandler(this.context, this.directory, this.tplPara).register(elementPath);
-		new ImageHandler(this.context, this.directory, this.tplPara).register(elementPath);
-		new BarcodeHandler(this.context, this.directory, this.tplPara).register(elementPath);
-		new DivHandler(this.context, this.directory, this.tplPara).register(elementPath);
+		new TextHandler(this.context, this.tplPara).register(elementPath);
+		new ImageHandler(this.context, this.tplPara).register(elementPath);
+		new BarcodeHandler(this.context, this.tplPara).register(elementPath);
+		new DivHandler(this.context, this.tplPara).register(elementPath);
 		new LineReturnHandler(this.tplPara).register(elementPath);
 	}
 	

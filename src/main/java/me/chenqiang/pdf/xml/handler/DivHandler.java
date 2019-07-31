@@ -14,7 +14,6 @@ import org.dom4j.Node;
 
 import com.itextpdf.layout.element.Div;
 
-import me.chenqiang.pdf.composer.ComposerDirectory;
 import me.chenqiang.pdf.composer.DivComposer;
 import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.composer.ParagraphComposer;
@@ -26,16 +25,16 @@ import me.chenqiang.pdf.xml.context.TemplateContext;
 public class DivHandler extends BasicTemplateElementHandler<DivComposer, Div> {
 	private DivComposer tplDiv;
 
-	public DivHandler(TemplateContext context, ComposerDirectory directory, DocumentComposer tplDoc) {
-		super(context, directory, tplDoc::append);
+	public DivHandler(TemplateContext context, DocumentComposer tplDoc) {
+		super(context, tplDoc::append);
 	}
 
-	public DivHandler(TemplateContext context, ComposerDirectory directory, TableCellComposer tplCell) {
-		super(context, directory, tplCell::append);
+	public DivHandler(TemplateContext context,  TableCellComposer tplCell) {
+		super(context, tplCell::append);
 	}
 	
-	public DivHandler(TemplateContext context, ComposerDirectory directory, ParagraphComposer tplPara) {
-		super(context, directory, tplPara::append);
+	public DivHandler(TemplateContext context, ParagraphComposer tplPara) {
+		super(context, tplPara::append);
 	}
 
 	@Override
@@ -69,10 +68,10 @@ public class DivHandler extends BasicTemplateElementHandler<DivComposer, Div> {
 		super.onStart(elementPath);
 		this.tplDiv = new DivComposer();
 		
-		new TextHandler(this.context, this.directory, this.tplDiv).register(elementPath);
-		new ImageHandler(this.context, this.directory, this.tplDiv).register(elementPath);
-		new BarcodeHandler(this.context, this.directory, this.tplDiv).register(elementPath);
-		new ParagraphHandler(this.context, this.directory, this.tplDiv).register(elementPath);
+		new TextHandler(this.context, this.tplDiv).register(elementPath);
+		new ImageHandler(this.context, this.tplDiv).register(elementPath);
+		new BarcodeHandler(this.context, this.tplDiv).register(elementPath);
+		new ParagraphHandler(this.context, this.tplDiv).register(elementPath);
 	}
 
 	@Override
