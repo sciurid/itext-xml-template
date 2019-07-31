@@ -12,7 +12,6 @@ import org.dom4j.Node;
 
 import com.itextpdf.layout.element.Text;
 
-import me.chenqiang.pdf.composer.ComposerDirectory;
 import me.chenqiang.pdf.composer.DivComposer;
 import me.chenqiang.pdf.composer.ParagraphComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
@@ -23,16 +22,16 @@ public class TextHandler extends BasicTemplateElementHandler<TextComposer, Text>
 
 	private TextComposer tplText;
 
-	public TextHandler(TemplateContext context, ComposerDirectory directory, ParagraphComposer tplPara) {
-		super(context, directory, tplPara::append);
+	public TextHandler(TemplateContext context, ParagraphComposer tplPara) {
+		super(context, tplPara::append);
 	}
 
-	public TextHandler(TemplateContext context, ComposerDirectory directory, TableCellComposer tplCell) {
-		super(context, directory, tplCell::append);
+	public TextHandler(TemplateContext context, TableCellComposer tplCell) {
+		super(context, tplCell::append);
 	}
 	
-	public TextHandler(TemplateContext context, ComposerDirectory directory, DivComposer tplDiv) {
-		super(context, directory, tplDiv::append);
+	public TextHandler(TemplateContext context, DivComposer tplDiv) {
+		super(context, tplDiv::append);
 	}
 
 	@Override

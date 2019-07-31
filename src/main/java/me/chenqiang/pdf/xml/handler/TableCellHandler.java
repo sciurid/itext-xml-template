@@ -15,7 +15,6 @@ import org.dom4j.Node;
 
 import com.itextpdf.layout.element.Cell;
 
-import me.chenqiang.pdf.composer.ComposerDirectory;
 import me.chenqiang.pdf.composer.StringComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
 import me.chenqiang.pdf.composer.TableRowComposer;
@@ -27,8 +26,8 @@ import me.chenqiang.pdf.xml.context.TemplateContext;
 public class TableCellHandler extends BasicTemplateElementHandler<TableCellComposer, Cell> {
 	private TableCellComposer tplCell;
 
-	public TableCellHandler(TemplateContext context, ComposerDirectory directory, TableRowComposer row) {
-		super(context, directory, row::add);
+	public TableCellHandler(TemplateContext context, TableRowComposer row) {
+		super(context, row::add);
 	}
 
 	@Override
@@ -82,11 +81,11 @@ public class TableCellHandler extends BasicTemplateElementHandler<TableCellCompo
 				}
 			}
 		}
-		new TextHandler(this.context, this.directory, this.tplCell).register(elementPath);
-		new ParagraphHandler(this.context, this.directory, this.tplCell).register(elementPath);
-		new ImageHandler(this.context, this.directory, this.tplCell).register(elementPath);
-		new BarcodeHandler(this.context, this.directory, this.tplCell).register(elementPath);
-		new DivHandler(this.context, this.directory, this.tplCell).register(elementPath);
+		new TextHandler(this.context, this.tplCell).register(elementPath);
+		new ParagraphHandler(this.context, this.tplCell).register(elementPath);
+		new ImageHandler(this.context, this.tplCell).register(elementPath);
+		new BarcodeHandler(this.context, this.tplCell).register(elementPath);
+		new DivHandler(this.context, this.tplCell).register(elementPath);
 	}
 
 	@Override

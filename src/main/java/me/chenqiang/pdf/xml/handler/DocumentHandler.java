@@ -25,7 +25,7 @@ public final class DocumentHandler extends BasicTemplateElementHandler<DocumentC
 	protected BiConsumer<String, DocumentComposer> postprocessor;
 
 	public DocumentHandler(TemplateContext context, BiConsumer<String, DocumentComposer> postprocessor) {
-		super(context, null, null);
+		super(context, null);
 		this.postprocessor = postprocessor;
 	}
 
@@ -34,17 +34,15 @@ public final class DocumentHandler extends BasicTemplateElementHandler<DocumentC
 		super.onStart(elementPath);
 		this.tplDoc = new DocumentComposer();
 		
-		this.directory = this.tplDoc.getDirectory();
-		
 		new DefaultParagraphHandler(this.context).register(elementPath);
 		new PredefinedStyleHandler(this.context).register(elementPath);
 		
-		new ParagraphHandler(this.context, this.directory, this.tplDoc).register(elementPath);
-		new TableHandler(this.context, this.directory, this.tplDoc).register(elementPath);
-		new ImageHandler(this.context, this.directory, this.tplDoc).register(elementPath);
-		new BarcodeHandler(this.context, this.directory, this.tplDoc).register(elementPath);
-		new DivHandler(this.context, this.directory, this.tplDoc).register(elementPath);
-		new NewPageHandler(this.context, this.directory, this.tplDoc).register(elementPath);
+		new ParagraphHandler(this.context, this.tplDoc).register(elementPath);
+		new TableHandler(this.context, this.tplDoc).register(elementPath);
+		new ImageHandler(this.context, this.tplDoc).register(elementPath);
+		new BarcodeHandler(this.context, this.tplDoc).register(elementPath);
+		new DivHandler(this.context, this.tplDoc).register(elementPath);
+		new NewPageHandler(this.context, this.tplDoc).register(elementPath);
 		new WatermarkHandler(this.context, this.tplDoc).register(elementPath);
 	}
 

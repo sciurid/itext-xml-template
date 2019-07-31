@@ -12,7 +12,6 @@ import org.dom4j.ElementPath;
 
 import com.itextpdf.layout.element.Image;
 
-import me.chenqiang.pdf.composer.ComposerDirectory;
 import me.chenqiang.pdf.composer.DivComposer;
 import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.composer.ImageComposer;
@@ -23,20 +22,20 @@ import me.chenqiang.pdf.xml.context.TemplateContext;
 
 public class ImageHandler extends BasicTemplateElementHandler<ImageComposer, Image> {
 
-	public ImageHandler(TemplateContext context, ComposerDirectory directory, DocumentComposer doc) {
-		super(context, directory, doc::append);
+	public ImageHandler(TemplateContext context, DocumentComposer doc) {
+		super(context, doc::append);
 	}
 
-	public ImageHandler(TemplateContext context, ComposerDirectory directory, ParagraphComposer para) {
-		super(context, directory, para::append);
+	public ImageHandler(TemplateContext context, ParagraphComposer para) {
+		super(context, para::append);
 	}
 
-	public ImageHandler(TemplateContext context, ComposerDirectory directory, TableCellComposer cell) {
-		super(context, directory, cell::append);
+	public ImageHandler(TemplateContext context, TableCellComposer cell) {
+		super(context, cell::append);
 	}
 	
-	public ImageHandler(TemplateContext context, ComposerDirectory directory, DivComposer tplDiv) {
-		super(context, directory, tplDiv::append);
+	public ImageHandler(TemplateContext context, DivComposer tplDiv) {
+		super(context, tplDiv::append);
 	}
 
 	@Override

@@ -63,7 +63,7 @@
 		<barcode format="qrcode" horizontal-alignment="center" width="80%">https://www.tsinghua.edu.cn</barcode>
 		<barcode format="pdf417" horizontal-alignment="center" width="80%">f516d2dc2c7aa8e28b1266191bb9d842805dd6869be35effb6d13fcb33288937</barcode>
 		<newpage/>
-		<table columns="3">
+		<table columns="3" horizontal-alignment="right">
 			<header><cell>类型</cell><cell>文本</cell><cell>图片</cell></header>
 			<body>
 				<cell>文本替换</cell><cell id="bug">【->文本替换结果：${文本替换}】</cell><cell><barcode width="2cm">${文本替换}</barcode></cell>

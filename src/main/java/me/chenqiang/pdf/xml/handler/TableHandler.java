@@ -13,7 +13,6 @@ import org.dom4j.ElementPath;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.UnitValue;
 
-import me.chenqiang.pdf.composer.ComposerDirectory;
 import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.composer.TableComposer;
 import me.chenqiang.pdf.xml.context.AttributeRegistry;
@@ -22,8 +21,8 @@ import me.chenqiang.pdf.xml.context.TemplateContext;
 
 public class TableHandler extends BasicTemplateElementHandler<TableComposer, Table> {
 	private TableComposer tplTbl;
-	public TableHandler(TemplateContext context, ComposerDirectory directory, DocumentComposer tplDoc) {
-		super(context, directory, tplDoc::append);
+	public TableHandler(TemplateContext context, DocumentComposer tplDoc) {
+		super(context, tplDoc::append);
 	}
 	
 	@Override
@@ -49,9 +48,9 @@ public class TableHandler extends BasicTemplateElementHandler<TableComposer, Tab
 			} 
 		}
 		
-		elementPath.addHandler("header", new TableRowHander(this.context, this.directory, this.tplTbl.getHeader()));
-		elementPath.addHandler("body", new TableRowHander(this.context, this.directory, this.tplTbl.getBody()));
-		elementPath.addHandler("footer", new TableRowHander(this.context, this.directory, this.tplTbl.getFooter()));		
+		elementPath.addHandler("header", new TableRowHander(this.context, this.tplTbl.getHeader()));
+		elementPath.addHandler("body", new TableRowHander(this.context, this.tplTbl.getBody()));
+		elementPath.addHandler("footer", new TableRowHander(this.context, this.tplTbl.getFooter()));		
 	}
 
 	@Override

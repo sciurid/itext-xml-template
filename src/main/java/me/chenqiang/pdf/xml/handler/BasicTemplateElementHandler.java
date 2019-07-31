@@ -14,10 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.itextpdf.layout.ElementPropertyContainer;
 
-import me.chenqiang.pdf.component.DataParameterPlaceholder;
 import me.chenqiang.pdf.component.PdfElementComposer;
-import me.chenqiang.pdf.component.StringParameterPlaceholder;
-import me.chenqiang.pdf.composer.ComposerDirectory;
 import me.chenqiang.pdf.xml.context.AttributeRegistry;
 import me.chenqiang.pdf.xml.context.AttributeUtils;
 import me.chenqiang.pdf.xml.context.TemplateContext;
@@ -27,14 +24,11 @@ public abstract class BasicTemplateElementHandler<T extends PdfElementComposer<E
 	private static final Logger LOGGER = LoggerFactory.getLogger(BasicTemplateElementHandler.class);
 
 	protected TemplateContext context;
-	protected ComposerDirectory directory;
 	protected int count;
 	protected Consumer<? super T> consumer;
 
-	protected BasicTemplateElementHandler(TemplateContext context, ComposerDirectory directory,
-			Consumer<? super T> consumer) {
+	protected BasicTemplateElementHandler(TemplateContext context, Consumer<? super T> consumer) {
 		this.context = context;
-		this.directory = directory;
 		this.consumer = consumer;
 		this.count = 0;
 	}
@@ -63,13 +57,6 @@ public abstract class BasicTemplateElementHandler<T extends PdfElementComposer<E
 		String composerId = current.attributeValue(AttributeRegistry.ID);
 		if (composerId != null) {
 			composer.setId(composerId);
-			this.directory.registerIdentifiable(composerId, composer);
-			if (composer instanceof StringParameterPlaceholder) {
-				this.directory.registerStringPlaceholder(composerId, (StringParameterPlaceholder) composer);
-			}
-			if (composer instanceof DataParameterPlaceholder) {
-				this.directory.registerDataPlaceholder(composerId, (DataParameterPlaceholder) composer);
-			}
 		}
 
 		String styleId = current.attributeValue(AttributeRegistry.STYLE);

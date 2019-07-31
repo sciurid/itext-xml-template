@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import com.itextpdf.layout.element.Image;
 
 import me.chenqiang.pdf.composer.BarcodeComposer;
-import me.chenqiang.pdf.composer.ComposerDirectory;
 import me.chenqiang.pdf.composer.DivComposer;
 import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.composer.ParagraphComposer;
@@ -24,17 +23,17 @@ import me.chenqiang.pdf.xml.context.TemplateContext;
 
 public class BarcodeHandler extends BasicTemplateElementHandler<BarcodeComposer, Image>{
 	private static final Logger LOGGER = LoggerFactory.getLogger(BarcodeHandler.class);
-	public BarcodeHandler(TemplateContext context, ComposerDirectory directory, DocumentComposer doc) {
-		super(context, directory, doc::append);
+	public BarcodeHandler(TemplateContext context, DocumentComposer doc) {
+		super(context, doc::append);
 	}
-	public BarcodeHandler(TemplateContext context, ComposerDirectory directory, ParagraphComposer para) {
-		super(context, directory, para::append);
+	public BarcodeHandler(TemplateContext context, ParagraphComposer para) {
+		super(context, para::append);
 	}
-	public BarcodeHandler(TemplateContext context, ComposerDirectory directory, TableCellComposer cell) {
-		super(context, directory, cell::append);
+	public BarcodeHandler(TemplateContext context, TableCellComposer cell) {
+		super(context, cell::append);
 	}
-	public BarcodeHandler(TemplateContext context, ComposerDirectory directory, DivComposer tplDiv) {
-		super(context, directory, tplDiv::append);
+	public BarcodeHandler(TemplateContext context, DivComposer tplDiv) {
+		super(context, tplDiv::append);
 	}
 
 	@Override
@@ -43,12 +42,7 @@ public class BarcodeHandler extends BasicTemplateElementHandler<BarcodeComposer,
 		String format = current.attributeValue(AttributeRegistry.FORMAT);
 		if(format == null) {
 			LOGGER.warn("No barcode format is specified: QRCode is assumed.");
-		}
-//		if(current.getText().isEmpty()) {
-//			LOGGER.error("No barcode message is specified: ignored.");
-//			return null;
-//		}
-		
+		}		
 		return new BarcodeComposer().setFormat(format).setText(current.getText());
 	}
 	
