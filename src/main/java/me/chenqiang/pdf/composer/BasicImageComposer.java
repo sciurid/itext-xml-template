@@ -34,6 +34,7 @@ public abstract class BasicImageComposer<S extends BasicImageComposer<S>>
 	
 	protected BasicImageComposer(BasicImageComposer<S> origin) {
 		super(origin);
+		this.imageData = origin.imageData;
 	}
 
 	public void setImageData(byte[] data) {

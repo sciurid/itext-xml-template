@@ -1,6 +1,7 @@
 package me.chenqiang.pdf.composer;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -10,6 +11,7 @@ import me.chenqiang.pdf.component.Copyable;
 import me.chenqiang.pdf.component.TableCellComponent;
 
 public class TableCellComposer extends BasicElementComposer<Cell, TableCellComposer>
+implements Iterable<TableCellComponent>
 {
 	protected final List<TableCellComponent> components;
 	protected int colspan = 1;
@@ -105,5 +107,10 @@ public class TableCellComposer extends BasicElementComposer<Cell, TableCellCompo
 	@Override
 	public TableCellComposer copy() {
 		return new TableCellComposer(this);
+	}
+
+	@Override
+	public Iterator<TableCellComponent> iterator() {
+		return this.components.iterator();
 	}
 }
