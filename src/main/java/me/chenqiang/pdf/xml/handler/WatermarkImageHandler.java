@@ -52,7 +52,8 @@ public class WatermarkImageHandler implements ElementHandler {
 							.create(WatermarkImageHandler.class.getResourceAsStream(parser.getString()).readAllBytes());
 					break;
 				case AttributeRegistry.REF:
-					imageData = this.context.getResourceRepository().getImage(parser.getString());
+					imageData = ImageDataFactory.create(
+							this.context.getResourceRepository().getImage(parser.getString()));
 					break;
 				case AttributeRegistry.OFFSET_X:
 					parser.setLength(setting::setOffsetX);

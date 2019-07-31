@@ -8,7 +8,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public interface SerializableCloning {
-	public static byte [] writeObject(Serializable obj) {
+	public static byte [] toBytes(Serializable obj) {
 		try(ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
 			try(ObjectOutputStream oos = new ObjectOutputStream(bos)) {
 				oos.writeObject(obj);
@@ -20,7 +20,7 @@ public interface SerializableCloning {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T> T readObject(byte [] data) {
+	public static <T> T fromBytes(byte [] data) {
 		try(ByteArrayInputStream bis = new ByteArrayInputStream(data)) {
 			try(ObjectInputStream ois = new ObjectInputStream(bis)) {
 				return (T)ois.readObject();

@@ -1,5 +1,6 @@
 package me.chenqiang.pdf.xml.handler.resource;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -8,8 +9,6 @@ import org.dom4j.ElementHandler;
 import org.dom4j.ElementPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.itextpdf.io.image.ImageDataFactory;
 
 import me.chenqiang.pdf.xml.context.ResourceRepository;
 
@@ -39,8 +38,8 @@ public class ImageResourceHandler implements ElementHandler {
 		
 		String file = current.attributeValue("file");
 		if(file != null) {
-			try {
-				this.repo.registerImage(id, ImageDataFactory.create(file));
+			try (FileInputStream fos = new FileInputStream(file)){
+				this.repo.registerImage(id, fos.readAllBytes());
 			}
 			catch(IOException ioe) {
 				LOGGER.error("Image resource (file) error: {} - {} with file {}", elementPath.getPath(), this.count, file);
@@ -54,7 +53,7 @@ public class ImageResourceHandler implements ElementHandler {
 			try {
 				InputStream is = ImageResourceHandler.class.getResourceAsStream(resource);
 				if (is != null) {
-					this.repo.registerImage(id, ImageDataFactory.create(is.readAllBytes()));
+					this.repo.registerImage(id, is.readAllBytes());
 				} else {
 					LOGGER.error("Image resource (resource) not found: {} - {}", elementPath.getPath(), this.count);
 					return;

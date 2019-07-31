@@ -76,6 +76,19 @@ public final class DocumentEngine {
 		return bos.toByteArray();
 	}
 	
+	public void produce(String docId, Map<String, String> subMap,
+			Map<String, String> textParams, Map<String, byte []> dataParams, OutputStream os) throws IOException {
+		if(docId == null) {
+			LOGGER.error("Document id '{}' does not exist.", docId);	
+		}
+		DocumentComposer composer = this.documentTemplates.get(docId);
+		if(composer == null) {
+			LOGGER.error("Document width id '{}' does not exist.", docId);
+		}
+		
+		produce(composer, subMap, textParams, dataParams, os);
+	}
+	
 	public static void produce(DocumentComposer composer, Map<String, String> subMap,
 			Map<String, String> textParams, Map<String, byte []> dataParams,
 			OutputStream os) throws IOException {

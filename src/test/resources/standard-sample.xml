@@ -8,6 +8,7 @@
 
 	<document id="test" font-family="宋体" font-size="10.5" text-align="justified">
 		<default-paragraph-style multiplied-leading="1.5" margin="0" first-line-indent="21" />
+		<p>${时间}</p>
 		<div><p style="warning">内部资料\r\n注意保存
 		
 		</p></div>

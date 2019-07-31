@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.dom4j.DocumentException;
 import org.junit.Test;
@@ -38,16 +40,18 @@ public class XmlTemplateTest {
 		}
 	}
 	
-//	@Test
+	@Test
 	public void doStandardSampleTestSub() throws DocumentException, IOException {
-		InputStream stream = XmlTemplateTest.class.getResourceAsStream("/standard-sample.xml");
 		File file = File.createTempFile("Sample", ".pdf");
+		byte [] sampleImage = XmlTemplateTest.class.getResourceAsStream("/books.png").readAllBytes();		
 		
 		DocumentEngine engine = new DocumentEngine();
+		InputStream stream = XmlTemplateTest.class.getResourceAsStream("/standard-sample.xml");
 		engine.load(stream);
 		
-		byte [] sampleImage = XmlTemplateTest.class.getResourceAsStream("/books.png").readAllBytes();		
-		byte [] pdfData = engine.produce("test", Map.of("文本替换", "https://www.tsinghua.edu.cn"), Map.of("元素替换", "https://www.tsinghua.edu.cn"), 
+		byte [] pdfData = engine.produce("test", 
+				Map.of("文本替换", "https://www.tsinghua.edu.cn"), 
+				Map.of("元素替换", "https://www.tsinghua.edu.cn"), 
 					Map.of("数据替换", sampleImage));
 		
 		try (FileOutputStream fos = new FileOutputStream(file)) {			
@@ -61,7 +65,7 @@ public class XmlTemplateTest {
 	}
 	
 	@Test
-	public void parallelTest() throws DocumentException, IOException {
+	public void parallelTest() throws DocumentException, IOException, InterruptedException {
 		InputStream stream = XmlTemplateTest.class.getResourceAsStream("/standard-sample.xml");
 		
 		DocumentEngine engine = new DocumentEngine();
@@ -69,35 +73,42 @@ public class XmlTemplateTest {
 		
 		byte [] sampleImage = XmlTemplateTest.class.getResourceAsStream("/books.png").readAllBytes();	
 		
-		List<Thread> list = new ArrayList<>();
-		for(int i = 0; i < 10; i++) {
+		
+		Set<Thread> threads = new LinkedHashSet<>();
+		List<File> files = new ArrayList<>();
+		for(int i = 0; i < 3; i++) {
+			Thread.sleep(2000);
 			Thread thread = new Thread(() ->  {
 				try {
-					File file = File.createTempFile("Sample", ".pdf");
-					byte [] pdfData = engine.produce("test", 
+					File file = File.createTempFile("Sample", ".pdf");					
+					try (FileOutputStream fos = new FileOutputStream(file)) {
+						engine.produce("test", 
 							Map.of("文本替换", "https://www.tsinghua.edu.cn", 
 									"时间", LocalDateTime.now().toString()), 
 							Map.of("元素替换", "https://www.tsinghua.edu.cn"), 
-								Map.of("数据替换", sampleImage));
-					
-					try (FileOutputStream fos = new FileOutputStream(file)) {			
-						fos.write(pdfData);
-					} 
-					if(Desktop.isDesktopSupported()) {
-						Desktop.getDesktop().open(file);
+								Map.of("数据替换", sampleImage), fos);
 					}
+					files.add(file);
 				}
 				catch (IOException e) {
 					LOGGER.error("Template failed.", e);
 				}
 			});
 			thread.start();
-			list.add(thread);
+			threads.add(thread);
 		}
-		list.forEach(thread -> {
-			try {
-				thread.join();
-			} catch (InterruptedException e) {
+		synchronized(threads) {
+			for(Thread t : threads) {
+				t.join();
+			}
+		}
+		files.forEach(file -> {
+			if(Desktop.isDesktopSupported()) {
+				try {
+					Desktop.getDesktop().open(file);
+				} catch (IOException e) {
+					LOGGER.error("File open failed.", e);
+				}
 			}
 		});
 		

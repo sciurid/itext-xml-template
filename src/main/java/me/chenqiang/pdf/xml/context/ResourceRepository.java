@@ -6,17 +6,17 @@ import java.util.ServiceLoader;
 import java.util.TreeMap;
 
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.layout.Style;
 
 import me.chenqiang.pdf.spi.IntegratedPdfFontService;
+import me.chenqiang.pdf.utils.SerializableCloning;
 
 public class ResourceRepository {
-	protected Map<String, PdfFont> fonts;
+	protected Map<String, byte []> fonts;
 	protected Map<String, Style> styles;
-	protected Map<String, ImageData> images;
+	protected Map<String, byte []> images;
 
 	public ResourceRepository() {
 		this.fonts = new TreeMap<>();
@@ -27,20 +27,24 @@ public class ResourceRepository {
 
 	protected void loadIntegratedPdfFonts() {
 		ServiceLoader<IntegratedPdfFontService> serviceLoader = ServiceLoader.load(IntegratedPdfFontService.class);
-		serviceLoader.forEach(service -> this.fonts.putAll(service.getIntegratedFonts()));
+		for(IntegratedPdfFontService service : serviceLoader) {
+			service.getIntegratedFonts().forEach((k, v) -> {
+				this.fonts.put(k, SerializableCloning.toBytes(v));
+			});
+		}
 	}
 	
 	public void loadSingleFontData(byte [] data, String ... names) throws IOException {
 		PdfFont font = PdfFontFactory.createFont(data, PdfEncodings.IDENTITY_H, true, true);
 		for(String name : names) {
-			this.fonts.put(name, font);
+			this.fonts.put(name, SerializableCloning.toBytes(font));
 		}
 	}
 	
 	public void loadTtcFontData(byte [] ttcData, int ttcIndex, String ... names) throws IOException {
 		PdfFont font = PdfFontFactory.createTtcFont(ttcData, ttcIndex, PdfEncodings.IDENTITY_H, true, true);
 		for(String name : names) {
-			this.fonts.put(name, font);
+			this.fonts.put(name, SerializableCloning.toBytes(font));
 		}
 	}
 	
@@ -51,7 +55,7 @@ public class ResourceRepository {
 		else {
 			PdfFont font = PdfFontFactory.createFont(path, PdfEncodings.IDENTITY_H, true, true);
 			for(String name : names) {
-				this.fonts.put(name, font);
+				this.fonts.put(name, SerializableCloning.toBytes(font));
 			}
 		}		
 	}
@@ -59,7 +63,7 @@ public class ResourceRepository {
 	public void loadTtcFontFile(String path, int ttcIndex, String ... names) throws IOException {
 		PdfFont font = PdfFontFactory.createTtcFont(path, ttcIndex, PdfEncodings.IDENTITY_H, true, true);
 		for(String name : names) {
-			this.fonts.put(name, font);
+			this.fonts.put(name, SerializableCloning.toBytes(font));
 		}
 	}
 	
@@ -76,7 +80,7 @@ public class ResourceRepository {
 		this.loadTtcFontData(ResourceRepository.class.getResourceAsStream(resource).readAllBytes(), ttcIndex, names);
 	}
 	
-	public PdfFont getFont(String name) {
+	public byte [] getFont(String name) {
 		return this.fonts.get(name);
 	}
 	
@@ -88,11 +92,11 @@ public class ResourceRepository {
 		return this.styles.get(name);
 	}
 	
-	public void registerImage(String id, ImageData data) {
+	public void registerImage(String id, byte [] data) {
 		this.images.put(id, data);
 	}
 	
-	public ImageData getImage(String id) {
+	public byte [] getImage(String id) {
 		return this.images.get(id);
 	}
 }

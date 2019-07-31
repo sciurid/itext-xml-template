@@ -26,6 +26,8 @@ import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 
+import me.chenqiang.pdf.utils.SerializableCloning;
+
 public final class AttributeRegistry {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AttributeRegistry.class);
 	protected ResourceRepository context;
@@ -69,12 +71,13 @@ public final class AttributeRegistry {
 	protected void initElementPropertyContainerMap() {
 		this.mapElementPropertyContainer.put(FONT_FAMILY, (name, value) -> {
 			AttributeValueParser parser = new AttributeValueParser(name, value);
-			PdfFont font = this.context.getFont(parser.getString());
-			if (font == null) {
+			byte [] fontData = this.context.getFont(parser.getString());
+			if (fontData == null) {
 				LOGGER.error("Font-family name '{}' not registered.", value);
 				return null;
 			}
-			return element -> element.setFont(font);
+			return element -> 
+				element.setFont((PdfFont)SerializableCloning.fromBytes(fontData));
 		});
 		this.mapElementPropertyContainer.put(FONT_SIZE,
 				AttributeRegistry.doFloat(ElementPropertyContainer::setFontSize));
