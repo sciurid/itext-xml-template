@@ -1,45 +1,28 @@
 package me.chenqiang.pdf.spi;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
+import me.chenqiang.pdf.font.FontRegistry;
+import me.chenqiang.pdf.font.FontResourceRegistry;
 
 public class HanSCPdfFontServiceImpl implements IntegratedPdfFontService{
-	private static final Logger LOGGER = LoggerFactory.getLogger(HanSCPdfFontServiceImpl.class);
-	protected Map<String, PdfFont> fonts;
+	protected Map<String, FontRegistry> fonts;
 
 	public HanSCPdfFontServiceImpl() {
 		this.fonts = new TreeMap<>();
-		
-		byte [] data;
-		
-		try {
-			data = HanSCPdfFontServiceImpl.class.getResourceAsStream("hansc/SourceHanSansSC-Medium.otf").readAllBytes();
-			PdfFont sans = PdfFontFactory.createFont(data, PdfEncodings.IDENTITY_H, true, true);
-			this.fonts.put("思源黑体", sans);
-			
-			data = HanSCPdfFontServiceImpl.class.getResourceAsStream("hansc/SourceHanSerifSC-Bold.otf").readAllBytes();
-			PdfFont serifB = PdfFontFactory.createFont(data, PdfEncodings.IDENTITY_H, true, true);
-			this.fonts.put("思源粗宋", serifB);
-			
-			data = HanSCPdfFontServiceImpl.class.getResourceAsStream("hansc/SourceHanSerifSC-Medium.otf").readAllBytes();
-			PdfFont serif = PdfFontFactory.createFont(data, PdfEncodings.IDENTITY_H, true, true);
-			this.fonts.put("思源宋体", serif);
-		} catch (IOException e) {
-			LOGGER.debug("内置字体加载失败：", e);
-		}
+		this.fonts.put("思源黑体", getResource("hansc/SourceHanSansSC-Medium.otf"));
+		this.fonts.put("思源粗宋", getResource("hansc/SourceHanSerifSC-Bold.otf"));
+		this.fonts.put("思源宋体", getResource("hansc/SourceHanSerifSC-Medium.otf"));
+	}
+	
+	protected static FontRegistry getResource(String name) {
+		return FontResourceRegistry.create(HanSCPdfFontServiceImpl.class, name);
 	}
 	
 	@Override
-	public Map<String, PdfFont> getIntegratedFonts() {
+	public Map<String, FontRegistry> getIntegratedFonts() {
 		return Collections.unmodifiableMap(this.fonts);
 	}
 }

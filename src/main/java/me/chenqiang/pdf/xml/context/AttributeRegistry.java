@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.ElementPropertyContainer;
 import com.itextpdf.layout.element.BlockElement;
@@ -26,7 +25,7 @@ import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 
-import me.chenqiang.pdf.utils.SerializableCloning;
+import me.chenqiang.pdf.font.FontRegistry;
 
 public final class AttributeRegistry {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AttributeRegistry.class);
@@ -71,13 +70,12 @@ public final class AttributeRegistry {
 	protected void initElementPropertyContainerMap() {
 		this.mapElementPropertyContainer.put(FONT_FAMILY, (name, value) -> {
 			AttributeValueParser parser = new AttributeValueParser(name, value);
-			byte [] fontData = this.context.getFont(parser.getString());
+			FontRegistry fontData = this.context.getFont(parser.getString());
 			if (fontData == null) {
 				LOGGER.error("Font-family name '{}' not registered.", value);
 				return null;
 			}
-			return element -> 
-				element.setFont((PdfFont)SerializableCloning.fromBytes(fontData));
+			return element -> element.setFont(fontData.getFont());
 		});
 		this.mapElementPropertyContainer.put(FONT_SIZE,
 				AttributeRegistry.doFloat(ElementPropertyContainer::setFontSize));

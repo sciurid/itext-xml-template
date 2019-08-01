@@ -40,7 +40,7 @@ public class XmlTemplateTest {
 		}
 	}
 	
-	@Test
+//	@Test
 	public void doStandardSampleTestSub() throws DocumentException, IOException {
 		File file = File.createTempFile("Sample", ".pdf");
 		byte [] sampleImage = XmlTemplateTest.class.getResourceAsStream("/books.png").readAllBytes();		
@@ -76,7 +76,7 @@ public class XmlTemplateTest {
 		
 		Set<Thread> threads = new LinkedHashSet<>();
 		List<File> files = new ArrayList<>();
-		for(int i = 0; i < 3; i++) {
+		for(int i = 0; i < 100; i++) {
 			Thread.sleep(2000);
 			Thread thread = new Thread(() ->  {
 				try {
@@ -89,6 +89,11 @@ public class XmlTemplateTest {
 								Map.of("数据替换", sampleImage), fos);
 					}
 					files.add(file);
+					try {
+						Desktop.getDesktop().open(file);
+					} catch (IOException e) {
+						LOGGER.error("File open failed.", e);
+					}
 				}
 				catch (IOException e) {
 					LOGGER.error("Template failed.", e);

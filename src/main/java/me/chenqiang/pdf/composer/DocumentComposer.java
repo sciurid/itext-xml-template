@@ -91,7 +91,10 @@ implements StringStub, Iterable<DocumentComponent> {
 			LOGGER.warn("Empty document found.");
 			pdf.addNewPage();
 		} else {
-			this.components.forEach(component -> component.process(doc, pdf, writer));
+			this.components.forEach(component -> {
+				component.process(doc, pdf, writer);
+				doc.flush();
+			});
 		}
 		if(close) {
 			doc.close();

@@ -96,6 +96,7 @@ public final class DocumentEngine {
 		
 		PdfWriter writer = new PdfWriter(os);
 		PdfDocument pdf = new PdfDocument(writer);
+		pdf.setFlushUnusedObjects(true);
 		pdf.setTagged();
 		sub.compose(pdf, writer, true);
 		writer.close();

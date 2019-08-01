@@ -27,7 +27,8 @@ import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 
 import me.chenqiang.pdf.component.Copyable;
-import me.chenqiang.pdf.utils.SerializableCloning;
+import me.chenqiang.pdf.font.FontRegistry;
+import me.chenqiang.pdf.font.MemoryCachedFontRegistry;
 import me.chenqiang.pdf.xml.context.ColorMap;
 
 public class WatermarkMaker implements IEventHandler, Copyable<WatermarkMaker> {
@@ -124,7 +125,7 @@ public class WatermarkMaker implements IEventHandler, Copyable<WatermarkMaker> {
 	}
 
 	public static class TextWatermarkSetting {
-		protected byte [] font;
+		protected FontRegistry font;
 		protected UnitValue fontSize = UnitValue.createPointValue(30f);
 		protected float width = 0f;
 		protected float offsetX = 0f;
@@ -138,7 +139,7 @@ public class WatermarkMaker implements IEventHandler, Copyable<WatermarkMaker> {
 		public TextWatermarkSetting() {
 			try {
 				PdfFont helvetica = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD, PdfEncodings.UTF8, true, true);
-				this.font = SerializableCloning.toBytes(helvetica);
+				this.font = new MemoryCachedFontRegistry(helvetica);
 			} catch (IOException e) {
 				this.font = null;
 			}
@@ -156,7 +157,7 @@ public class WatermarkMaker implements IEventHandler, Copyable<WatermarkMaker> {
 			this.offsetY = offsetY;
 		}
 
-		public void setFont(byte [] font) {
+		public void setFont(FontRegistry font) {
 			this.font = font;
 		}
 
@@ -195,7 +196,7 @@ public class WatermarkMaker implements IEventHandler, Copyable<WatermarkMaker> {
 
 		TextWatermarkSetting setting = twsetting == null ? new TextWatermarkSetting() : twsetting;
 
-		canvas.setProperty(Property.FONT, SerializableCloning.fromBytes(setting.font));
+		canvas.setProperty(Property.FONT, setting.font.getFont());
 		canvas.setProperty(Property.FONT_COLOR, new TransparentColor(setting.fontColor, setting.opacity));
 		canvas.setProperty(Property.FONT_SIZE, setting.fontSize);
 

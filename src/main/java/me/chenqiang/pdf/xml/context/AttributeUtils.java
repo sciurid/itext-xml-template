@@ -21,71 +21,83 @@ import me.chenqiang.pdf.component.PdfElementComposer;
 public final class AttributeUtils {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AttributeUtils.class);
 	public static final BiFunction<String, String, Consumer<Object>> DO_NOTHING = (name, value) -> {
-		return item -> {};
-	};	
-	
-	protected static final Set<String> WARNING_FREE = Set.of(
-			AttributeRegistry.ID);
-	
+		return item -> {
+		};
+	};
+
+	protected static final Set<String> WARNING_FREE;
+	static {
+		WARNING_FREE = Set.of(AttributeRegistry.ID, AttributeRegistry.FONT_COLOR, AttributeRegistry.FONT_OPACITY,
+				AttributeRegistry.BACKGROUND_COLOR, AttributeRegistry.BACKGROUND_OPACITY, AttributeRegistry.BORDER_TYPE,
+				AttributeRegistry.BORDER_WIDTH, AttributeRegistry.BORDER_COLOR, AttributeRegistry.BORDER_OPACITY,
+				AttributeRegistry.BORDER_TYPE_TOP, AttributeRegistry.BORDER_WIDTH_TOP,
+				AttributeRegistry.BORDER_COLOR_TOP, AttributeRegistry.BORDER_OPACITY_TOP,
+				AttributeRegistry.BORDER_TYPE_RIGHT, AttributeRegistry.BORDER_WIDTH_RIGHT,
+				AttributeRegistry.BORDER_COLOR_RIGHT, AttributeRegistry.BORDER_OPACITY_RIGHT,
+				AttributeRegistry.BORDER_TYPE_BOTTOM, AttributeRegistry.BORDER_WIDTH_BOTTOM,
+				AttributeRegistry.BORDER_COLOR_BOTTOM, AttributeRegistry.BORDER_OPACITY_BOTTOM,
+				AttributeRegistry.BORDER_TYPE_LEFT, AttributeRegistry.BORDER_WIDTH_LEFT,
+				AttributeRegistry.BORDER_COLOR_LEFT, AttributeRegistry.BORDER_OPACITY_LEFT,
+				AttributeRegistry.WIDTHS, AttributeRegistry.COLUMNS, AttributeRegistry.FORMAT, AttributeRegistry.STYLE);
+	}
+
 //	public static <E> void setComposerAttributes(List<Attribute> xmlAttrs, 
 //			Map<String, BiFunction<String, String, Consumer<? super E>> > registryMap, 
 //			PdfElementComposer<E> composer) {		
 //		assignAttributes(xmlAttrs, Attribute::getName, Attribute::getValue, registryMap,  composer::setAttribute,  composer.getClass());
 //	}
-	
-	public static <E extends ElementPropertyContainer<E>, S extends PdfElementComposer<E, S>> void setComposerAttributes(Iterable<String[]> attrs, 
-			Map<String, BiFunction<String, String, ? extends Consumer<? super E>> > registryMap, 
-			PdfElementComposer<E, S> composer) {		
-		AttributeUtils.<E, String[]>assignAttributes(
-				attrs, arr -> arr[0], arr -> arr[1], 
-				registryMap, composer::setAttribute, composer.getClass());
+
+	public static <E extends ElementPropertyContainer<E>, S extends PdfElementComposer<E, S>> void setComposerAttributes(
+			Iterable<String[]> attrs,
+			Map<String, BiFunction<String, String, ? extends Consumer<? super E>>> registryMap,
+			PdfElementComposer<E, S> composer) {
+		AttributeUtils.<E, String[]>assignAttributes(attrs, arr -> arr[0], arr -> arr[1], registryMap,
+				composer::setAttribute, composer.getClass());
 	}
-	
-	public static <E> List<Consumer<? super E>> getComposerAttributes(List<Attribute> xmlAttrs, 
-			Map<String, BiFunction<String, String, ? extends Consumer<? super E>> > registryMap, Class<?> clazz) {
+
+	public static <E> List<Consumer<? super E>> getComposerAttributes(List<Attribute> xmlAttrs,
+			Map<String, BiFunction<String, String, ? extends Consumer<? super E>>> registryMap, Class<?> clazz) {
 		List<Consumer<? super E>> list = new ArrayList<>();
 		assignAttributes(xmlAttrs, registryMap, list::add, clazz);
 		return list;
 	}
-	
-	protected static <E> void assignAttributes(List<Attribute> xmlAttrs, 
-			Map<String, BiFunction<String, String, ? extends Consumer<? super E>> > registryMap, 
-			Consumer<Consumer<? super E>> collector, Class<?> clazz) {	
+
+	protected static <E> void assignAttributes(List<Attribute> xmlAttrs,
+			Map<String, BiFunction<String, String, ? extends Consumer<? super E>>> registryMap,
+			Consumer<Consumer<? super E>> collector, Class<?> clazz) {
 		assignAttributes(xmlAttrs, Attribute::getName, Attribute::getValue, registryMap, collector, clazz);
 	}
-	
-	protected static <E, A> void assignAttributes(
-			Iterable<A> attrs, Function<A, String> nameGetter, Function<A, String> valueGetter,
-			Map<String, BiFunction<String, String, ? extends Consumer<? super E>> > registryMap, 
-			Consumer<Consumer<? super E>> collector, Class<?> clazz) {		
-		for(A attr : attrs) {
+
+	protected static <E, A> void assignAttributes(Iterable<A> attrs, Function<A, String> nameGetter,
+			Function<A, String> valueGetter,
+			Map<String, BiFunction<String, String, ? extends Consumer<? super E>>> registryMap,
+			Consumer<Consumer<? super E>> collector, Class<?> clazz) {
+		for (A attr : attrs) {
 			String name = nameGetter.apply(attr);
 			String value = valueGetter.apply(attr);
-			if(registryMap.containsKey(name)) {
+			if (registryMap.containsKey(name)) {
 				Consumer<? super E> modifier = registryMap.get(name).apply(name, value);
-				if(modifier != null) {
+				if (modifier != null) {
 					collector.accept(registryMap.get(name).apply(name, value));
 				}
-			}
-			else {
-				if(!WARNING_FREE.contains(name)) {
+			} else {
+				if (!WARNING_FREE.contains(name)) {
 					LOGGER.info("Unrecognized attribute '{}' for {}", name, clazz);
 				}
 			}
-		}		
+		}
 	}
-	
+
 	public static CompositeAttribute getCompositeAttribute(List<Attribute> attributes) {
 		return getCompositeAttribute(attributes, Attribute::getName, Attribute::getValue);
 	}
-	
-	public static CompositeAttribute getCompositeAttribute(Iterable<String []> attributes) {
+
+	public static CompositeAttribute getCompositeAttribute(Iterable<String[]> attributes) {
 		return getCompositeAttribute(attributes, arr -> arr[0], arr -> arr[1]);
 	}
-	
-	
-	public static <A> CompositeAttribute getCompositeAttribute(Iterable<A> attributes, 
-			Function<A, String> nameGetter, Function<A, String> valueGetter) {
+
+	public static <A> CompositeAttribute getCompositeAttribute(Iterable<A> attributes, Function<A, String> nameGetter,
+			Function<A, String> valueGetter) {
 		CompositeAttribute attribute = new CompositeAttribute();
 		for (A attr : attributes) {
 			String attrName = nameGetter.apply(attr);
@@ -173,10 +185,12 @@ public final class AttributeUtils {
 		}
 		return attribute;
 	}
-	
+
 	protected static final Map<String, PageSize> STANDARD_PAGE_SIZE = Map.ofEntries(Map.entry("a4", PageSize.A4),
-			Map.entry("a4r", PageSize.A4.rotate()), Map.entry("a3", PageSize.A3), Map.entry("a3r", PageSize.A3.rotate()),
-			Map.entry("b5", PageSize.B5), Map.entry("b5r", PageSize.B5.rotate()));
+			Map.entry("a4r", PageSize.A4.rotate()), Map.entry("a3", PageSize.A3),
+			Map.entry("a3r", PageSize.A3.rotate()), Map.entry("b5", PageSize.B5),
+			Map.entry("b5r", PageSize.B5.rotate()));
+
 	public static PaperLayout getPaperLayout(List<Attribute> attributes) {
 		PaperLayout paper = new PaperLayout();
 		for (Attribute attr : attributes) {
@@ -186,16 +200,15 @@ public final class AttributeUtils {
 			switch (attrName) {
 			case AttributeRegistry.PAGE_SIZE:
 				PageSize ps = STANDARD_PAGE_SIZE.get(parser.getString().toLowerCase());
-				if(ps == null) {
+				if (ps == null) {
 					LOGGER.warn("Page size ({}) is not predefined. Default to A4.", attrValue);
 					continue;
-				}
-				else {
+				} else {
 					paper.setPs(ps);
 				}
 				break;
 			case AttributeRegistry.MARGIN:
-				parser.setLength(paper::setMargin);				
+				parser.setLength(paper::setMargin);
 				break;
 			case AttributeRegistry.MARGIN_LEFT:
 				parser.setLength(paper::setMarginLeft);

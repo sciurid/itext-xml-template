@@ -2,8 +2,8 @@ package me.chenqiang.pdf.spi;
 
 import java.util.Map;
 
-import com.itextpdf.kernel.font.PdfFont;
+import me.chenqiang.pdf.font.FontRegistry;
 
 public interface IntegratedPdfFontService {
-	public Map<String, PdfFont> getIntegratedFonts();
+	public Map<String, FontRegistry> getIntegratedFonts();
 }

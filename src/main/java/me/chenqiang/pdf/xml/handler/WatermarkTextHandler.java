@@ -7,13 +7,12 @@ import org.dom4j.ElementPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
 
 import me.chenqiang.pdf.composer.WatermarkMaker;
 import me.chenqiang.pdf.composer.WatermarkMaker.TextWatermarkSetting;
-import me.chenqiang.pdf.utils.SerializableCloning;
+import me.chenqiang.pdf.font.FontRegistry;
 import me.chenqiang.pdf.xml.context.AttributeRegistry;
 import me.chenqiang.pdf.xml.context.AttributeValueParser;
 import me.chenqiang.pdf.xml.context.TemplateContext;
@@ -44,7 +43,7 @@ public class WatermarkTextHandler implements ElementHandler {
 			try {
 				switch (name) {
 				case AttributeRegistry.FONT_FAMILY:
-					byte [] font = this.context.getResourceRepository().getFont(parser.getString());
+					FontRegistry font = this.context.getResourceRepository().getFont(parser.getString());
 					if(font != null) {
 						setting.setFont(font);
 					}

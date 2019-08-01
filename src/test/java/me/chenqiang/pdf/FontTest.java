@@ -1,7 +1,6 @@
 package me.chenqiang.pdf;
 
 
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +10,7 @@ import com.itextpdf.layout.font.FontSet;
 
 public class FontTest {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FontTest.class);
-	@Test
+//	@Test
 	public void listSystemFonts() {
 		FontProvider fp = new FontProvider();
 		fp.addSystemFonts();
