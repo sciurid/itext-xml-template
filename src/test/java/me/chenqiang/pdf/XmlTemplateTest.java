@@ -40,7 +40,7 @@ public class XmlTemplateTest {
 		}
 	}
 	
-//	@Test
+	@Test
 	public void doStandardSampleTestSub() throws DocumentException, IOException {
 		File file = File.createTempFile("Sample", ".pdf");
 		byte [] sampleImage = XmlTemplateTest.class.getResourceAsStream("/books.png").readAllBytes();		
@@ -49,13 +49,13 @@ public class XmlTemplateTest {
 		InputStream stream = XmlTemplateTest.class.getResourceAsStream("/standard-sample.xml");
 		engine.load(stream);
 		
-		byte [] pdfData = engine.produce("test", 
-				Map.of("文本替换", "https://www.tsinghua.edu.cn"), 
-				Map.of("元素替换", "https://www.tsinghua.edu.cn"), 
-					Map.of("数据替换", sampleImage));
-		
-		try (FileOutputStream fos = new FileOutputStream(file)) {			
-			fos.write(pdfData);
+		try (FileOutputStream fos = new FileOutputStream(file)) {
+			engine.add(DocumentEngine.PAGE_NUMBER);
+			engine.add(DocumentEngine.PRINTING_ONLY);
+			engine.produce("test", 
+					Map.of("文本替换", "https://www.tsinghua.edu.cn"), 
+					Map.of("元素替换", "https://www.tsinghua.edu.cn"), 
+						Map.of("数据替换", sampleImage), fos);
 		} catch (IOException e) {
 			LOGGER.error("Template failed.", e);
 		}
@@ -64,7 +64,7 @@ public class XmlTemplateTest {
 		}
 	}
 	
-	@Test
+//	@Test
 	public void parallelTest() throws DocumentException, IOException, InterruptedException {
 		InputStream stream = XmlTemplateTest.class.getResourceAsStream("/standard-sample.xml");
 		
@@ -76,8 +76,7 @@ public class XmlTemplateTest {
 		
 		Set<Thread> threads = new LinkedHashSet<>();
 		List<File> files = new ArrayList<>();
-		for(int i = 0; i < 100; i++) {
-			Thread.sleep(2000);
+		for(int i = 0; i < 10; i++) {
 			Thread thread = new Thread(() ->  {
 				try {
 					File file = File.createTempFile("Sample", ".pdf");					

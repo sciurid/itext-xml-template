@@ -2,7 +2,6 @@ package me.chenqiang.pdf.xml.context;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.ServiceLoader;
 import java.util.TreeMap;
 
 import org.slf4j.Logger;
@@ -28,18 +27,11 @@ public class ResourceRepository {
 	protected Map<String, FontRegistry> fonts;
 	
 	public ResourceRepository() {
-		this.fonts = new TreeMap<>();
-		this.loadIntegratedPdfFonts();
+		this.fonts = IntegratedPdfFontService.loadAll();
 		this.styles = new TreeMap<>();
 		this.images = new TreeMap<>();
 	}
 
-	protected void loadIntegratedPdfFonts() {
-		ServiceLoader<IntegratedPdfFontService> serviceLoader = ServiceLoader.load(IntegratedPdfFontService.class);
-		for(IntegratedPdfFontService service : serviceLoader) {
-			this.fonts.putAll(service.getIntegratedFonts());
-		}
-	}
 	
 	public void loadSingleFontData(byte [] data, String ... names) throws IOException {
 		PdfFont font = PdfFontFactory.createFont(data, PdfEncodings.IDENTITY_H, true, false);
