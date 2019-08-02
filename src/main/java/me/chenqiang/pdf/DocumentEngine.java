@@ -133,17 +133,24 @@ public final class DocumentEngine {
 				.collect(StringBuilder::new, (sb, i) -> sb.append((char)(i + 33)), StringBuilder::append)
 				.toString();
 		LOGGER.warn("Random password used for pdf owner: {}", random);
-		
-		try {
-			PdfWriter writer = new PdfWriter(os, new WriterProperties()
-					.setStandardEncryption(null, random.getBytes(), EncryptionConstants.ALLOW_PRINTING,
-	                EncryptionConstants.ENCRYPTION_AES_128 | EncryptionConstants.DO_NOT_ENCRYPT_METADATA));
-			PdfDocument pdf = new PdfDocument(new PdfReader(is), writer);
-			pdf.close();
-		} catch (IOException e) {
-			LOGGER.error("Error in setting printing-only.", e);
-		}
+		getEncryption(null, random).accept(is, os);		
 	};	
+	
+	public static BiConsumer<InputStream, OutputStream> getEncryption(String userPassword, String ownerPassword) {
+		return (is, os) -> {
+			try {
+
+				PdfWriter writer = new PdfWriter(os, new WriterProperties()
+						.setStandardEncryption(userPassword.getBytes(), ownerPassword.getBytes(), 
+								EncryptionConstants.ALLOW_PRINTING,
+								EncryptionConstants.ENCRYPTION_AES_128 | EncryptionConstants.DO_NOT_ENCRYPT_METADATA));
+				PdfDocument pdf = new PdfDocument(new PdfReader(is), writer);
+				pdf.close();
+			} catch (IOException e) {
+				LOGGER.error("Error in setting printing-only.", e);
+			}
+		};
+	}
 	
 	
 	public static void produce(DocumentComposer composer, Map<String, String> subMap,
