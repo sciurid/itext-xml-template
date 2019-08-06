@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfDocumentInfo;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 
@@ -27,6 +28,12 @@ implements StringStub, Iterable<DocumentComponent> {
 	protected List<DocumentComponent> components;
 	protected WatermarkMaker watermarkMaker;
 	protected PaperLayout paperLayout;
+	
+	protected String author;
+	protected String creator;
+	protected String title;
+	protected String subject;
+	protected String keywords;
 
 	public DocumentComposer() {
 		super(Document.class);
@@ -48,6 +55,11 @@ implements StringStub, Iterable<DocumentComponent> {
 		}
 		this.paperLayout = origin.paperLayout == null ? null : origin.paperLayout.copy();
 		this.watermarkMaker = origin.watermarkMaker == null ? null : origin.watermarkMaker.copy();
+		this.author = origin.author;
+		this.creator = origin.creator;
+		this.title = origin.title;
+		this.subject = origin.subject;
+		this.keywords = origin.keywords;
 	}
 
 	public WatermarkMaker getWatermarkMaker() {
@@ -90,16 +102,38 @@ implements StringStub, Iterable<DocumentComponent> {
 		if (this.components.isEmpty()) {
 			LOGGER.warn("Empty document found.");
 			pdf.addNewPage();
+			doc.flush();
 		} else {
 			this.components.forEach(component -> {
 				component.process(doc, pdf, writer);
 				doc.flush();
 			});
 		}
+		this.setMetadata(pdf);
 		if(close) {
 			doc.close();
 		}
 		return doc;
+	}
+	
+	protected void setMetadata(PdfDocument pdf) {
+		PdfDocumentInfo info = pdf.getDocumentInfo();
+		info.addCreationDate().addModDate();
+		if(this.author != null) {
+			info.setAuthor(this.author);
+		}
+		if(this.creator != null) {
+			info.setCreator(this.creator);
+		}
+		if(this.title != null) {
+			info.setKeywords(this.title);
+		}
+		if(this.subject != null) {
+			info.setSubject(this.subject);
+		}
+		if(this.keywords != null) {
+			info.setKeywords(this.keywords);
+		}		
 	}
 
 	@Override
@@ -116,4 +150,29 @@ implements StringStub, Iterable<DocumentComponent> {
 	public DocumentComposer copy() {
 		return new DocumentComposer(this);
 	}
+
+	public DocumentComposer setAuthor(String author) {
+		this.author = author;
+		return this;
+	}
+
+	public DocumentComposer setCreator(String creator) {
+		this.creator = creator;
+		return this;
+	}
+
+	public DocumentComposer setTitle(String title) {
+		this.title = title;
+		return this;
+	}
+
+	public DocumentComposer setSubject(String subject) {
+		this.subject = subject;
+		return this;
+	}
+
+	public DocumentComposer setKeywords(String keywords) {
+		this.keywords = keywords;
+		return this;
+	}	
 }

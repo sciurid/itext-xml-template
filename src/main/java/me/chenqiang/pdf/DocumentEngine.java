@@ -22,8 +22,10 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.layout.Document;
@@ -81,6 +83,7 @@ public final class DocumentEngine {
 			LOGGER.error("Document width id '{}' does not exist.", docId);
 			throw new IllegalArgumentException(String.format("Document with id '%s' does not exist.", docId));
 		}
+		composer.setAuthor("清华大学 Tsinghua University.");
 		return composer;
 	}
 	
@@ -141,7 +144,8 @@ public final class DocumentEngine {
 			try {
 
 				PdfWriter writer = new PdfWriter(os, new WriterProperties()
-						.setStandardEncryption(userPassword.getBytes(), ownerPassword.getBytes(), 
+						.setStandardEncryption(userPassword == null ? null : userPassword.getBytes(), 
+								ownerPassword == null ? null : ownerPassword.getBytes(), 
 								EncryptionConstants.ALLOW_PRINTING,
 								EncryptionConstants.ENCRYPTION_AES_128 | EncryptionConstants.DO_NOT_ENCRYPT_METADATA));
 				PdfDocument pdf = new PdfDocument(new PdfReader(is), writer);
@@ -158,7 +162,7 @@ public final class DocumentEngine {
 			OutputStream os) throws IOException {
 		DocumentComposer sub = Replacement.replace(composer, subMap, textParams, dataParams);
 		
-		PdfWriter writer = new PdfWriter(os);
+		PdfWriter writer = new PdfWriter(os, new WriterProperties().addXmpMetadata());
 		PdfDocument pdf = getPdfADocument(writer);
 		pdf.setFlushUnusedObjects(true);
 		pdf.setTagged();
@@ -168,8 +172,10 @@ public final class DocumentEngine {
 
 	public static PdfADocument getPdfADocument(PdfWriter writer) {
 		InputStream icm = DocumentFactory.class.getResourceAsStream("/sRGB_CS_profile.icm");
-		return new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3A, 
+		PdfADocument pdf = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3A, 
 				new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icm));
+		pdf.getCatalog().put(PdfName.Lang, new PdfString("ZH"));
+		return pdf;
 	}
 
 
