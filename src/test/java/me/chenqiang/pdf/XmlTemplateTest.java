@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -19,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 public class XmlTemplateTest {
 	private static final Logger LOGGER = LoggerFactory.getLogger(XmlTemplateTest.class);
-//	@Test
+	@Test
 	public void doStandardSampleTest() throws DocumentException, IOException {
 		InputStream stream = XmlTemplateTest.class.getResourceAsStream("/standard-sample.xml");
 		File file = File.createTempFile("Sample", ".pdf");
@@ -78,7 +77,7 @@ public class XmlTemplateTest {
 		
 		Set<Thread> threads = new LinkedHashSet<>();
 		List<File> files = new ArrayList<>();
-		for(int i = 0; i < 10; i++) {
+		for(int i = 0; i < 5; i++) {
 			Thread thread = new Thread(() ->  {
 				try {
 					File file = File.createTempFile("Sample", ".pdf");					

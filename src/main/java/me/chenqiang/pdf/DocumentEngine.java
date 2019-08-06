@@ -1,6 +1,5 @@
 package me.chenqiang.pdf;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +35,8 @@ import com.itextpdf.pdfa.PdfADocument;
 
 import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.spi.IntegratedPdfFontService;
+import me.chenqiang.pdf.utils.ByteBufferInputStream;
+import me.chenqiang.pdf.utils.ByteBufferOutputStream;
 import me.chenqiang.pdf.utils.LengthUnit;
 import me.chenqiang.pdf.xml.XmlTemplateLoader;
 
@@ -95,15 +96,14 @@ public final class DocumentEngine {
 	}
 	
 	public void produce(String docId, Map<String, Object> params, OutputStream os) throws IOException {
-		ByteArrayInputStream bis;
-		try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) { 
+		ByteBufferInputStream bis;
+		try (ByteBufferOutputStream buffer = new ByteBufferOutputStream()) { 
 			produce(this.getDocument(docId), params, buffer);
-			bis = new ByteArrayInputStream(buffer.toByteArray());
-		}
-		for(BiConsumer<InputStream, OutputStream> modifier : this.documentModifiers) {
-			try(ByteArrayOutputStream next = new ByteArrayOutputStream()) { 
-				modifier.accept(bis, next);
-				bis = new ByteArrayInputStream(next.toByteArray());
+			bis = buffer.transfer();
+			for(BiConsumer<InputStream, OutputStream> modifier : this.documentModifiers) {
+				buffer.reset();
+				modifier.accept(bis, buffer);
+				bis = buffer.transfer();
 			}
 		}
 		bis.transferTo(os);
