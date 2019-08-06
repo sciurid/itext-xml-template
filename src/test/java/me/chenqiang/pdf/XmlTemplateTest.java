@@ -27,7 +27,7 @@ public class XmlTemplateTest {
 		DocumentEngine engine = new DocumentEngine();
 		engine.load(stream);
 			
-		byte [] pdfData = engine.produce("test", null, null, null);
+		byte [] pdfData = engine.produce("test", null);
 		
 		try (FileOutputStream fos = new FileOutputStream(file)) {			
 			fos.write(pdfData);
@@ -53,9 +53,11 @@ public class XmlTemplateTest {
 			engine.add(DocumentEngine.PAGE_NUMBER);
 			engine.add(DocumentEngine.PRINTING_ONLY);
 			engine.produce("test", 
-					Map.of("文本替换", "https://www.tsinghua.edu.cn"), 
-					Map.of("元素替换", "https://www.tsinghua.edu.cn"), 
-						Map.of("数据替换", sampleImage), fos);
+					Map.of(
+							"文本替换", "https://www.tsinghua.edu.cn", 
+							"元素替换", "https://www.tsinghua.edu.cn", 
+							"数据替换", sampleImage), 
+					fos);
 		} catch (IOException e) {
 			LOGGER.error("Template failed.", e);
 		}
@@ -82,10 +84,11 @@ public class XmlTemplateTest {
 					File file = File.createTempFile("Sample", ".pdf");					
 					try (FileOutputStream fos = new FileOutputStream(file)) {
 						engine.produce("test", 
-							Map.of("文本替换", "https://www.tsinghua.edu.cn", 
-									"时间", LocalDateTime.now().toString()), 
-							Map.of("元素替换", "https://www.tsinghua.edu.cn"), 
-								Map.of("数据替换", sampleImage), fos);
+								Map.of(
+										"文本替换", "https://www.tsinghua.edu.cn", 
+										"元素替换", "https://www.tsinghua.edu.cn", 
+										"数据替换", sampleImage),
+								fos);
 					}
 					files.add(file);
 					try {

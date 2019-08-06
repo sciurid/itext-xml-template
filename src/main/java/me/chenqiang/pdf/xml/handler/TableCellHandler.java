@@ -62,25 +62,34 @@ public class TableCellHandler extends BasicTemplateElementHandler<TableCellCompo
 	@Override
 	public void onStart(ElementPath elementPath) {
 		super.onStart(elementPath);
-		this.tplCell = new TableCellComposer();
 		
 		Element current = elementPath.getCurrent();
+		int rowspan = 1;
+		int colspan = 1;
 		for (Attribute attr : current.attributes()) {
 			String attrName = attr.getName();
 			if (AttributeRegistry.ROW_SPAN.equals(attrName)) {
 				AttributeValueParser parser = new AttributeValueParser(attr.getName(), attr.getValue());
-				Integer rowspan = parser.getInteger();
-				if (rowspan != null && rowspan > 1) {
-					this.tplCell.setRowspan(rowspan);
+				Integer r = parser.getInteger();
+				if (r != null && r > 1) {
+					rowspan = r;
 				}
 			} else if (AttributeRegistry.COL_SPAN.equals(attrName)) {
 				AttributeValueParser parser = new AttributeValueParser(attr.getName(), attr.getValue());
-				Integer cellspan = parser.getInteger();
-				if (cellspan != null && cellspan > 1) {
-					this.tplCell.setColspan(cellspan);
+				Integer c = parser.getInteger();
+				if (c != null && c > 1) {
+					colspan = c;
 				}
 			}
 		}
+		
+		if(rowspan == 1 && colspan == 1) {
+			this.tplCell = new TableCellComposer();
+		}
+		else {
+			this.tplCell = new TableCellComposer(rowspan, colspan);
+		}		
+		
 		new TextHandler(this.context, this.tplCell).register(elementPath);
 		new ParagraphHandler(this.context, this.tplCell).register(elementPath);
 		new ImageHandler(this.context, this.tplCell).register(elementPath);

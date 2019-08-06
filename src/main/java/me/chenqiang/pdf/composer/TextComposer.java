@@ -1,22 +1,18 @@
 package me.chenqiang.pdf.composer;
 
-import java.util.Map;
-
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 
+import me.chenqiang.pdf.DocumentContext;
 import me.chenqiang.pdf.component.DivComponent;
 import me.chenqiang.pdf.component.ParagraphComponent;
-import me.chenqiang.pdf.component.StringParameterPlaceholder;
-import me.chenqiang.pdf.component.StringStub;
 import me.chenqiang.pdf.component.TableCellComponent;
-import me.chenqiang.pdf.utils.Substitution;
 
 public class TextComposer extends BasicElementComposer<Text, TextComposer>
-		implements ParagraphComponent, TableCellComponent, DivComponent, StringParameterPlaceholder, StringStub {
-	protected StringBuilder text;
+		implements ParagraphComponent, TableCellComponent, DivComponent {
+	protected final StringBuilder text;
 
 	public TextComposer() {
 		super(Text.class);
@@ -39,54 +35,36 @@ public class TextComposer extends BasicElementComposer<Text, TextComposer>
 	}
 
 	@Override
-	public void process(Cell cell) {
-		Text str = this.create();
-		if (str != null) {
-			cell.add(new Paragraph(str));
+	public void process(Cell cell, DocumentContext context) {
+		Text evaluated = this.produce(context);
+		if (evaluated != null) {
+			cell.add(new Paragraph(evaluated));
 		}
 	}
 
 	@Override
-	protected Text create() {
+	protected Text create(DocumentContext context) {
 		if (this.text.length() == 0) {
 			return null;
-		} else {
-			return new Text(this.getCurrentText());
+		} 
+		
+		String evaluated = context == null ? this.text.toString() : context.eval(this.text.toString());
+		return new Text(evaluated);
+	}
+
+	@Override
+	public void process(Paragraph para, DocumentContext context) {
+		Text element = this.produce(context);
+		if (element != null) {
+			para.add(element);
 		}
 	}
 
 	@Override
-	public void process(Paragraph para) {
-		Text text = this.<Void>produce(null);
-		if (text != null) {
-			para.add(text);
+	public void process(Div div, DocumentContext context) {
+		Text element = this.produce(context);
+		if (element != null) {
+			div.add(new Paragraph(element));
 		}
-	}
-
-	@Override
-	public void process(Div div) {
-		Text text = this.<Void>produce(null);
-		if (text != null) {
-			div.add(new Paragraph(text));
-		}
-	}
-
-	@Override
-	public void substitute(Map<String, String> params) {
-		this.text = new StringBuilder(Substitution.substitute(this.text.toString(), params));
-	}
-
-	protected String getCurrentText() {
-		return this.text.toString();
-	}
-
-	@Override
-	public void setParameter(String parameter) {
-		this.text.delete(0, this.text.length()).append(parameter);
-	}
-
-	@Override
-	public TextComposer copy() {
-		return new TextComposer(this);
 	}
 }

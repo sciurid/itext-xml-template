@@ -21,7 +21,6 @@ import me.chenqiang.pdf.spi.IntegratedPdfFontService;
 
 public class ResourceRepository {
 	static final Logger LOGGER = LoggerFactory.getLogger(ResourceRepository.class);
-//	protected Map<String, byte []> fonts;
 	protected Map<String, Style> styles;
 	protected Map<String, byte []> images;
 	protected Map<String, FontRegistry> fonts;

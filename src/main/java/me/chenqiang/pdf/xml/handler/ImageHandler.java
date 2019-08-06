@@ -47,13 +47,16 @@ public class ImageHandler extends BasicTemplateElementHandler<ImageComposer, Ima
 			String value = attr.getValue();
 			switch (name) {
 			case AttributeRegistry.FILE:
-				tplImg.setImageFile(value);
+				tplImg.loadFromFile(value);
 				break;
 			case AttributeRegistry.RESOURCE:
-				tplImg.setImageResource(value);
+				tplImg.loadFromResource(value);
 				break;
 			case AttributeRegistry.REF:
-				tplImg.setImageData(this.context.getResourceRepository().getImage(value));
+				tplImg.loadFromBytes(this.context.getResourceRepository().getImage(value));
+				break;
+			case AttributeRegistry.VALUE:
+				tplImg.setValue(value);
 				break;
 			default:
 			}

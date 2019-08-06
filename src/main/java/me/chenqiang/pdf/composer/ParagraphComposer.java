@@ -14,7 +14,7 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 
-import me.chenqiang.pdf.component.Copyable;
+import me.chenqiang.pdf.DocumentContext;
 import me.chenqiang.pdf.component.DivComponent;
 import me.chenqiang.pdf.component.DocumentComponent;
 import me.chenqiang.pdf.component.ParagraphComponent;
@@ -28,19 +28,6 @@ public final class ParagraphComposer extends BasicElementComposer<Paragraph, Par
 	public ParagraphComposer() {
 		super(Paragraph.class);
 		this.components = new ArrayList<>();
-	}
-	
-	protected ParagraphComposer(ParagraphComposer origin) {
-		super(origin);
-		this.components = new ArrayList<>(origin.components.size());
-		for(ParagraphComponent comp : origin.components) {
-			if(comp instanceof Copyable) {
-				this.components.add((ParagraphComponent)((Copyable<?>)comp).copy());
-			}
-			else {
-				this.components.add(comp);
-			}
-		}
 	}
 
 	public ParagraphComposer append(ParagraphComponent component) {
@@ -58,33 +45,32 @@ public final class ParagraphComposer extends BasicElementComposer<Paragraph, Par
 	}
 
 	@Override
-	public void process(Document doc, PdfDocument pdf, PdfWriter writer) {
-		Paragraph para = this.<Void>produce(null);
+	public void process(Document doc, PdfDocument pdf, PdfWriter writer, DocumentContext context) {
+		Paragraph para = this.produce(context);
 		doc.add(para);
 	}
 
 	@Override
-	public void process(Cell cell) {
-		Paragraph para = this.<Void>produce(null);
+	public void process(Cell cell, DocumentContext context) {
+		Paragraph para = this.produce(context);
 		cell.add(para);
 	}
-	
 
 	@Override
-	public void process(Div div) {
-		Paragraph para = this.<Void>produce(null);
-		div.add(para);		
+	public void process(Div div, DocumentContext context) {
+		Paragraph para = this.produce(null);
+		div.add(para);
 	}
 
 	@Override
-	protected Paragraph create() {
+	protected Paragraph create(DocumentContext context) {
 		Paragraph para = new Paragraph();
 		if (this.components.isEmpty()) {
 			para.add("");
 			LOGGER.warn("Empty paragraph found.");
 		} else {
 			LOGGER.debug("Paragraph with {} components.", this.components.size());
-			this.components.forEach(component -> component.process(para));
+			this.components.forEach(component -> component.process(para, context));
 		}
 		return para;
 	}
@@ -93,10 +79,4 @@ public final class ParagraphComposer extends BasicElementComposer<Paragraph, Par
 	public Iterator<ParagraphComponent> iterator() {
 		return this.components.iterator();
 	}
-
-	@Override
-	public ParagraphComposer copy() {
-		return new ParagraphComposer(this);
-	}
-
 }

@@ -204,6 +204,7 @@ public final class AttributeRegistry {
 	public static final String REF = "ref";
 	public static final String FILE = "file";
 	public static final String RESOURCE = "resource";
+	public static final String VALUE = "value";
 	public static final String FORMAT = "format";
 	public static final String OPACITY = "opacity";
 	public static final String OFFSET_X = "offset-x";
@@ -241,6 +242,7 @@ public final class AttributeRegistry {
 		this.mapImage.put(REF, AttributeUtils.DO_NOTHING);
 		this.mapImage.put(FILE, AttributeUtils.DO_NOTHING);
 		this.mapImage.put(RESOURCE, AttributeUtils.DO_NOTHING);
+		this.mapImage.put(VALUE, AttributeUtils.DO_NOTHING);
 	}
 
 	public Map<String, BiFunction<String, String, ? extends Consumer<? super Image>>> getImageMap() {

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import org.slf4j.Logger;
@@ -16,13 +15,12 @@ import com.itextpdf.kernel.pdf.PdfDocumentInfo;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 
+import me.chenqiang.pdf.DocumentContext;
 import me.chenqiang.pdf.attribute.PaperLayout;
-import me.chenqiang.pdf.component.Copyable;
 import me.chenqiang.pdf.component.DocumentComponent;
-import me.chenqiang.pdf.component.StringStub;
 
 public class DocumentComposer extends BasicElementComposer<Document, DocumentComposer>
-implements StringStub, Iterable<DocumentComponent> {
+implements Iterable<DocumentComponent> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DocumentComposer.class);
 
 	protected List<DocumentComponent> components;
@@ -42,26 +40,6 @@ implements StringStub, Iterable<DocumentComponent> {
 		this.paperLayout = new PaperLayout();
 	}
 	
-	protected DocumentComposer(DocumentComposer origin) {
-		super(origin);
-		this.components = new ArrayList<>(origin.components.size());
-		for(DocumentComponent comp : origin.components) {
-			if(comp instanceof Copyable) {
-				this.components.add((DocumentComponent)((Copyable<?>)comp).copy());
-			}
-			else {
-				this.components.add(comp);
-			}
-		}
-		this.paperLayout = origin.paperLayout == null ? null : origin.paperLayout.copy();
-		this.watermarkMaker = origin.watermarkMaker == null ? null : origin.watermarkMaker.copy();
-		this.author = origin.author;
-		this.creator = origin.creator;
-		this.title = origin.title;
-		this.subject = origin.subject;
-		this.keywords = origin.keywords;
-	}
-
 	public WatermarkMaker getWatermarkMaker() {
 		return watermarkMaker;
 	}
@@ -87,12 +65,12 @@ implements StringStub, Iterable<DocumentComponent> {
 	}
 	
 	@Override
-	protected Document create() {
+	protected Document create(DocumentContext context) {
 		throw new UnsupportedOperationException();
 	}
 
 	protected static final ChineseSplitCharacters CHINESE_SPLIT_CHARATERS = new ChineseSplitCharacters();
-	public Document compose(PdfDocument pdf, PdfWriter writer, boolean close) {
+	public Document compose(PdfDocument pdf, PdfWriter writer, boolean close, DocumentContext context) {
 		Document doc = new Document(pdf, this.paperLayout.getPageSize());
 		doc.setSplitCharacters(CHINESE_SPLIT_CHARATERS);
 		doc.setMargins(this.paperLayout.getMarginTop(), this.paperLayout.getMarginRight(),
@@ -105,7 +83,7 @@ implements StringStub, Iterable<DocumentComponent> {
 			doc.flush();
 		} else {
 			this.components.forEach(component -> {
-				component.process(doc, pdf, writer);
+				component.process(doc, pdf, writer, context);
 				doc.flush();
 			});
 		}
@@ -137,18 +115,8 @@ implements StringStub, Iterable<DocumentComponent> {
 	}
 
 	@Override
-	public void substitute(Map<String, String> params) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public Iterator<DocumentComponent> iterator() {
 		return this.components.iterator();
-	}
-
-	@Override
-	public DocumentComposer copy() {
-		return new DocumentComposer(this);
 	}
 
 	public DocumentComposer setAuthor(String author) {

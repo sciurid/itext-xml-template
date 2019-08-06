@@ -43,7 +43,7 @@ public class BarcodeHandler extends BasicTemplateElementHandler<BarcodeComposer,
 		if(format == null) {
 			LOGGER.warn("No barcode format is specified: QRCode is assumed.");
 		}		
-		return new BarcodeComposer().setFormat(format).setText(current.getText());
+		return new BarcodeComposer(current.getText(), format);
 	}
 	
 	@Override

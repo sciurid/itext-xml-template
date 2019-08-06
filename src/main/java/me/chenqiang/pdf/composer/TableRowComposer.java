@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 
 import com.itextpdf.layout.element.Cell;
 
-import me.chenqiang.pdf.component.Copyable;
+import me.chenqiang.pdf.DocumentContext;
 import me.chenqiang.pdf.component.ParagraphComponent;
 import me.chenqiang.pdf.component.PdfElementComposer;
 import me.chenqiang.pdf.component.TableCellComponent;
@@ -18,18 +18,6 @@ public class TableRowComposer implements PdfElementComposer<Cell, TableRowCompos
 
 	public TableRowComposer() {
 		this.components = new ArrayList<>();
-	}
-	protected TableRowComposer(TableRowComposer origin) {
-		this.id = origin.id;
-		this.components = new ArrayList<>(origin.components.size());
-		for(TableCellComposer comp : origin.components) {
-			if(comp instanceof Copyable) {
-				this.components.add(comp.copy());
-			}
-			else {
-				this.components.add(comp);
-			}
-		}
 	}
 
 	public String getId() {
@@ -96,11 +84,8 @@ public class TableRowComposer implements PdfElementComposer<Cell, TableRowCompos
 	}
 
 	@Override
-	public <C> Cell produce(C context) {
+	public Cell produce(DocumentContext context) {
 		throw new UnsupportedOperationException();
 	}
-	@Override
-	public TableRowComposer copy() {
-		return new TableRowComposer(this);
-	}
+
 }

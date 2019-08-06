@@ -16,6 +16,7 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.UnitValue;
 
+import me.chenqiang.pdf.DocumentContext;
 import me.chenqiang.pdf.component.DocumentComponent;
 
 public class TableComposer extends BasicElementComposer<Table, TableComposer>
@@ -28,14 +29,6 @@ public class TableComposer extends BasicElementComposer<Table, TableComposer>
 	
 	public TableComposer() {
 		super(Table.class);
-	}
-	
-	public TableComposer(TableComposer origin) {
-		super(origin);
-		this.creator = origin.creator;
-		this.header = origin.header.copy();
-		this.body = origin.body.copy();
-		this.footer = origin.footer.copy();
 	}
 
 	public void setColumns(int numColumns) {
@@ -62,20 +55,20 @@ public class TableComposer extends BasicElementComposer<Table, TableComposer>
 		return footer;
 	}
 
-	protected static void appendAll(List<TableCellComposer> comps, Consumer<Cell> cc, Runnable nr) {
+	protected static void appendAll(List<TableCellComposer> comps, Consumer<Cell> cc, Runnable nr, DocumentContext context) {
 		for (TableCellComposer comp : comps) {
 			if (comp instanceof TableCellComposer.NewRow) {
 				nr.run();
 				return;
 			}
-			Cell cell = comp.<Void>produce(null);
+			Cell cell = comp.produce(context);
 			cc.accept(cell);
 			LOGGER.debug("Cell position: {}, {}", cell.getRow(), cell.getCol());
 		}
 	}
 
 	@Override
-	protected Table create() {
+	protected Table create(DocumentContext context) {
 		if (this.creator == null) {
 			LOGGER.error("Compulsory table attribute missing: 'cols' or 'widths'. Table ignored.");
 			return null;
@@ -92,15 +85,15 @@ public class TableComposer extends BasicElementComposer<Table, TableComposer>
 			LOGGER.warn("Table footer: {} cells, exceeding number of columns : {}.", this.footer.components.size(),
 					numColumns);
 		}
-		appendAll(this.header.components, tbl::addHeaderCell, tbl::startNewRow);
-		appendAll(this.body.components, tbl::addCell, tbl::startNewRow);
-		appendAll(this.footer.components, tbl::addFooterCell, tbl::startNewRow);
+		appendAll(this.header.components, tbl::addHeaderCell, tbl::startNewRow, context);
+		appendAll(this.body.components, tbl::addCell, tbl::startNewRow, context);
+		appendAll(this.footer.components, tbl::addFooterCell, tbl::startNewRow, context);
 		return tbl;
 	}
 
 	@Override
-	public void process(Document doc, PdfDocument pdf, PdfWriter writer) {
-		Table tbl = this.<Void>produce(null);
+	public void process(Document doc, PdfDocument pdf, PdfWriter writer, DocumentContext context) {
+		Table tbl = this.produce(context);
 		if (tbl != null) {
 			doc.add(tbl);
 		}
@@ -114,10 +107,5 @@ public class TableComposer extends BasicElementComposer<Table, TableComposer>
 		all.addAll(this.body.components);
 		all.addAll(this.footer.components);
 		return all.iterator();
-	}
-
-	@Override
-	public TableComposer copy() {
-		return new TableComposer(this);
 	}
 }

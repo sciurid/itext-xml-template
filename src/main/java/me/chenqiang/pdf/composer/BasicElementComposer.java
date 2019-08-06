@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.function.Consumer;
 
+import me.chenqiang.pdf.DocumentContext;
 import me.chenqiang.pdf.component.PdfElementComposer;
 
 public abstract class BasicElementComposer<T, S extends BasicElementComposer<T, S>>
@@ -58,11 +59,11 @@ implements PdfElementComposer<T, S> {
 		return (S)this;
 	}
 	
-	protected abstract T create();
+	protected abstract T create(DocumentContext context);
 
 	@Override
-	public <C> T produce(C context) {
-		T instance = this.create();
+	public T produce(DocumentContext context) {
+		T instance = this.create(context);
 		if(instance == null) {
 			return null;
 		}

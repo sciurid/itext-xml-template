@@ -87,19 +87,17 @@ public final class DocumentEngine {
 		return composer;
 	}
 	
-	public byte [] produce(String docId, Map<String, String> subMap,
-			Map<String, String> textParams, Map<String, byte []> dataParams) throws IOException {		
+	public byte [] produce(String docId, Map<String, Object> params) throws IOException {		
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		produce(this.getDocument(docId), subMap, textParams, dataParams, bos);
+		produce(this.getDocument(docId), params, bos);
 		bos.close();
 		return bos.toByteArray();
 	}
 	
-	public void produce(String docId, Map<String, String> subMap,
-			Map<String, String> textParams, Map<String, byte []> dataParams, OutputStream os) throws IOException {
+	public void produce(String docId, Map<String, Object> params, OutputStream os) throws IOException {
 		ByteArrayInputStream bis;
 		try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) { 
-			produce(this.getDocument(docId), subMap, textParams, dataParams, buffer);
+			produce(this.getDocument(docId), params, buffer);
 			bis = new ByteArrayInputStream(buffer.toByteArray());
 		}
 		for(BiConsumer<InputStream, OutputStream> modifier : this.documentModifiers) {
@@ -154,19 +152,17 @@ public final class DocumentEngine {
 				LOGGER.error("Error in setting printing-only.", e);
 			}
 		};
-	}
+	}	
 	
-	
-	public static void produce(DocumentComposer composer, Map<String, String> subMap,
-			Map<String, String> textParams, Map<String, byte []> dataParams,
-			OutputStream os) throws IOException {
-		DocumentComposer sub = Replacement.replace(composer, subMap, textParams, dataParams);
-		
+	public static void produce(DocumentComposer composer, Map<String, Object> params, OutputStream os) throws IOException {		
 		PdfWriter writer = new PdfWriter(os, new WriterProperties().addXmpMetadata());
 		PdfDocument pdf = getPdfADocument(writer);
 		pdf.setFlushUnusedObjects(true);
 		pdf.setTagged();
-		sub.compose(pdf, writer, true);
+		
+		DocumentContext context = new DocumentContext(params);
+		composer.compose(pdf, writer, true, context);
+		
 		writer.close();
 	}
 
@@ -177,6 +173,4 @@ public final class DocumentEngine {
 		pdf.getCatalog().put(PdfName.Lang, new PdfString("ZH"));
 		return pdf;
 	}
-
-
 }

@@ -14,7 +14,7 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 
-import me.chenqiang.pdf.component.Copyable;
+import me.chenqiang.pdf.DocumentContext;
 import me.chenqiang.pdf.component.DivComponent;
 import me.chenqiang.pdf.component.DocumentComponent;
 import me.chenqiang.pdf.component.ParagraphComponent;
@@ -28,19 +28,6 @@ public final class DivComposer extends BasicElementComposer<Div, DivComposer>
 	public DivComposer() {
 		super(Div.class);
 		this.components = new ArrayList<>();
-	}
-	
-	protected DivComposer(DivComposer origin) {
-		super(origin);
-		this.components = new ArrayList<>(origin.components.size());
-		for(DivComponent comp : origin.components) {
-			if(comp instanceof Copyable) {
-				this.components.add((DivComponent)((Copyable<?>)comp).copy());
-			}
-			else {
-				this.components.add(comp);
-			}
-		}
 	}
 	
 	public DivComposer append(DivComponent component) {
@@ -58,31 +45,31 @@ public final class DivComposer extends BasicElementComposer<Div, DivComposer>
 	}
 
 	@Override
-	public void process(Document doc, PdfDocument pdf, PdfWriter writer) {
-		Div div = this.<Void>produce(null);
+	public void process(Document doc, PdfDocument pdf, PdfWriter writer, DocumentContext context) {
+		Div div = this.produce(context);
 		doc.add(div);
 	}
 
 	@Override
-	public void process(Cell cell) {
-		Div div = this.<Void>produce(null);
+	public void process(Cell cell, DocumentContext context) {
+		Div div = this.produce(context);
 		cell.add(div);
 	}
 	
 	@Override
-	public void process(Paragraph para) {
-		Div div = this.<Void>produce(null);
+	public void process(Paragraph para, DocumentContext context) {
+		Div div = this.produce(context);
 		para.add(div);
 	}
 
 	@Override
-	protected Div create() {
+	protected Div create(DocumentContext context) {
 		Div div = new Div();
 		if (this.components.isEmpty()) {
 			LOGGER.warn("Empty div found.");
 		} else {
 			LOGGER.debug("Div with {} components.", this.components.size());
-			this.components.forEach(component -> component.process(div));
+			this.components.forEach(component -> component.process(div, context));
 		}
 		return div;
 	}
@@ -91,10 +78,4 @@ public final class DivComposer extends BasicElementComposer<Div, DivComposer>
 	public Iterator<DivComponent> iterator() {
 		return this.components.iterator();
 	}
-
-	@Override
-	public DivComposer copy() {
-		return new DivComposer(this);
-	}
-	
 }

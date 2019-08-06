@@ -1,5 +1,7 @@
 package me.chenqiang.pdf.composer;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 
 import org.slf4j.Logger;
@@ -9,22 +11,43 @@ import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.layout.element.Image;
 
-import me.chenqiang.pdf.component.DataParameterPlaceholder;
+import me.chenqiang.pdf.DocumentContext;
 
-public final class ImageComposer extends BasicImageComposer<ImageComposer>
-implements DataParameterPlaceholder{
+public final class ImageComposer extends BasicImageComposer<ImageComposer> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ImageComposer.class);
+	public static final String IMAGE_ERROR = "IMAGE DATA LOADING ERROR.";
+	protected ImageData imageData = null;
+	protected String value = null;
+
 	
-	public ImageComposer() {
-		
+	
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	public void loadFromBytes(byte[] data) {
+		this.imageData = ImageDataFactory.create(data);
+	}
+
+	public void loadFromInputStream(InputStream is) {
+		try {
+			this.imageData = ImageDataFactory.create(is.readAllBytes());
+		} catch (IOException e) {
+			LOGGER.error(IMAGE_ERROR, e);
+			this.setImageData((ImageData)null);
+		}
+	}
+
+	public void loadFromFile(String filepath) {
+		try {
+			this.imageData = ImageDataFactory.create(filepath);
+		} catch (MalformedURLException e) {
+			LOGGER.error(IMAGE_ERROR, e);
+		}
 	}
 	
-	protected ImageComposer(ImageComposer origin) {
-		super(origin);
-	}
-	@Override
-	public void setParameter(byte [] parameter) {
-		this.setImageData(parameter);
+	public void loadFromResource(String resource) {
+		this.loadFromInputStream(ImageComposer.class.getResourceAsStream(resource));
 	}
 	
 	public void setImageData(ImageData imageData) {
@@ -39,32 +62,24 @@ implements DataParameterPlaceholder{
 		this.imageData = imageData;
 	}
 
-	public ImageComposer setImageFile(String filepath) {
-		try {
-			this.imageData = ImageDataFactory.create(filepath);
-		} catch (MalformedURLException e) {
-			LOGGER.error(IMAGE_ERROR, e);
-		}
-		return this;
-	}
-
-	public ImageComposer setImageResource(String resource) {
-		this.setImageData(ImageComposer.class.getResourceAsStream(resource));
-		return this;
-	}
-	
 	@Override
-	protected Image create() {
-		if(this.imageData == null) {
-			return null;
+	protected Image create(DocumentContext context) {
+		if(context != null && this.value != null) {
+			byte [] data = (byte [])context.getProperty(this.value);
+			if(data == null) {
+				return null;
+			}
+			else {
+				return new Image(ImageDataFactory.create(data));
+			}			
 		}
 		else {
-			return new Image(this.imageData);
+			if(this.imageData == null) {
+				return null;
+			}
+			else {
+				return new Image(this.imageData);
+			}
 		}
-	}
-
-	@Override
-	public ImageComposer copy() {
-		return new ImageComposer(this);
 	}
 }

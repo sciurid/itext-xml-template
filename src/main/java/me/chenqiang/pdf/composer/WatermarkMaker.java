@@ -26,12 +26,11 @@ import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 
-import me.chenqiang.pdf.component.Copyable;
 import me.chenqiang.pdf.font.FontRegistry;
 import me.chenqiang.pdf.font.MemoryCachedFontRegistry;
 import me.chenqiang.pdf.xml.context.ColorMap;
 
-public class WatermarkMaker implements IEventHandler, Copyable<WatermarkMaker> {
+public class WatermarkMaker implements IEventHandler {
 	@FunctionalInterface
 	public static interface Renderer {
 		public void render(PdfDocument pdfDoc, PdfPage page, PdfCanvas canvas);
@@ -47,11 +46,6 @@ public class WatermarkMaker implements IEventHandler, Copyable<WatermarkMaker> {
 
 	public void addRenderer(Renderer renderer) {
 		this.renderers.add(renderer);
-	}
-	
-	@Override
-	public WatermarkMaker copy() {
-		return new WatermarkMaker(this);
 	}
 
 	@Override

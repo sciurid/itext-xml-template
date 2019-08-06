@@ -67,13 +67,13 @@
 			<header><cell>类型</cell><cell>文本</cell><cell>图片</cell></header>
 			<body>
 				<cell>文本替换</cell><cell id="bug">【->文本替换结果：${文本替换}】</cell><cell><barcode width="2cm">${文本替换}</barcode></cell>
-				<cell>元素替换</cell><cell>【->元素替换结果：】<text id="元素替换" /></cell><cell><barcode id="元素替换" width="2cm"/></cell>
-				<cell>数据替换</cell><cell colspan="2"><image id="数据替换" width="8cm"/></cell>
+				<cell>元素替换</cell><cell>【->元素替换结果：】<text>${元素替换}</text></cell><cell><barcode width="2cm">${元素替换}</barcode></cell>
+				<cell>数据替换</cell><cell colspan="2"><image value="${数据替换}" width="8cm"/></cell>
 			</body>
 		</table>
 		
 		<p>文本替换结果：${文本替换}\n</p>
-		<p>元素替换结果：<text id="元素替换" /></p>
+		<p>元素替换结果：<text>${元素替换}</text></p>
 		<watermark>
 			<image ref="hawk" opacity="0.2" offset-y="2cm" width="-0.5" />
 			<text font-family="思源粗宋" font-size="24" font-color="red" opacity="0.3" offset-y="-3cm">内部资料\n注意保存</text>

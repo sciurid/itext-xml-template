@@ -7,46 +7,27 @@ import java.util.function.Consumer;
 
 import com.itextpdf.layout.element.Cell;
 
-import me.chenqiang.pdf.component.Copyable;
+import me.chenqiang.pdf.DocumentContext;
 import me.chenqiang.pdf.component.TableCellComponent;
 
 public class TableCellComposer extends BasicElementComposer<Cell, TableCellComposer>
 implements Iterable<TableCellComponent>
 {
 	protected final List<TableCellComponent> components;
-	protected int colspan = 1;
-	protected int rowspan = 1;
+	protected final int colspan;
+	protected final int rowspan;
 
 	public TableCellComposer() {
+		this(1, 1);
+	}
+	
+	public TableCellComposer(int rowspan, int colspan) {
 		super(Cell.class);
 		this.components = new ArrayList<>();
-	}
-	
-	protected TableCellComposer(TableCellComposer origin) {
-		super(origin);
-		this.components = new ArrayList<>(origin.components.size());
-		for(TableCellComponent comp : origin.components) {
-			if(comp instanceof Copyable) {
-				this.components.add((TableCellComponent)((Copyable<?>)comp).copy());
-			}
-			else {
-				this.components.add(comp);
-			}
-		}
-		this.colspan = origin.colspan;
-		this.rowspan = origin.rowspan;
-	}
-	
-	public TableCellComposer setColspan(int colspan) {
-		this.colspan = colspan;
-		return this;
-	}
-
-	public TableCellComposer setRowspan(int rowspan) {
 		this.rowspan = rowspan;
-		return this;
+		this.colspan = colspan;
 	}
-
+	
 	public void inheritAttributes(List<? extends Consumer<? super Cell>> rowAttributes) {
 		this.attributes.addAll(0, rowAttributes);
 	}
@@ -66,9 +47,9 @@ implements Iterable<TableCellComponent>
 	}
 	
 	@Override
-	protected Cell create() {
+	protected Cell create(DocumentContext context) {
 		Cell cell = (this.rowspan > 1 || this.colspan > 1) ? new Cell(this.rowspan, this.colspan) : new Cell();
-		this.components.forEach(item -> item.process(cell));
+		this.components.forEach(item -> item.process(cell, context));
 		return cell;
 	}
 	
@@ -76,16 +57,6 @@ implements Iterable<TableCellComponent>
 		private NewRow() {
 		}
 		public static final NewRow INSTANCE = new NewRow();
-
-		@Override
-		public TableCellComposer setColspan(int colspan) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public TableCellComposer setRowspan(int rowspan) {
-			throw new UnsupportedOperationException();
-		}
 
 		@Override
 		public void inheritAttributes(List<? extends Consumer<? super Cell>> rowAttributes) {
@@ -98,15 +69,10 @@ implements Iterable<TableCellComponent>
 		}
 
 		@Override
-		protected Cell create() {
+		protected Cell create(DocumentContext context) {
 			throw new UnsupportedOperationException();
 		}
 		
-	}
-
-	@Override
-	public TableCellComposer copy() {
-		return new TableCellComposer(this);
 	}
 
 	@Override

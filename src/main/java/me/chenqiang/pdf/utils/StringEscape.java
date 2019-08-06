@@ -4,7 +4,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class StringEscape {
+public final class StringEscape {	
+	private StringEscape() {
+	}
+	
 	protected static final Pattern ESCAPING_PATTERN = Pattern.compile("\\\\\\\\|\\\\n|\\\\r|\\\\t");
 	protected static final Map<String, String> REPLACEMENT = Map.of(
 			"\\\\", "\\", "\\r", "\r", "\\n", "\n",	"\\t", "\t"

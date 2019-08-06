@@ -22,18 +22,16 @@ import com.google.zxing.oned.UPCAWriter;
 import com.google.zxing.oned.UPCEWriter;
 import com.google.zxing.pdf417.PDF417Writer;
 import com.google.zxing.qrcode.QRCodeWriter;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.layout.element.Image;
 
-import me.chenqiang.pdf.component.StringParameterPlaceholder;
-import me.chenqiang.pdf.component.StringStub;
-import me.chenqiang.pdf.utils.Substitution;
+import me.chenqiang.pdf.DocumentContext;
 
-public final class BarcodeComposer extends BasicImageComposer<BarcodeComposer> 
-implements StringParameterPlaceholder, StringStub{
+public final class BarcodeComposer extends BasicImageComposer<BarcodeComposer> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BarcodeComposer.class);
-	protected String text;
-	protected String output = "PNG";
-	protected BarcodeFormat format = BarcodeFormat.QR_CODE;
+	protected final String text;
+	protected final String output;
+	protected final BarcodeFormat format;
 	public static final int BASE_SIZE = 300;
 
 	protected static final Map<String, BarcodeFormat> FORMATS = Map.ofEntries(
@@ -73,11 +71,60 @@ implements StringParameterPlaceholder, StringStub{
 				Map.entry(BarcodeFormat.UPC_E,
 						(str, format) -> new UPCEWriter().encode(str, format, BASE_SIZE, BASE_SIZE, DEFAULT_HINTS)));
 	}
-	
-	public BarcodeComposer() {
+		
+	public BarcodeComposer(String text, BarcodeFormat format, String output) {
 		super();
+		this.text = text;
+		this.output = output;
+		this.format = format;
 	}
 	
+	public BarcodeComposer(String text, String format, String output) {
+		super();
+		this.text = text;
+		this.output = output;
+		if (format != null && FORMATS.containsKey(format)) {
+			this.format = FORMATS.get(format);
+		}
+		else {
+			this.format = BarcodeFormat.QR_CODE;
+		}
+	}
+	
+	public BarcodeComposer(String text, BarcodeFormat format) {
+		this(text, format, "PNG");
+	}
+		
+	public BarcodeComposer(String text, String format) {
+		this(text, format, "PNG");
+	}
+	
+	public BarcodeComposer(String text) {
+		this(text, BarcodeFormat.QR_CODE, "PNG");
+	}
+
+	@Override
+	protected Image create(DocumentContext context) {
+		if(this.text == null || this.text.length() == 0) {
+			return null;
+		}
+		if(!CREATORS.containsKey(this.format)) {
+			return null;
+		}
+
+		try {
+			String evaluated = context == null ? this.text : context.eval(this.text);
+			BitMatrix matrix = CREATORS.get(this.format).create(evaluated, this.format);
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			MatrixToImageWriter.writeToStream(matrix, this.output, os);
+			byte [] imageData = os.toByteArray();
+			return new Image(ImageDataFactory.create(imageData));
+		}
+		catch(WriterException | IOException e) {
+			LOGGER.error("BARCODE GENERATION ERROR.", e);
+			return null;
+		}
+	}
 
 	protected BarcodeComposer(BarcodeComposer origin) {
 		super(origin);
@@ -85,64 +132,5 @@ implements StringParameterPlaceholder, StringStub{
 		this.output = origin.output;
 		this.format = origin.format;
 	}
-
-	public BarcodeComposer setText(String text) {
-		this.text = text;
-		return this;
-	}
-
-	@Override
-	public void setParameter(String parameter) {
-		this.setText(parameter);
-	}
-
-	public BarcodeComposer setFormat(String format) {
-		if (format != null && FORMATS.containsKey(format)) {
-			this.format = FORMATS.get(format);
-		} else {
-			this.format = BarcodeFormat.QR_CODE;
-		}
-		return this;
-	}
-
-	protected byte[] getImageData(BitMatrix matrix) {
-		try {
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			MatrixToImageWriter.writeToStream(matrix, this.output, os);
-			return os.toByteArray();
-		} catch (IOException e) {
-			LOGGER.error(IMAGE_ERROR, e);
-			throw new IllegalStateException(e);
-		}
-	}
-
-	@Override
-	protected Image create() {
-		try {
-			if(this.text != null && this.text.length() != 0 && CREATORS.containsKey(this.format)) {
-				BitMatrix matrix = CREATORS.get(this.format).create(this.text, this.format);
-				if (matrix == null) {
-					this.imageData = null;
-				} else {
-					this.setImageData(this.getImageData(matrix));
-				}
-			}
-			else {
-				this.imageData = null;
-			}
-		} catch (WriterException we) {
-			LOGGER.error(IMAGE_ERROR, we);
-		}
-		return super.create();
-	}
 	
-	@Override
-	public BarcodeComposer copy() {
-		return new BarcodeComposer(this);
-	}
-
-	@Override
-	public void substitute(Map<String, String> params) {
-		this.text = Substitution.substitute(this.text, params);
-	}	
 }

@@ -1,20 +1,16 @@
 package me.chenqiang.pdf.composer;
 
-import java.util.Map;
-
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 
-import me.chenqiang.pdf.component.Copyable;
+import me.chenqiang.pdf.DocumentContext;
 import me.chenqiang.pdf.component.DivComponent;
 import me.chenqiang.pdf.component.ParagraphComponent;
-import me.chenqiang.pdf.component.StringStub;
 import me.chenqiang.pdf.component.TableCellComponent;
-import me.chenqiang.pdf.utils.Substitution;
 
-public class StringComposer implements ParagraphComponent, TableCellComponent, DivComponent, StringStub, Copyable<StringComposer> {
-	private String text;	
+public class StringComposer implements ParagraphComponent, TableCellComponent, DivComponent {
+	protected final String text;	
 
 	public StringComposer(String content) {
 		this.text = content;
@@ -24,39 +20,41 @@ public class StringComposer implements ParagraphComponent, TableCellComponent, D
 		this.text = composer.text;
 	}
 
-	@Override
-	public void process(Paragraph para) {
+	protected String getEvaluatedString(DocumentContext context) {
 		if (this.text != null && this.text.length() > 0) {
-			para.add(this.text);
+			return context == null ? this.text : context.eval(this.text);
 		}
-	}
-
-	@Override
-	public void process(Cell cell) {
-		if (this.text != null && this.text.length() > 0) {
-			cell.add(new Paragraph(this.text));
+		else {
+			return null;
 		}
 	}
 	
 	@Override
-	public void process(Div div) {
-		if (this.text != null && this.text.length() > 0) {
-			div.add(new Paragraph(this.text));
+	public void process(Paragraph para, DocumentContext context) {
+		String evaluated = this.getEvaluatedString(context);
+		if (evaluated != null) {
+			para.add(evaluated);
+		}
+	}
+
+	@Override
+	public void process(Cell cell, DocumentContext context) {
+		String evaluated = this.getEvaluatedString(context);
+		if (evaluated != null) {
+			cell.add(new Paragraph(evaluated));
+		}
+	}
+	
+	@Override
+	public void process(Div div, DocumentContext context) {
+		String evaluated = this.getEvaluatedString(context);
+		if (evaluated != null) {
+			div.add(new Paragraph(evaluated));
 		}
 	}
 	
 	@Override
 	public String toString() {
 		return this.text;
-	}
-
-	@Override
-	public void substitute(Map<String, String> params) {
-		this.text = Substitution.substitute(this.text, params);
-	}
-
-	@Override
-	public StringComposer copy() {
-		return new StringComposer(this);
 	}
 }
