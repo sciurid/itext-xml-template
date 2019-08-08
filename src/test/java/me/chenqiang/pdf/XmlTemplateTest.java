@@ -5,11 +5,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.dom4j.DocumentException;
 import org.junit.Test;
@@ -65,58 +66,68 @@ public class XmlTemplateTest {
 		}
 	}
 	
-//	@Test
+	@Test
 	public void parallelTest() throws DocumentException, IOException, InterruptedException {
 		InputStream stream = XmlTemplateTest.class.getResourceAsStream("/standard-sample.xml");
 		
 		DocumentEngine engine = new DocumentEngine();
 		engine.load(stream);
 		
-		byte [] sampleImage = XmlTemplateTest.class.getResourceAsStream("/books.png").readAllBytes();	
+		byte [] sampleImage = XmlTemplateTest.class.getResourceAsStream("/books.png").readAllBytes();
 		
+		LinkedBlockingQueue<File> files = new LinkedBlockingQueue<>();
+		Runnable task = () ->  {
+			try {
+				File file = File.createTempFile("Sample", ".pdf");					
+				try (FileOutputStream fos = new FileOutputStream(file)) {
+					engine.produce("test", 
+							Map.of(
+									"文本替换", "https://www.tsinghua.edu.cn", 
+									"元素替换", "https://www.tsinghua.edu.cn", 
+									"数据替换", sampleImage,
+									"时间", LocalDateTime.now()),
+							fos);
+				}
+				files.offer(file);
+			}
+			catch (IOException e) {
+				LOGGER.error("Template failed.", e);
+			}
+		};
 		
-		Set<Thread> threads = new LinkedHashSet<>();
-		List<File> files = new ArrayList<>();
-		for(int i = 0; i < 5; i++) {
-			Thread thread = new Thread(() ->  {
+		ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 2, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(10), new ThreadPoolExecutor.CallerRunsPolicy());
+		Thread display = new Thread(() -> {
+			while(true) {
 				try {
-					File file = File.createTempFile("Sample", ".pdf");					
-					try (FileOutputStream fos = new FileOutputStream(file)) {
-						engine.produce("test", 
-								Map.of(
-										"文本替换", "https://www.tsinghua.edu.cn", 
-										"元素替换", "https://www.tsinghua.edu.cn", 
-										"数据替换", sampleImage),
-								fos);
+					File file = files.take();				
+					if(Desktop.isDesktopSupported()) {
+						try {
+							Desktop.getDesktop().open(file);
+						} catch (IOException e) {
+							LOGGER.error("File open failed.", e);
+						}
 					}
-					files.add(file);
-					try {
-						Desktop.getDesktop().open(file);
-					} catch (IOException e) {
-						LOGGER.error("File open failed.", e);
+					if(Thread.currentThread().isInterrupted() && files.isEmpty()) {
+						return;
+					}
+				} catch (InterruptedException e) {
+					if(files.isEmpty()) {
+						return;
 					}
 				}
-				catch (IOException e) {
-					LOGGER.error("Template failed.", e);
-				}
-			});
-			thread.start();
-			threads.add(thread);
-		}
-		synchronized(threads) {
-			for(Thread t : threads) {
-				t.join();
-			}
-		}
-		files.forEach(file -> {
-			if(Desktop.isDesktopSupported()) {
-				try {
-					Desktop.getDesktop().open(file);
-				} catch (IOException e) {
-					LOGGER.error("File open failed.", e);
-				}
-			}
+			}			
 		});
+		display.setName("Display");
+		display.start();
 		
+		for(int i = 0; i < 20; i++) {
+			executor.submit(task);
+		}
+		
+		executor.shutdown();
+		executor.awaitTermination(10, TimeUnit.MINUTES);
+		
+		display.interrupt();
+		display.join(1000 * 60);
 	}
 }

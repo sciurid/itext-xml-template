@@ -22,7 +22,7 @@ public class BeanUtilEvaluator implements ParameterEvaluator {
 			String key = m.group(1);
 			try {
 				String value = BeanUtils.getProperty(params, key);
-				m.appendReplacement(sb, Matcher.quoteReplacement(value == null ? key : value));
+				m.appendReplacement(sb, Matcher.quoteReplacement(value == null ? String.format("${%s}", key) : value));
 			}
 			catch(RuntimeException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 				LOGGER.error("ERROR IN EVALUATING BEAN PROPERTY VALUE STRING: ", e);
