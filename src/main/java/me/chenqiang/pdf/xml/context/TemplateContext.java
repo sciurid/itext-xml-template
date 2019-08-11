@@ -18,7 +18,7 @@ public class TemplateContext {
 		this.resourceRepository = new ResourceRepository();
 		this.attributeRegistry = new AttributeRegistry(this.resourceRepository);
 		this.scopeStack = new LinkedList<>();
-		this.startScope();
+		this.beginScope();
 	}
 
 	public ResourceRepository getResourceRepository() {
@@ -29,7 +29,7 @@ public class TemplateContext {
 		return attributeRegistry;
 	}
 	
-	public Scope startScope() {
+	public Scope beginScope() {
 		Scope scope = new Scope();
 		this.scopeStack.addFirst(scope);
 		LOGGER.debug("Enter new scope, stack depth: {}", this.scopeStack.size());
