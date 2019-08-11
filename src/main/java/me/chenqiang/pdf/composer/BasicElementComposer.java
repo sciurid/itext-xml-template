@@ -9,27 +9,12 @@ import me.chenqiang.pdf.component.PdfElementComposer;
 
 public abstract class BasicElementComposer<T, S extends BasicElementComposer<T, S>>
 implements PdfElementComposer<T, S> {
-	protected String id;
 	protected final LinkedList<Consumer<? super T>> attributes;
 	protected final Class<T> elementClass;
 	
 	protected BasicElementComposer(Class<T> elementClass) {
 		this.attributes = new LinkedList<>();
 		this.elementClass = elementClass;
-	}
-	
-	protected BasicElementComposer(BasicElementComposer<T, S> origin) {
-		this(origin.elementClass);
-		this.attributes.addAll(origin.attributes);
-		this.id = origin.id;
-	}
-	
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	@Override

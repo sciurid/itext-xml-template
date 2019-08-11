@@ -54,20 +54,12 @@ public abstract class BasicTemplateElementHandler<T extends PdfElementComposer<E
 		}
 		Element current = elementPath.getCurrent();
 
-		String composerId = current.attributeValue(AttributeRegistry.ID);
-		if (composerId != null) {
-			composer.setId(composerId);
-		}
-
 		String styleId = current.attributeValue(AttributeRegistry.STYLE);
 		List<String []> attributes = new ArrayList<>();
 		if(styleId != null){
 			List<String []> styleAttributes = this.context.getPredefinedStyle(styleId);
 			if(styleAttributes != null) {
 				attributes.addAll(styleAttributes);
-//				List<String[]> filtered = styleAttributes.stream().filter(attr -> attributeMap.containsKey(attr[0])).collect(Collectors.toList());
-//				AttributeUtils.setComposerAttributes(styleAttributes, cellMap, this.row);
-//				AttributeUtils.getCompositeAttribute(styleAttributes).setComposerAttribute(this.row);
 			}
 		}
 		current.attributes().forEach(attr -> attributes.add(new String[] {attr.getName(), attr.getValue()}));

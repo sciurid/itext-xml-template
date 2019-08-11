@@ -38,7 +38,7 @@ public class RootHandler implements ElementHandler{
 
 	@Override
 	public void onEnd(ElementPath elementPath) {
-		
+		// Do Nothing.
 	}
 
 	protected void doTemplatePostProcess(DocumentComposer tplDoc) {

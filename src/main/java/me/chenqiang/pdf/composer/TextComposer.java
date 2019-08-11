@@ -19,11 +19,6 @@ public class TextComposer extends BasicElementComposer<Text, TextComposer>
 		this.text = new StringBuilder();
 	}
 
-	protected TextComposer(TextComposer original) {
-		super(original);
-		this.text = new StringBuilder(original.text);
-	}
-
 	public TextComposer(String str) {
 		this();
 		this.append(str);

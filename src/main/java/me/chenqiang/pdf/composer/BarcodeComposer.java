@@ -125,12 +125,4 @@ public final class BarcodeComposer extends BasicImageComposer<BarcodeComposer> {
 			return null;
 		}
 	}
-
-	protected BarcodeComposer(BarcodeComposer origin) {
-		super(origin);
-		this.text = origin.text;
-		this.output = origin.output;
-		this.format = origin.format;
-	}
-	
 }
