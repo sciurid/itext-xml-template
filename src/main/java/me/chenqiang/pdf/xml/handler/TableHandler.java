@@ -48,9 +48,9 @@ public class TableHandler extends BasicTemplateElementHandler<TableComposer, Tab
 			} 
 		}
 		
-		elementPath.addHandler("header", new TableRowHander(this.context, this.tplTbl.getHeader()));
-		elementPath.addHandler("body", new TableRowHander(this.context, this.tplTbl.getBody()));
-		elementPath.addHandler("footer", new TableRowHander(this.context, this.tplTbl.getFooter()));		
+		elementPath.addHandler("header", new TableRowHander(this.context, this.tplTbl, Table::addHeaderCell));
+		elementPath.addHandler("body", new TableRowHander(this.context, this.tplTbl, Table::addCell));
+		elementPath.addHandler("footer", new TableRowHander(this.context, this.tplTbl, Table::addFooterCell));		
 	}
 
 	@Override

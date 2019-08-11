@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -14,20 +15,27 @@ import org.dom4j.ElementPath;
 import org.dom4j.Node;
 
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Table;
 
 import me.chenqiang.pdf.composer.StringComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
-import me.chenqiang.pdf.composer.TableRowComposer;
+import me.chenqiang.pdf.composer.TableComposer;
 import me.chenqiang.pdf.utils.StringEscape;
 import me.chenqiang.pdf.xml.context.AttributeRegistry;
+import me.chenqiang.pdf.xml.context.AttributeUtils;
 import me.chenqiang.pdf.xml.context.AttributeValueParser;
 import me.chenqiang.pdf.xml.context.TemplateContext;
 
 public class TableCellHandler extends BasicTemplateElementHandler<TableCellComposer, Cell> {
-	private TableCellComposer tplCell;
-
-	public TableCellHandler(TemplateContext context, TableRowComposer row) {
-		super(context, row::add);
+	protected TableCellComposer tplCell;
+	protected TableComposer tplTbl;
+	protected BiConsumer<Table, Cell> appender;
+	protected List<String []> attributes;
+	
+	public TableCellHandler(TemplateContext context, TableComposer tplTbl, BiConsumer<Table, Cell> appender, List<String []> attributes) {
+		super(context, tplTbl::append);
+		this.appender = appender;
+		this.attributes = attributes;
 	}
 
 	@Override
@@ -84,11 +92,15 @@ public class TableCellHandler extends BasicTemplateElementHandler<TableCellCompo
 		}
 		
 		if(rowspan == 1 && colspan == 1) {
-			this.tplCell = new TableCellComposer();
+			this.tplCell = new TableCellComposer(this.appender);
 		}
 		else {
-			this.tplCell = new TableCellComposer(rowspan, colspan);
-		}		
+			this.tplCell = new TableCellComposer(rowspan, colspan, this.appender);
+		}
+		
+		Map<String, BiFunction<String, String, ? extends Consumer<? super Cell>>> attributeMap = this.getAttributeMap();
+		AttributeUtils.setComposerAttributes(attributes, attributeMap, this.tplCell);
+		AttributeUtils.getCompositeAttribute(attributes).setComposerAttribute(this.tplCell);
 		
 		new TextHandler(this.context, this.tplCell).register(elementPath);
 		new ParagraphHandler(this.context, this.tplCell).register(elementPath);

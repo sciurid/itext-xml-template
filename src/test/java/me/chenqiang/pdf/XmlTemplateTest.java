@@ -66,7 +66,7 @@ public class XmlTemplateTest {
 		}
 	}
 	
-	@Test
+//	@Test
 	public void parallelTest() throws DocumentException, IOException, InterruptedException {
 		InputStream stream = XmlTemplateTest.class.getResourceAsStream("/standard-sample.xml");
 		
