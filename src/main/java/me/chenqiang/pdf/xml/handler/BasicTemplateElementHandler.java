@@ -42,7 +42,7 @@ public abstract class BasicTemplateElementHandler<T extends PdfElementComposer<E
 	@Override
 	public void onStart(ElementPath elementPath) {
 		LOGGER.debug("[START] {} - {}", elementPath.getPath(), this.count);
-		this.context.startScope();
+		this.context.beginScope();
 	}
 
 	@Override
