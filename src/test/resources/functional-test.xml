@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<document id="test">
+	<paragraph>${name}</paragraph>
+	<paragraph>${title}</paragraph>
+	<paragraph><foreach var="child" items="children">${child}<br/></foreach></paragraph>
+	<paragraph><image data="${hawk}"/></paragraph>
+	</document>
+</root>

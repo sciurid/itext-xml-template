@@ -31,7 +31,7 @@ public class DocumentContext {
 	protected final LinkedList<Scope> scopes;
 	protected final ParameterEvaluator evaluator;
 	
-	public DocumentContext(Scope scope, ParameterEvaluator evaluator) {
+	protected DocumentContext(Scope scope, ParameterEvaluator evaluator) {
 		this.scopes = new LinkedList<>();
 		this.scopes.addFirst(scope);
 		this.evaluator = evaluator;
@@ -51,6 +51,14 @@ public class DocumentContext {
 	
 	public void endScope() {
 		this.scopes.removeFirst();
+	}
+	
+	public Scope getCurrentScope() {
+		return this.scopes.getFirst();
+	}
+	
+	public void setParameter(String key, Object value) {
+		this.getCurrentScope().setParameter(key, value);
 	}
 
 	public String eval(String text) {		
