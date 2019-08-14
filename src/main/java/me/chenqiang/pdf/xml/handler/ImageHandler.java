@@ -2,9 +2,6 @@ package me.chenqiang.pdf.xml.handler;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 import org.dom4j.Attribute;
 import org.dom4j.Element;
@@ -53,7 +50,7 @@ public class ImageHandler extends BasicTemplateElementHandler<ImageComposer, Ima
 				tplImg.loadFromResource(value);
 				break;
 			case AttributeRegistry.REF:
-				tplImg.loadFromBytes(this.context.getResourceRepository().getImage(value));
+				tplImg.loadFromBytes(this.context.getImage(value));
 				break;
 			case AttributeRegistry.VALUE:
 				tplImg.setValue(value);
@@ -64,11 +61,6 @@ public class ImageHandler extends BasicTemplateElementHandler<ImageComposer, Ima
 		return tplImg;
 	}
 	
-	@Override
-	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Image>>> getAttributeMap() {
-		return this.context.getAttributeRegistry().getImageMap();
-	}
-
 	public static final List<String> getElementNames() {
 		return Arrays.asList("image", "img");
 	}

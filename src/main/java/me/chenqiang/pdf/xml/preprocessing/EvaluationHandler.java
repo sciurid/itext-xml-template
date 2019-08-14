@@ -1,6 +1,5 @@
 package me.chenqiang.pdf.xml.preprocessing;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Iterator;
@@ -30,17 +29,16 @@ public class EvaluationHandler implements ElementHandler {
 
 	@Override
 	public void onStart(ElementPath elementPath) {
-		Element current = elementPath.getCurrent();
-//		for(Attribute attr : current.attributes()) {
-//			String originalValue = attr.getValue();
-//			attr.setValue(context.eval(originalValue));
-//		}
+		// Do Nothing.
 	}
 
 	@Override
 	public void onEnd(ElementPath elementPath) {
 		Element current = elementPath.getCurrent();
 		switch(current.getName()) {
+		case "if":
+			this.doIf(current);
+			break;
 		case "foreach":
 			this.doForEach(current);
 			break;
@@ -98,7 +96,7 @@ public class EvaluationHandler implements ElementHandler {
 			return;
 		}
 		
-		Iterable<Node> iter = () -> current.nodeIterator();
+		Iterable<Node> iter = current::nodeIterator;
 		List<Node> nodes = StreamSupport.stream(iter.spliterator(), false).collect(Collectors.toList());		
 		nodes.forEach(Node::detach);
 		Element parent = current.getParent();
@@ -127,5 +125,27 @@ public class EvaluationHandler implements ElementHandler {
 		finally {
 			context.endScope();
 		}
+	}
+	
+	protected void doIf(Element current) {
+		String predicateName = current.attributeValue("test");
+		Object obj = this.context.getProperty(predicateName);
+		boolean predicate;
+		if(obj.getClass() == Boolean.class || obj.getClass() == boolean.class) {
+			predicate = (boolean)obj;
+		}
+		else if(obj instanceof String) {
+			predicate = Boolean.parseBoolean((String)obj);
+		}
+		else {
+			predicate = false;
+		}
+		
+		if(predicate) {
+			Iterable<Node> iter = current::nodeIterator;
+			Element parent = current.getParent();
+			StreamSupport.stream(iter.spliterator(), false).forEach(parent::add);
+		}
+		current.detach();
 	}
 }

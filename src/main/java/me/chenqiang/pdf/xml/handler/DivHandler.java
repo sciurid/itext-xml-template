@@ -2,11 +2,8 @@ package me.chenqiang.pdf.xml.handler;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 import org.dom4j.Element;
 import org.dom4j.ElementPath;
@@ -72,11 +69,6 @@ public class DivHandler extends BasicTemplateElementHandler<DivComposer, Div> {
 		new ImageHandler(this.context, this.tplDiv).register(elementPath);
 		new BarcodeHandler(this.context, this.tplDiv).register(elementPath);
 		new ParagraphHandler(this.context, this.tplDiv).register(elementPath);
-	}
-
-	@Override
-	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Div>>> getAttributeMap() {
-		return this.context.getAttributeRegistry().getDivMap();
 	}
 
 	public static List<String> getElementNames() {

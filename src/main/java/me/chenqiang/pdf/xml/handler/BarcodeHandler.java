@@ -2,9 +2,6 @@ package me.chenqiang.pdf.xml.handler;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 import org.dom4j.Element;
 import org.dom4j.ElementPath;
@@ -46,11 +43,6 @@ public class BarcodeHandler extends BasicTemplateElementHandler<BarcodeComposer,
 		return new BarcodeComposer(current.getText(), format);
 	}
 	
-	@Override
-	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Image>>> getAttributeMap() {
-		return this.context.getAttributeRegistry().getImageMap();
-	}
-		
 	public static final List<String> getElementNames() {
 		return Arrays.asList("barcode");
 	}	

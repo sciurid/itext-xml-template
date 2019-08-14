@@ -11,17 +11,17 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 
-public class FontFileRegistry implements FontRegistry {
-	private static final Logger LOGGER = LoggerFactory.getLogger(FontFileRegistry.class);
+public class FileEntry implements FontRegistryEntry {
+	private static final Logger LOGGER = LoggerFactory.getLogger(FileEntry.class);
 	protected File file;
 	protected int ttcIndex;
 	
-	private FontFileRegistry(File file, int ttcIndex) {
+	private FileEntry(File file, int ttcIndex) {
 		this.file = file;
 		this.ttcIndex = ttcIndex;
 	}
 	
-	private FontFileRegistry(File file) {
+	private FileEntry(File file) {
 		this(file, -1);
 	}
 			
@@ -43,8 +43,8 @@ public class FontFileRegistry implements FontRegistry {
 		} 
 	}		
 	
-	public static FontFileRegistry create(File file) {
-		FontFileRegistry reg = new FontFileRegistry(file);
+	public static FileEntry create(File file) {
+		FileEntry reg = new FileEntry(file);
 		if(reg.getFont() != null) {
 			return reg;
 		}
@@ -52,8 +52,8 @@ public class FontFileRegistry implements FontRegistry {
 			return null;
 		}
 	}
-	public static FontFileRegistry createTtc(File file, int ttcIndex) {
-		FontFileRegistry reg = new FontFileRegistry(file, ttcIndex);
+	public static FileEntry createTtc(File file, int ttcIndex) {
+		FileEntry reg = new FileEntry(file, ttcIndex);
 		if(reg.getFont() != null) {
 			return reg;
 		}
@@ -62,11 +62,11 @@ public class FontFileRegistry implements FontRegistry {
 		}
 	}
 	
-	public static FontFileRegistry create(String path) {
+	public static FileEntry create(String path) {
 		return create(new File(path));
 	}
 	
-	public static FontFileRegistry createTtc(String path, int ttcIndex) {
+	public static FileEntry createTtc(String path, int ttcIndex) {
 		return createTtc(new File(path), ttcIndex);
 	}
 }

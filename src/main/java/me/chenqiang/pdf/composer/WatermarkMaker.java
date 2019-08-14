@@ -26,8 +26,8 @@ import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 
-import me.chenqiang.pdf.font.FontRegistry;
-import me.chenqiang.pdf.font.MemoryCachedFontRegistry;
+import me.chenqiang.pdf.font.FontRegistryEntry;
+import me.chenqiang.pdf.font.MemoryCachedEntry;
 import me.chenqiang.pdf.xml.context.ColorMap;
 
 public class WatermarkMaker implements IEventHandler {
@@ -119,7 +119,7 @@ public class WatermarkMaker implements IEventHandler {
 	}
 
 	public static class TextWatermarkSetting {
-		protected FontRegistry font;
+		protected FontRegistryEntry font;
 		protected UnitValue fontSize = UnitValue.createPointValue(30f);
 		protected float width = 0f;
 		protected float offsetX = 0f;
@@ -133,7 +133,7 @@ public class WatermarkMaker implements IEventHandler {
 		public TextWatermarkSetting() {
 			try {
 				PdfFont helvetica = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD, PdfEncodings.UTF8, true, true);
-				this.font = new MemoryCachedFontRegistry(helvetica);
+				this.font = new MemoryCachedEntry(helvetica);
 			} catch (IOException e) {
 				this.font = null;
 			}
@@ -151,7 +151,7 @@ public class WatermarkMaker implements IEventHandler {
 			this.offsetY = offsetY;
 		}
 
-		public void setFont(FontRegistry font) {
+		public void setFont(FontRegistryEntry font) {
 			this.font = font;
 		}
 

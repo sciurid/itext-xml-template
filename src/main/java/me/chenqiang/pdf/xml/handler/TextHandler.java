@@ -2,9 +2,6 @@ package me.chenqiang.pdf.xml.handler;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 import org.dom4j.Element;
 import org.dom4j.ElementPath;
@@ -49,11 +46,6 @@ public class TextHandler extends BasicTemplateElementHandler<TextComposer, Text>
 	public void onStart(ElementPath elementPath) {
 		super.onStart(elementPath);
 		this.tplText = new TextComposer();
-	}
-
-	@Override
-	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Text>>> getAttributeMap() {
-		return this.context.getAttributeRegistry().getTextMap();
 	}
 
 	public static final List<String> getElementNames() {

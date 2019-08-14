@@ -12,11 +12,11 @@ import com.itextpdf.kernel.font.PdfFont;
 
 import me.chenqiang.pdf.utils.SerializableCloning;
 
-public class FileCachedFontRegistry implements FontRegistry {
-	private static final Logger LOGGER = LoggerFactory.getLogger(FileCachedFontRegistry.class);
+public class FileCachedEntry implements FontRegistryEntry {
+	private static final Logger LOGGER = LoggerFactory.getLogger(FileCachedEntry.class);
 	protected File file;
 	
-	public FileCachedFontRegistry(PdfFont font) {
+	public FileCachedEntry(PdfFont font) {
 		try {
 			this.file = File.createTempFile("font-", ".cache");
 			try(FileOutputStream fos = new FileOutputStream(file)) {

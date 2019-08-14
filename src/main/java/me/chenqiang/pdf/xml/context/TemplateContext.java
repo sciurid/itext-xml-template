@@ -1,5 +1,6 @@
 package me.chenqiang.pdf.xml.context;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -8,25 +9,47 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.itextpdf.layout.Style;
+
+import me.chenqiang.pdf.font.FontRegistry;
+import me.chenqiang.pdf.font.FontRegistryEntry;
+
 public class TemplateContext {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TemplateContext.class);
-	protected ResourceRepository resourceRepository;
-	protected AttributeRegistry attributeRegistry;
+	protected Map<String, Style> styles;
+	protected Map<String, byte []> images;
+	protected FontRegistry fontreg;
+	protected AttributeRegistry attributes;
 	protected LinkedList<Scope> scopeStack;
 	
 	public TemplateContext() {
-		this.resourceRepository = new ResourceRepository();
-		this.attributeRegistry = new AttributeRegistry(this.resourceRepository);
+		this.fontreg = new FontRegistry();	
+		this.fontreg.initialize();
+		this.styles = new TreeMap<>();
+		this.images = new TreeMap<>();
+		this.attributes = new AttributeRegistry(this.fontreg);
 		this.scopeStack = new LinkedList<>();
 		this.beginScope();
 	}
 
-	public ResourceRepository getResourceRepository() {
-		return resourceRepository;
+	public AttributeRegistry getAttributeRegistry() {
+		return attributes;
+	}
+	
+	public byte [] getImage(String name) {
+		return this.images.get(name);
+	}
+	
+	public void registerImage(String name, byte [] image) {
+		this.images.put(name, image);
 	}
 
-	public AttributeRegistry getAttributeRegistry() {
-		return attributeRegistry;
+	public FontRegistry getFontreg() {
+		return fontreg;
+	}
+
+	public FontRegistryEntry getFont(String name) {
+		return this.fontreg.apply(name);
 	}
 	
 	public Scope beginScope() {
@@ -55,7 +78,7 @@ public class TemplateContext {
 	}
 	
 	public List<String []> getPredefinedStyle(String id) {
-		List<String []> res = null;
+		List<String []> res = new ArrayList<>();
 		for(Scope scope : this.scopeStack) {
 			res = scope.getStyle(id);
 			if(res != null) {

@@ -2,11 +2,8 @@ package me.chenqiang.pdf.xml.handler;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 import org.dom4j.Element;
 import org.dom4j.ElementPath;
@@ -20,7 +17,7 @@ import me.chenqiang.pdf.composer.ParagraphComposer;
 import me.chenqiang.pdf.composer.StringComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
 import me.chenqiang.pdf.utils.StringEscape;
-import me.chenqiang.pdf.xml.context.AttributeUtils;
+import me.chenqiang.pdf.xml.context.AttributeRegistry;
 import me.chenqiang.pdf.xml.context.TemplateContext;
 
 public class ParagraphHandler extends BasicTemplateElementHandler<ParagraphComposer, Paragraph> {
@@ -80,15 +77,11 @@ public class ParagraphHandler extends BasicTemplateElementHandler<ParagraphCompo
 	@Override
 	public void onEnd(ElementPath elementPath) {
 		super.onEnd(elementPath);
-		List<String []> defaultParagraphStyle = this.context.getDefaultParagraphStyle();
-		if(defaultParagraphStyle != null) {
-			AttributeUtils.setComposerAttributes(defaultParagraphStyle, this.context.getAttributeRegistry().getParagraphMap(), this.tplPara);
+		List<String []> dps = this.context.getDefaultParagraphStyle();
+		if(dps != null) {
+			AttributeRegistry ar = this.context.getAttributeRegistry();
+			dps.forEach(item -> this.tplPara.setAttribute(ar.get(Paragraph.class, item[0], item[1])));
 		}
-	}
-
-	@Override
-	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Paragraph>>> getAttributeMap() {
-		return this.context.getAttributeRegistry().getParagraphMap();
 	}
 	
 	public static List<String> getElementNames() {

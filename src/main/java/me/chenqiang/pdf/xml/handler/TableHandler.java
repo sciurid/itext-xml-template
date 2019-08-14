@@ -2,9 +2,6 @@ package me.chenqiang.pdf.xml.handler;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 import org.dom4j.Attribute;
 import org.dom4j.Element;
@@ -15,6 +12,7 @@ import com.itextpdf.layout.property.UnitValue;
 
 import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.composer.TableComposer;
+import me.chenqiang.pdf.xml.context.AttributeNames;
 import me.chenqiang.pdf.xml.context.AttributeRegistry;
 import me.chenqiang.pdf.xml.context.AttributeValueParser;
 import me.chenqiang.pdf.xml.context.TemplateContext;
@@ -25,27 +23,31 @@ public class TableHandler extends BasicTemplateElementHandler<TableComposer, Tab
 		super(context, tplDoc::append);
 	}
 	
+	
+	
+	@Override
+	protected List<String> listIgnoredAttributes() {
+		 List<String> list = super.listIgnoredAttributes();
+		 list.addAll(LAYOUT_ATTRS);
+		 return list;
+	}
+
+	protected static final List<String> LAYOUT_ATTRS = List.of(AttributeNames.WIDTHS, AttributeNames.COLUMNS);
+
 	@Override
 	public void onStart(ElementPath elementPath) {
 		super.onStart(elementPath);
 		this.tplTbl = new TableComposer();
 		Element current = elementPath.getCurrent();		
-		for (Attribute attr : current.attributes()) {
-			String attrName = attr.getName();
-			if (AttributeRegistry.WIDTHS.equals(attrName)) {
-				AttributeValueParser parser = new AttributeValueParser(attr.getName(), attr.getValue());
-				UnitValue [] widths = parser.getUnitValueArray();
-				if(widths.length > 0) {
+		
+		for(String name : LAYOUT_ATTRS) {
+			String value = current.attributeValue(name);
+			if(value != null) {
+				UnitValue [] widths = new AttributeValueParser(name, value).getUnitValueArray();
+				if(widths != null && widths.length > 0) {
 					this.tplTbl.setColumns(widths);
 				}
 			}
-			else if (AttributeRegistry.COLUMNS.equals(attrName)) {
-				AttributeValueParser parser = new AttributeValueParser(attr.getName(), attr.getValue());
-				Integer columns = parser.getInteger();
-				if(columns != null && columns > 0) {
-					this.tplTbl.setColumns(columns);
-				}
-			} 
 		}
 		
 		elementPath.addHandler("header", new TableRowHander(this.context, this.tplTbl, Table::addHeaderCell));
@@ -56,11 +58,6 @@ public class TableHandler extends BasicTemplateElementHandler<TableComposer, Tab
 	@Override
 	protected TableComposer create(ElementPath elementPath) {
 		return this.tplTbl;
-	}
-
-	@Override
-	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Table>>> getAttributeMap() {
-		return this.context.getAttributeRegistry().getTableMap();
 	}
 
 	public static List<String> getElementNames() {
