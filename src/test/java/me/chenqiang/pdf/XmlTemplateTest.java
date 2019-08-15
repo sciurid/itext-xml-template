@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -56,7 +57,8 @@ public class XmlTemplateTest {
 					Map.of(
 							"文本替换", "https://www.tsinghua.edu.cn", 
 							"元素替换", "https://www.tsinghua.edu.cn", 
-							"数据替换", sampleImage), 
+							"数据替换", sampleImage,
+							"names", List.of("李白", "杜甫", "白居易", "杜牧", "李商隐")), 
 					fos);
 		} catch (IOException e) {
 			LOGGER.error("Template failed.", e);
@@ -120,7 +122,7 @@ public class XmlTemplateTest {
 		display.setName("Display");
 		display.start();
 		
-		for(int i = 0; i < 20; i++) {
+		for(int i = 0; i < 10; i++) {
 			executor.submit(task);
 		}
 		

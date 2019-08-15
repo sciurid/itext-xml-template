@@ -2,11 +2,8 @@ package me.chenqiang.pdf.xml.handler;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 import org.dom4j.Element;
 import org.dom4j.ElementPath;
@@ -16,11 +13,13 @@ import com.itextpdf.layout.element.Paragraph;
 
 import me.chenqiang.pdf.composer.DivComposer;
 import me.chenqiang.pdf.composer.DocumentComposer;
+import me.chenqiang.pdf.composer.ForEachComposer;
+import me.chenqiang.pdf.composer.IfComposer;
 import me.chenqiang.pdf.composer.ParagraphComposer;
 import me.chenqiang.pdf.composer.StringComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
 import me.chenqiang.pdf.utils.StringEscape;
-import me.chenqiang.pdf.xml.context.AttributeUtils;
+import me.chenqiang.pdf.xml.context.AttributeRegistry;
 import me.chenqiang.pdf.xml.context.TemplateContext;
 
 public class ParagraphHandler extends BasicTemplateElementHandler<ParagraphComposer, Paragraph> {
@@ -36,6 +35,14 @@ public class ParagraphHandler extends BasicTemplateElementHandler<ParagraphCompo
 	
 	public ParagraphHandler(TemplateContext context, DivComposer tplDiv) {
 		super(context, tplDiv::append);
+	}
+	
+	public ParagraphHandler(TemplateContext context, ForEachComposer foreach) {
+		super(context, foreach::append);
+	}
+	
+	public ParagraphHandler(TemplateContext context, IfComposer foreach) {
+		super(context, foreach::append);
 	}
 
 	@Override
@@ -75,20 +82,19 @@ public class ParagraphHandler extends BasicTemplateElementHandler<ParagraphCompo
 		new BarcodeHandler(this.context, this.tplPara).register(elementPath);
 		new DivHandler(this.context, this.tplPara).register(elementPath);
 		new LineReturnHandler(this.tplPara).register(elementPath);
+		
+		new ForEachHandler(this.context, this.tplPara::append).register(elementPath);	
+		new IfHandler(this.context, this.tplPara::append).register(elementPath);
 	}
 	
 	@Override
 	public void onEnd(ElementPath elementPath) {
 		super.onEnd(elementPath);
-		List<String []> defaultParagraphStyle = this.context.getDefaultParagraphStyle();
-		if(defaultParagraphStyle != null) {
-			AttributeUtils.setComposerAttributes(defaultParagraphStyle, this.context.getAttributeRegistry().getParagraphMap(), this.tplPara);
+		List<String []> dps = this.context.getDefaultParagraphStyle();
+		if(dps != null) {
+			AttributeRegistry ar = this.context.getAttributeRegistry();
+			dps.forEach(item -> this.tplPara.setAttribute(ar.get(Paragraph.class, item[0], item[1])));
 		}
-	}
-
-	@Override
-	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Paragraph>>> getAttributeMap() {
-		return this.context.getAttributeRegistry().getParagraphMap();
 	}
 	
 	public static List<String> getElementNames() {

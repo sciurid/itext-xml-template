@@ -88,7 +88,7 @@ public class AttributeValueParser {
 			return res;
 		} catch (NumberFormatException nfe) {
 			LOGGER.error("Attribute '{}' value is not an array of floats: '{}'.", this.attrName, this.originalValue);
-			return new float[0];
+			return null;
 		}
 	}
 

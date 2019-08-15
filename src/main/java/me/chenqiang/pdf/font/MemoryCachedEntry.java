@@ -7,11 +7,11 @@ import com.itextpdf.kernel.font.PdfFont;
 
 import me.chenqiang.pdf.utils.SerializableCloning;
 
-public class MemoryCachedFontRegistry implements FontRegistry {
-	private static final Logger LOGGER = LoggerFactory.getLogger(MemoryCachedFontRegistry.class);
+public class MemoryCachedEntry implements FontRegistryEntry {
+	private static final Logger LOGGER = LoggerFactory.getLogger(MemoryCachedEntry.class);
 	protected byte[] cache;
 
-	public MemoryCachedFontRegistry(PdfFont font) {
+	public MemoryCachedEntry(PdfFont font) {
 		this.cache = SerializableCloning.toBytes(font);
 		LOGGER.debug("Memory cached font registry is created.");
 	}

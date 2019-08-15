@@ -1,7 +1,5 @@
 package me.chenqiang.pdf.xml.handler;
 
-import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import org.dom4j.Element;
@@ -43,6 +41,9 @@ public final class DocumentHandler extends BasicTemplateElementHandler<DocumentC
 		new DivHandler(this.context, this.tplDoc).register(elementPath);
 		new NewPageHandler(this.context, this.tplDoc).register(elementPath);
 		new WatermarkHandler(this.context, this.tplDoc).register(elementPath);
+		
+		new ForEachHandler(this.context, this.tplDoc::append).register(elementPath);
+		new IfHandler(this.context, this.tplDoc::append).register(elementPath);
 	}
 
 	@Override
@@ -65,11 +66,6 @@ public final class DocumentHandler extends BasicTemplateElementHandler<DocumentC
 		LOGGER.debug("[END] {} - {}", elementPath.getPath(), this.count++);
 		
 		super.onEnd(elementPath);
-	}
-
-	@Override
-	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Document>>> getAttributeMap() {
-		return this.context.getAttributeRegistry().getDocumentMap();
 	}
 
 	@Override

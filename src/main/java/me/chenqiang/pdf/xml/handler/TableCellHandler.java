@@ -2,14 +2,10 @@ package me.chenqiang.pdf.xml.handler;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
-import org.dom4j.Attribute;
 import org.dom4j.Element;
 import org.dom4j.ElementPath;
 import org.dom4j.Node;
@@ -17,12 +13,13 @@ import org.dom4j.Node;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 
+import me.chenqiang.pdf.composer.ForEachComposer;
+import me.chenqiang.pdf.composer.IfComposer;
 import me.chenqiang.pdf.composer.StringComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
 import me.chenqiang.pdf.composer.TableComposer;
 import me.chenqiang.pdf.utils.StringEscape;
-import me.chenqiang.pdf.xml.context.AttributeRegistry;
-import me.chenqiang.pdf.xml.context.AttributeUtils;
+import me.chenqiang.pdf.xml.context.AttributeNames;
 import me.chenqiang.pdf.xml.context.AttributeValueParser;
 import me.chenqiang.pdf.xml.context.TemplateContext;
 
@@ -34,6 +31,19 @@ public class TableCellHandler extends BasicTemplateElementHandler<TableCellCompo
 	
 	public TableCellHandler(TemplateContext context, TableComposer tplTbl, BiConsumer<Table, Cell> appender, List<String []> attributes) {
 		super(context, tplTbl::append);
+		this.appender = appender;
+		this.attributes = attributes;
+	}
+	
+	public TableCellHandler(TemplateContext context, ForEachComposer foreach, BiConsumer<Table, Cell> appender, List<String []> attributes) {
+		super(context, foreach::append);
+		this.appender = appender;
+		this.attributes = attributes;
+	}
+
+	public TableCellHandler(TemplateContext context, IfComposer conditional, BiConsumer<Table, Cell> appender,
+			List<String[]> attributes) {
+		super(context, conditional::append);
 		this.appender = appender;
 		this.attributes = attributes;
 	}
@@ -53,6 +63,16 @@ public class TableCellHandler extends BasicTemplateElementHandler<TableCellCompo
 		HANDLED_ELEMENT.addAll(ParagraphHandler.getElementNames());
 		HANDLED_ELEMENT.addAll(DivHandler.getElementNames());
 	}
+	
+	@Override
+	protected List<String> listIgnoredAttributes() {
+		 List<String> list = super.listIgnoredAttributes();
+		 list.add(AttributeNames.ROW_SPAN);
+		 list.add(AttributeNames.COL_SPAN);
+		 return list;
+	}
+
+	
 	protected void resumeTextContent(Element current) {
 		int counter = 0;
 		for (Node node : current.content()) {
@@ -74,46 +94,46 @@ public class TableCellHandler extends BasicTemplateElementHandler<TableCellCompo
 		Element current = elementPath.getCurrent();
 		int rowspan = 1;
 		int colspan = 1;
-		for (Attribute attr : current.attributes()) {
-			String attrName = attr.getName();
-			if (AttributeRegistry.ROW_SPAN.equals(attrName)) {
-				AttributeValueParser parser = new AttributeValueParser(attr.getName(), attr.getValue());
-				Integer r = parser.getInteger();
-				if (r != null && r > 1) {
-					rowspan = r;
-				}
-			} else if (AttributeRegistry.COL_SPAN.equals(attrName)) {
-				AttributeValueParser parser = new AttributeValueParser(attr.getName(), attr.getValue());
-				Integer c = parser.getInteger();
-				if (c != null && c > 1) {
-					colspan = c;
-				}
+		
+		String rss = current.attributeValue(AttributeNames.ROW_SPAN);
+		if(rss != null) {
+			Integer r = new AttributeValueParser(AttributeNames.ROW_SPAN, rss).getInteger();
+			if (r != null && r > 1) {
+				rowspan = r;
 			}
 		}
-		
+		String css = current.attributeValue(AttributeNames.COL_SPAN);
+		if(css != null) {
+			Integer c = new AttributeValueParser(AttributeNames.COL_SPAN, css).getInteger();
+			if (c != null && c > 1) {
+				colspan = c;
+			}
+		}
 		if(rowspan == 1 && colspan == 1) {
 			this.tplCell = new TableCellComposer(this.appender);
 		}
 		else {
 			this.tplCell = new TableCellComposer(rowspan, colspan, this.appender);
 		}
-		
-		Map<String, BiFunction<String, String, ? extends Consumer<? super Cell>>> attributeMap = this.getAttributeMap();
-		AttributeUtils.setComposerAttributes(attributes, attributeMap, this.tplCell);
-		AttributeUtils.getCompositeAttribute(attributes).setComposerAttribute(this.tplCell);
-		
+				
 		new TextHandler(this.context, this.tplCell).register(elementPath);
 		new ParagraphHandler(this.context, this.tplCell).register(elementPath);
 		new ImageHandler(this.context, this.tplCell).register(elementPath);
 		new BarcodeHandler(this.context, this.tplCell).register(elementPath);
 		new DivHandler(this.context, this.tplCell).register(elementPath);
-	}
+		
 
-	@Override
-	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Cell>>> getAttributeMap() {
-		return this.context.getAttributeRegistry().getCellMap();
+		new ForEachHandler(this.context, this.tplCell::append).register(elementPath);
 	}
 	
+	
+	
+	@Override
+	public void onEnd(ElementPath elementPath) {
+		// TODO Auto-generated method stub
+		super.onEnd(elementPath);
+	}
+
 	public static List<String> getElementNames() {
 		return Arrays.asList("cell", "td");
 	}

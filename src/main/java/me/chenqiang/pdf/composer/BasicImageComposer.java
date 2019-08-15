@@ -21,10 +21,6 @@ public abstract class BasicImageComposer<S extends BasicImageComposer<S>>
 	protected BasicImageComposer() {
 		super(Image.class);
 	}
-	
-	protected BasicImageComposer(BasicImageComposer<S> origin) {
-		super(origin);
-	}
 
 	@Override
 	public void process(Cell cell, DocumentContext context) {

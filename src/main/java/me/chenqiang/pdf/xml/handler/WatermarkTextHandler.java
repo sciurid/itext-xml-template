@@ -12,7 +12,7 @@ import com.itextpdf.layout.property.VerticalAlignment;
 
 import me.chenqiang.pdf.composer.WatermarkMaker;
 import me.chenqiang.pdf.composer.WatermarkMaker.TextWatermarkSetting;
-import me.chenqiang.pdf.font.FontRegistry;
+import me.chenqiang.pdf.font.FontRegistryEntry;
 import me.chenqiang.pdf.xml.context.AttributeRegistry;
 import me.chenqiang.pdf.xml.context.AttributeValueParser;
 import me.chenqiang.pdf.xml.context.TemplateContext;
@@ -43,7 +43,7 @@ public class WatermarkTextHandler implements ElementHandler {
 			try {
 				switch (name) {
 				case AttributeRegistry.FONT_FAMILY:
-					FontRegistry font = this.context.getResourceRepository().getFont(parser.getString());
+					FontRegistryEntry font = this.context.getFont(parser.getString());
 					if(font != null) {
 						setting.setFont(font);
 					}

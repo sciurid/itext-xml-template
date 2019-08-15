@@ -10,19 +10,19 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 
-public class FontResourceRegistry implements FontRegistry {
-	private static final Logger LOGGER = LoggerFactory.getLogger(FontResourceRegistry.class);
+public class ResourceEntry implements FontRegistryEntry {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ResourceEntry.class);
 	protected Class<?> clazz;
 	protected String resource;
 	protected int ttcIndex;
 					
-	public FontResourceRegistry(Class<?> clazz, String resource, int ttcIndex) {
+	public ResourceEntry(Class<?> clazz, String resource, int ttcIndex) {
 		this.clazz = clazz;
 		this.resource = resource;
 		this.ttcIndex = ttcIndex;
 	}
 	
-	public FontResourceRegistry(Class<?> clazz, String resource) {
+	public ResourceEntry(Class<?> clazz, String resource) {
 		this(clazz, resource, -1);
 	}
 
@@ -45,8 +45,8 @@ public class FontResourceRegistry implements FontRegistry {
 		} 
 	}
 	
-	public static FontResourceRegistry create(Class<?> clazz, String resourcePath) {
-		FontResourceRegistry reg = new FontResourceRegistry(clazz, resourcePath);
+	public static ResourceEntry create(Class<?> clazz, String resourcePath) {
+		ResourceEntry reg = new ResourceEntry(clazz, resourcePath);
 		if(reg.getFont() != null) {
 			return reg;
 		}
@@ -55,8 +55,8 @@ public class FontResourceRegistry implements FontRegistry {
 		}
 	}
 	
-	public static FontResourceRegistry createTtc(Class<?> clazz, String resourcePath, int ttcIndex) {
-		FontResourceRegistry reg = new FontResourceRegistry(clazz, resourcePath, ttcIndex);
+	public static ResourceEntry createTtc(Class<?> clazz, String resourcePath, int ttcIndex) {
+		ResourceEntry reg = new ResourceEntry(clazz, resourcePath, ttcIndex);
 		if(reg.getFont() != null) {
 			return reg;
 		}

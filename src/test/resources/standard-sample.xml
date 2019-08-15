@@ -9,9 +9,11 @@
 	<document id="test" font-family="宋体" font-size="10.5" text-align="justified">
 		<default-paragraph-style multiplied-leading="1.5" margin="0" first-line-indent="21" />
 		<p>${时间}</p>
-		<div><p style="warning">内部资料\r\n注意保存
-		
-		</p></div>
+		<div>
+			<p style="warning">内部资料\r\n注意保存
+
+			</p>
+		</div>
 		<para font-family="黑体" font-size="20" text-align="center" padding-bottom="2cm">标题格式</para>
 		<p first-line-indent="0" font-family="黑体">【顶格黑体】题目：</p>
 		<p>
@@ -29,10 +31,26 @@
 		</p>
 		<p>【段落中间换行】</p>
 		<p first-line-indent="0" text-align="center">
-		<text font-family="思源黑体" font-size="14">滁州西涧</text>\n
-		<text font-family="楷体" font-size="10.5">唐·韦应物</text>\n
-		独怜幽草涧边生，上有黄鹂深树鸣。\n春潮带雨晚来急，野渡无人舟自横。
+			<text font-family="思源黑体" font-size="14">滁州西涧</text>
+			\n
+			<text font-family="楷体" font-size="10.5">唐·韦应物</text>
+			\n
+			独怜幽草涧边生，上有黄鹂深树鸣。\n春潮带雨晚来急，野渡无人舟自横。
 		</p>
+		
+		<foreach items="${names}" var="name">
+			<p>${_index}:${name}</p>
+		</foreach>
+
+		<table columns="2" width="80%" text-align="center" >
+		<body>
+		<foreach items="${names}" var="name">
+			<cell>${_index}</cell><cell>${name}</cell>
+		</foreach>
+		</body>
+		</table>
+		
+		
 		<newpage />
 		<table widths="50%, 20%, 30%" width="100%" text-align="center" border-width="2">
 			<header border-color="green" min-height="2cm" vertical-alignment="middle" font-family="黑体">
@@ -56,24 +74,47 @@
 				<cell>丙</cell>
 			</footer>
 		</table>
-		<paragraph border-type="solid" first-line-indent="0" vertical-alignment="middle" text-align="center" margin-top="8mm" padding-bottom="2mm">
-			<image ref="hawk" width="20%"/>
+		<paragraph border-type="solid" first-line-indent="0" vertical-alignment="middle" text-align="center"
+			margin-top="8mm" padding-bottom="2mm">
+			<image ref="hawk" width="20%" />
 		</paragraph>
-		<image ref="hawk" width="5cm"  horizontal-alignment="center"/>
+		<image ref="hawk" width="5cm" horizontal-alignment="center" />
 		<barcode format="qrcode" horizontal-alignment="center" width="80%">https://www.tsinghua.edu.cn</barcode>
-		<barcode format="pdf417" horizontal-alignment="center" width="80%">f516d2dc2c7aa8e28b1266191bb9d842805dd6869be35effb6d13fcb33288937</barcode>
-		<newpage/>
+		<barcode format="pdf417" horizontal-alignment="center" width="80%">f516d2dc2c7aa8e28b1266191bb9d842805dd6869be35effb6d13fcb33288937
+		</barcode>
+		<newpage />
 		<table columns="3" horizontal-alignment="right">
-			<header><cell>类型</cell><cell>文本</cell><cell>图片</cell></header>
+			<header>
+				<cell>类型</cell>
+				<cell>文本</cell>
+				<cell>图片</cell>
+			</header>
 			<body>
-				<cell>文本替换</cell><cell id="bug">【->文本替换结果：${文本替换}】</cell><cell><barcode width="2cm">${文本替换}</barcode></cell>
-				<cell>元素替换</cell><cell>【->元素替换结果：】<text>${元素替换}</text></cell><cell><barcode width="2cm">${元素替换}</barcode></cell>
-				<cell>数据替换</cell><cell colspan="2"><image value="${数据替换}" width="8cm"/></cell>
+				<cell>文本替换</cell>
+				<cell id="bug">【->文本替换结果：${文本替换}】</cell>
+				<cell>
+					<barcode width="2cm">${文本替换}</barcode>
+				</cell>
+				<cell>元素替换</cell>
+				<cell>
+					【->元素替换结果：】
+					<text>${元素替换}</text>
+				</cell>
+				<cell>
+					<barcode width="2cm" value="${元素替换}" />
+				</cell>
+				<cell>数据替换</cell>
+				<cell colspan="2">
+					<image value="${数据替换}" width="8cm" />
+				</cell>
 			</body>
 		</table>
-		
+
 		<p>文本替换结果：${文本替换}\n</p>
-		<p>元素替换结果：<text>${元素替换}</text></p>
+		<p>
+			元素替换结果：
+			<text>${元素替换}</text>
+		</p>
 		<watermark>
 			<image ref="hawk" opacity="0.2" offset-y="2cm" width="-0.5" />
 			<text font-family="思源粗宋" font-size="24" font-color="red" opacity="0.3" offset-y="-3cm">内部资料\n注意保存</text>

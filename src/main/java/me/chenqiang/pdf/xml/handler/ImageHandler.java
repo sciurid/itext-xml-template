@@ -2,9 +2,6 @@ package me.chenqiang.pdf.xml.handler;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 import org.dom4j.Attribute;
 import org.dom4j.Element;
@@ -17,6 +14,7 @@ import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.composer.ImageComposer;
 import me.chenqiang.pdf.composer.ParagraphComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
+import me.chenqiang.pdf.xml.context.AttributeNames;
 import me.chenqiang.pdf.xml.context.AttributeRegistry;
 import me.chenqiang.pdf.xml.context.TemplateContext;
 
@@ -37,6 +35,18 @@ public class ImageHandler extends BasicTemplateElementHandler<ImageComposer, Ima
 	public ImageHandler(TemplateContext context, DivComposer tplDiv) {
 		super(context, tplDiv::append);
 	}
+	
+	
+
+	@Override
+	protected List<String> listIgnoredAttributes() {
+		 List<String> list = super.listIgnoredAttributes();
+		 list.add(AttributeNames.RESOURCE);
+		 list.add(AttributeNames.FILE);
+		 list.add(AttributeNames.REF);
+		 list.add(AttributeNames.VALUE);
+		 return list;
+	}
 
 	@Override
 	protected ImageComposer create(ElementPath elementPath) {
@@ -53,7 +63,7 @@ public class ImageHandler extends BasicTemplateElementHandler<ImageComposer, Ima
 				tplImg.loadFromResource(value);
 				break;
 			case AttributeRegistry.REF:
-				tplImg.loadFromBytes(this.context.getResourceRepository().getImage(value));
+				tplImg.loadFromBytes(this.context.getImage(value));
 				break;
 			case AttributeRegistry.VALUE:
 				tplImg.setValue(value);
@@ -64,11 +74,6 @@ public class ImageHandler extends BasicTemplateElementHandler<ImageComposer, Ima
 		return tplImg;
 	}
 	
-	@Override
-	protected Map<String, BiFunction<String, String, ? extends Consumer<? super Image>>> getAttributeMap() {
-		return this.context.getAttributeRegistry().getImageMap();
-	}
-
 	public static final List<String> getElementNames() {
 		return Arrays.asList("image", "img");
 	}

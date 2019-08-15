@@ -4,11 +4,11 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
-import me.chenqiang.pdf.font.FontRegistry;
-import me.chenqiang.pdf.font.FontResourceRegistry;
+import me.chenqiang.pdf.font.FontRegistryEntry;
+import me.chenqiang.pdf.font.ResourceEntry;
 
 public class HanSCPdfFontServiceImpl implements IntegratedPdfFontService{
-	protected Map<String, FontRegistry> fonts;
+	protected Map<String, FontRegistryEntry> fonts;
 
 	public HanSCPdfFontServiceImpl() {
 		this.fonts = new TreeMap<>();
@@ -17,12 +17,12 @@ public class HanSCPdfFontServiceImpl implements IntegratedPdfFontService{
 		this.fonts.put("思源宋体", getResource("hansc/SourceHanSerifSC-Medium.otf"));
 	}
 	
-	protected static FontRegistry getResource(String name) {
-		return FontResourceRegistry.create(HanSCPdfFontServiceImpl.class, name);
+	protected static FontRegistryEntry getResource(String name) {
+		return ResourceEntry.create(HanSCPdfFontServiceImpl.class, name);
 	}
 	
 	@Override
-	public Map<String, FontRegistry> getIntegratedFonts() {
+	public Map<String, FontRegistryEntry> getIntegratedFonts() {
 		return Collections.unmodifiableMap(this.fonts);
 	}
 }

@@ -29,8 +29,8 @@ public class RootHandler implements ElementHandler{
 
 	@Override
 	public void onStart(ElementPath elementPath) {
-		new FontResourceHandler(this.context.getResourceRepository()).register(elementPath);
-		new ImageResourceHandler(this.context.getResourceRepository()).register(elementPath);
+		new FontResourceHandler(this.context.getFontreg()).register(elementPath);
+		new ImageResourceHandler(this.context::registerImage).register(elementPath);
 		new DocumentHandler(this.context, this::doTemplatePostProcess).register(elementPath);
 		new DefaultParagraphHandler(this.context).register(elementPath);
 		new PredefinedStyleHandler(this.context).register(elementPath);
@@ -38,7 +38,7 @@ public class RootHandler implements ElementHandler{
 
 	@Override
 	public void onEnd(ElementPath elementPath) {
-		
+		// Do Nothing.
 	}
 
 	protected void doTemplatePostProcess(DocumentComposer tplDoc) {

@@ -41,12 +41,6 @@ public final class AttributeUtils {
 				AttributeRegistry.WIDTHS, AttributeRegistry.COLUMNS, AttributeRegistry.FORMAT, AttributeRegistry.STYLE);
 	}
 
-//	public static <E> void setComposerAttributes(List<Attribute> xmlAttrs, 
-//			Map<String, BiFunction<String, String, Consumer<? super E>> > registryMap, 
-//			PdfElementComposer<E> composer) {		
-//		assignAttributes(xmlAttrs, Attribute::getName, Attribute::getValue, registryMap,  composer::setAttribute,  composer.getClass());
-//	}
-
 	public static <E extends ElementPropertyContainer<E>, S extends PdfElementComposer<E, S>> void setComposerAttributes(
 			Iterable<String[]> attrs,
 			Map<String, BiFunction<String, String, ? extends Consumer<? super E>>> registryMap,
@@ -88,21 +82,28 @@ public final class AttributeUtils {
 		}
 	}
 
-	public static CompositeAttribute getCompositeAttribute(List<Attribute> attributes) {
-		return getCompositeAttribute(attributes, Attribute::getName, Attribute::getValue);
+	public static CompositeAttribute getCompositeAttribute(List<Attribute> attributes, Consumer<String> remover) {
+		return getCompositeAttribute(attributes, Attribute::getName, Attribute::getValue, remover);
 	}
 
-	public static CompositeAttribute getCompositeAttribute(Iterable<String[]> attributes) {
-		return getCompositeAttribute(attributes, arr -> arr[0], arr -> arr[1]);
+	public static CompositeAttribute getCompositeAttribute(Iterable<String[]> attributes, Consumer<String> remover) {
+		return getCompositeAttribute(attributes, arr -> arr[0], arr -> arr[1], remover);
 	}
+	
+	public static CompositeAttribute getCompositeAttribute(Map<String, String> attributes, Consumer<String> remover) {
+		return getCompositeAttribute(attributes.entrySet(), Map.Entry::getKey, Map.Entry::getValue, remover);
+	}
+
 
 	public static <A> CompositeAttribute getCompositeAttribute(Iterable<A> attributes, Function<A, String> nameGetter,
-			Function<A, String> valueGetter) {
+			Function<A, String> valueGetter, Consumer<String> remover) {
 		CompositeAttribute attribute = new CompositeAttribute();
 		for (A attr : attributes) {
 			String attrName = nameGetter.apply(attr);
 			String attrValue = valueGetter.apply(attr);
 			AttributeValueParser parser = new AttributeValueParser(attrName, attrValue);
+			
+			boolean remove = true;
 			switch (attrName) {
 			case AttributeRegistry.FONT_COLOR:
 				attribute.createAndGetFontColor().setFontColor(parser.getDeviceRgb());
@@ -181,6 +182,11 @@ public final class AttributeUtils {
 			case AttributeRegistry.BORDER_OPACITY_LEFT:
 				attribute.createAndGetLeftBorder().setOpacity(parser.getFloat());
 				break;
+			default:
+				remove = false;
+			}
+			if(remove && remover != null) {
+				remover.accept(attrName);
 			}
 		}
 		return attribute;

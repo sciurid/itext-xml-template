@@ -45,6 +45,8 @@ public class TableRowHander implements ElementHandler {
 		current.attributes().forEach(attr -> attributes.add(new String[] {attr.getName(), attr.getValue()}));
 		
 		new TableCellHandler(this.context, this.tbl, this.appender, attributes).register(elementPath);
+		new ForEachCellHandler(this.context, this.tbl, this.appender, attributes).register(elementPath);
+		new IfCellHandler(this.context, this.tbl, this.appender, attributes).register(elementPath);
 	}
 
 	@Override

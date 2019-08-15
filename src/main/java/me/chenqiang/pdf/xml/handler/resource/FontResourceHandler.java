@@ -9,15 +9,15 @@ import org.dom4j.ElementPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import me.chenqiang.pdf.xml.context.ResourceRepository;
+import me.chenqiang.pdf.font.FontRegistry;
 
 public class FontResourceHandler implements ElementHandler{
 	private static final Logger LOGGER = LoggerFactory.getLogger(FontResourceHandler.class);
-	protected ResourceRepository repo;	
+	protected FontRegistry registry;	
 
-	public FontResourceHandler(ResourceRepository repo) {
+	public FontResourceHandler(FontRegistry repo) {
 		super();
-		this.repo = repo;
+		this.registry = repo;
 	}
 	
 	@Override
@@ -67,21 +67,21 @@ public class FontResourceHandler implements ElementHandler{
 		 try {
 			 if("file".equals(type)) {
 				 if(ttcIndex < 0) {
-					 this.repo.loadFontFile(path, names);
+					 this.registry.loadFile(path, names);
 					 LOGGER.info("Font file '{}' with names '{}' loaded.", path, (Object)names);
 				 }
 				 else {
-					 this.repo.loadTtcFontFile(path, ttcIndex, names);
+					 this.registry.loadTtcFile(path, ttcIndex, names);
 					 LOGGER.info("Font file '{}' with names '{}' loaded.", path, (Object)names);
 				 }
 			 }
 			 else if("resource".equals(type)) {
 				 if(ttcIndex < 0) {
-					 this.repo.loadFontResource(path, names);
+					 this.registry.loadResource(path, names);
 					 LOGGER.info("Font resource '{}' with names '{}' loaded.", path, (Object)names);
 				 }
 				 else {
-					 this.repo.loadTtcFontResource(path, ttcIndex, names);
+					 this.registry.loadTtcResource(path, ttcIndex, names);
 					 LOGGER.info("Font resource '{}' with names '{}' loaded.", path, (Object)names);
 				 }				
 			 }

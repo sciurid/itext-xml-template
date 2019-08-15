@@ -20,13 +20,14 @@ import me.chenqiang.pdf.attribute.PaperLayout;
 import me.chenqiang.pdf.component.DocumentComponent;
 
 public class DocumentComposer extends BasicElementComposer<Document, DocumentComposer>
-implements Iterable<DocumentComponent> {
+		implements Iterable<DocumentComponent> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DocumentComposer.class);
+	protected String id;
 
 	protected List<DocumentComponent> components;
 	protected WatermarkMaker watermarkMaker;
 	protected PaperLayout paperLayout;
-	
+
 	protected String author;
 	protected String creator;
 	protected String title;
@@ -39,11 +40,19 @@ implements Iterable<DocumentComponent> {
 		this.watermarkMaker = new WatermarkMaker();
 		this.paperLayout = new PaperLayout();
 	}
-	
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	public WatermarkMaker getWatermarkMaker() {
 		return watermarkMaker;
 	}
-	
+
 	public DocumentComposer setPaperLayout(PaperLayout paperLayout) {
 		this.paperLayout = paperLayout;
 		return this;
@@ -63,13 +72,14 @@ implements Iterable<DocumentComponent> {
 	public void setAllAttributes(Collection<? extends Consumer<? super Document>> attributes) {
 		this.attributes.addAll(attributes);
 	}
-	
+
 	@Override
 	protected Document create(DocumentContext context) {
 		throw new UnsupportedOperationException();
 	}
 
 	protected static final ChineseSplitCharacters CHINESE_SPLIT_CHARATERS = new ChineseSplitCharacters();
+
 	public Document compose(PdfDocument pdf, PdfWriter writer, boolean close, DocumentContext context) {
 		Document doc = new Document(pdf, this.paperLayout.getPageSize());
 		doc.setSplitCharacters(CHINESE_SPLIT_CHARATERS);
@@ -88,30 +98,30 @@ implements Iterable<DocumentComponent> {
 			});
 		}
 		this.setMetadata(pdf);
-		if(close) {
+		if (close) {
 			doc.close();
 		}
 		return doc;
 	}
-	
+
 	protected void setMetadata(PdfDocument pdf) {
 		PdfDocumentInfo info = pdf.getDocumentInfo();
 		info.addCreationDate().addModDate();
-		if(this.author != null) {
+		if (this.author != null) {
 			info.setAuthor(this.author);
 		}
-		if(this.creator != null) {
+		if (this.creator != null) {
 			info.setCreator(this.creator);
 		}
-		if(this.title != null) {
+		if (this.title != null) {
 			info.setKeywords(this.title);
 		}
-		if(this.subject != null) {
+		if (this.subject != null) {
 			info.setSubject(this.subject);
 		}
-		if(this.keywords != null) {
+		if (this.keywords != null) {
 			info.setKeywords(this.keywords);
-		}		
+		}
 	}
 
 	@Override
@@ -142,5 +152,5 @@ implements Iterable<DocumentComponent> {
 	public DocumentComposer setKeywords(String keywords) {
 		this.keywords = keywords;
 		return this;
-	}	
+	}
 }
