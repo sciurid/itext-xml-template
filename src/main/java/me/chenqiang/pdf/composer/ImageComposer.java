@@ -82,4 +82,6 @@ public final class ImageComposer extends BasicImageComposer<ImageComposer> {
 			}
 		}
 	}
+	
+	
 }

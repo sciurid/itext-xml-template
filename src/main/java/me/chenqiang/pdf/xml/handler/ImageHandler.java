@@ -14,6 +14,7 @@ import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.composer.ImageComposer;
 import me.chenqiang.pdf.composer.ParagraphComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
+import me.chenqiang.pdf.xml.context.AttributeNames;
 import me.chenqiang.pdf.xml.context.AttributeRegistry;
 import me.chenqiang.pdf.xml.context.TemplateContext;
 
@@ -33,6 +34,18 @@ public class ImageHandler extends BasicTemplateElementHandler<ImageComposer, Ima
 	
 	public ImageHandler(TemplateContext context, DivComposer tplDiv) {
 		super(context, tplDiv::append);
+	}
+	
+	
+
+	@Override
+	protected List<String> listIgnoredAttributes() {
+		 List<String> list = super.listIgnoredAttributes();
+		 list.add(AttributeNames.RESOURCE);
+		 list.add(AttributeNames.FILE);
+		 list.add(AttributeNames.REF);
+		 list.add(AttributeNames.VALUE);
+		 return list;
 	}
 
 	@Override

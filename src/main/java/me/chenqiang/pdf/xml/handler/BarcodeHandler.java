@@ -42,6 +42,15 @@ public class BarcodeHandler extends BasicTemplateElementHandler<BarcodeComposer,
 	}
 
 	@Override
+	protected List<String> listIgnoredAttributes() {
+		 List<String> list = super.listIgnoredAttributes();
+		 list.add(AttributeNames.FORMAT);
+		 list.add(AttributeNames.VALUE);
+		 return list;
+	}
+
+	
+	@Override
 	protected BarcodeComposer create(ElementPath elementPath) {		
 		Element current = elementPath.getCurrent();
 		String format = current.attributeValue(AttributeNames.FORMAT);

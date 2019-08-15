@@ -42,6 +42,6 @@ public class IfHandler implements ElementHandler{
 	}	
 	
 	public void register(ElementPath elementPath) {
-		elementPath.addHandler("foreach", this);
+		elementPath.addHandler("if", this);
 	}
 }

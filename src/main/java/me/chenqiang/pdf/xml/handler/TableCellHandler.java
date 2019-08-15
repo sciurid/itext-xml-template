@@ -63,6 +63,16 @@ public class TableCellHandler extends BasicTemplateElementHandler<TableCellCompo
 		HANDLED_ELEMENT.addAll(ParagraphHandler.getElementNames());
 		HANDLED_ELEMENT.addAll(DivHandler.getElementNames());
 	}
+	
+	@Override
+	protected List<String> listIgnoredAttributes() {
+		 List<String> list = super.listIgnoredAttributes();
+		 list.add(AttributeNames.ROW_SPAN);
+		 list.add(AttributeNames.COL_SPAN);
+		 return list;
+	}
+
+	
 	protected void resumeTextContent(Element current) {
 		int counter = 0;
 		for (Node node : current.content()) {
