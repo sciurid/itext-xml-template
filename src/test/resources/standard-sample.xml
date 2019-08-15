@@ -101,7 +101,7 @@
 					<text>${元素替换}</text>
 				</cell>
 				<cell>
-					<barcode width="2cm" value="${元素替换}" />
+					<barcode width="2cm">${元素替换}</barcode>
 				</cell>
 				<cell>数据替换</cell>
 				<cell colspan="2">

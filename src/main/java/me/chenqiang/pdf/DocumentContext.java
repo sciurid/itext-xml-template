@@ -4,6 +4,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
+import me.chenqiang.pdf.common.utils.BeanUtilEvaluator;
+
 public class DocumentContext {
 	public static class Scope {
 		protected final Map<String, Object> parameters;
@@ -29,19 +31,13 @@ public class DocumentContext {
 	}
 	
 	protected final LinkedList<Scope> scopes;
-	protected final ParameterEvaluator evaluator;
 	
-	protected DocumentContext(Scope scope, ParameterEvaluator evaluator) {
+	protected DocumentContext(Scope scope) {
 		this.scopes = new LinkedList<>();
 		this.scopes.addFirst(scope);
-		this.evaluator = evaluator;
 	}
-	public DocumentContext(Map<String, Object> parameters, ParameterEvaluator evaluator) {
-		this(new Scope(parameters), evaluator);
-	}
-
 	public DocumentContext(Map<String, Object> parameters) {
-		this(parameters, new BeanUtilEvaluator());
+		this(new Scope(parameters));
 	}
 	
 	public Scope beginScope() {
@@ -62,35 +58,24 @@ public class DocumentContext {
 	}
 
 	public String eval(String text) {		
-		if(this.evaluator != null) {
-			String res = null;
-			for(Scope scope : this.scopes) {
-				 res = this.evaluator.evaluate(scope.getParameters(), text);
-				 if(res != null) {
-					 return res;
-				 }
-			}
-			return res;
+		String res = null;
+		for(Scope scope : this.scopes) {
+			 res = BeanUtilEvaluator.evaluate(scope.getParameters(), text);
+			 if(res != null) {
+				 return res;
+			 }
 		}
-		else {
-			return text;
-		}
-		
+		return res;		
 	}
 
 	public Object getProperty(String text) {
-		if(this.evaluator != null) {
-			Object res = null;
-			for(Scope scope : this.scopes) {
-				 res = this.evaluator.getProperty(scope.getParameters(), text);
-				 if(res != null) {
-					 return res;
-				 }
-			}
-			return res;
+		Object res = null;
+		for(Scope scope : this.scopes) {
+			 res = BeanUtilEvaluator.getProperty(scope.getParameters(), text);
+			 if(res != null) {
+				 return res;
+			 }
 		}
-		else {
-			return null;
-		}
-	}	
+		return res;
+	}
 }

@@ -1,0 +1,31 @@
+package me.chenqiang.pdf.sax.handler;
+
+import java.util.List;
+import java.util.function.BiConsumer;
+
+import org.dom4j.ElementPath;
+
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Table;
+
+import me.chenqiang.pdf.sax.TemplateContext;
+import me.chenqiang.pdf.sax.composer.TableComposer;
+
+public class ForEachCellHandler extends ForEachHandler{
+	protected TableComposer tplTbl;
+	protected BiConsumer<Table, Cell> appender;
+	protected List<String []> attributes;
+	
+	public ForEachCellHandler(TemplateContext context, TableComposer tplTbl,
+			BiConsumer<Table, Cell> appender, List<String[]> attributes) {
+		super(context, tplTbl::append);
+		this.tplTbl = tplTbl;
+		this.appender = appender;
+		this.attributes = attributes;
+	}
+
+	@Override
+	protected void registerSubHandlers(ElementPath elementPath) {
+		new TableCellHandler(this.context, this.foreach, this.appender, attributes).register(elementPath);
+	}
+}

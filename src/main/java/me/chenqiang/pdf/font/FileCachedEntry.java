@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.itextpdf.kernel.font.PdfFont;
 
-import me.chenqiang.pdf.utils.SerializableCloning;
+import me.chenqiang.pdf.common.utils.SerializableCloning;
 
 public class FileCachedEntry implements FontRegistryEntry {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileCachedEntry.class);

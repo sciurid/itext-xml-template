@@ -8,8 +8,8 @@ import java.io.InputStream;
 
 import org.junit.Test;
 
-import me.chenqiang.pdf.utils.ByteBufferInputStream;
-import me.chenqiang.pdf.utils.ByteBufferOutputStream;
+import me.chenqiang.pdf.common.utils.ByteBufferInputStream;
+import me.chenqiang.pdf.common.utils.ByteBufferOutputStream;
 
 public class BufferedStreamTest {
 

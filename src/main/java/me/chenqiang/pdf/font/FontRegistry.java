@@ -9,13 +9,11 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 
-import me.chenqiang.pdf.spi.IntegratedPdfFontService;
-
 public class FontRegistry implements Function<String, FontRegistryEntry>{
 	protected Map<String, FontRegistryEntry> fonts = new TreeMap<>();
 	
 	public void initialize() {
-		this.fonts.putAll(IntegratedPdfFontService.loadAll());
+		this.fonts.putAll(PdfFontService.loadAll());
 	}
 	
 	public void loadData(byte [] data, String ... names) throws IOException {
