@@ -29,7 +29,7 @@ public abstract class BasicTemplateElementHandler<T extends PdfElementComposer<E
 	protected int count;
 	protected Consumer<? super T> parentAppender;
 
-	protected BasicTemplateElementHandler(TemplateContext context, Consumer<? super T> parentAppender) {
+	public BasicTemplateElementHandler(TemplateContext context, Consumer<? super T> parentAppender) {
 		this.context = context;
 		this.parentAppender = parentAppender;
 		this.count = 0;

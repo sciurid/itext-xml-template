@@ -10,6 +10,8 @@ import org.dom4j.Node;
 import com.itextpdf.layout.element.Text;
 
 import me.chenqiang.pdf.composer.DivComposer;
+import me.chenqiang.pdf.composer.ForEachComposer;
+import me.chenqiang.pdf.composer.IfComposer;
 import me.chenqiang.pdf.composer.ParagraphComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
 import me.chenqiang.pdf.composer.TextComposer;
@@ -29,6 +31,14 @@ public class TextHandler extends BasicTemplateElementHandler<TextComposer, Text>
 	
 	public TextHandler(TemplateContext context, DivComposer tplDiv) {
 		super(context, tplDiv::append);
+	}
+	
+	public TextHandler(TemplateContext context, ForEachComposer foreach) {
+		super(context, foreach::append);
+	}
+	
+	public TextHandler(TemplateContext context, IfComposer foreach) {
+		super(context, foreach::append);
 	}
 
 	@Override

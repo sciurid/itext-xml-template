@@ -3,7 +3,6 @@ package me.chenqiang.pdf.xml.handler;
 import java.util.Arrays;
 import java.util.List;
 
-import org.dom4j.Attribute;
 import org.dom4j.Element;
 import org.dom4j.ElementPath;
 
@@ -13,7 +12,6 @@ import com.itextpdf.layout.property.UnitValue;
 import me.chenqiang.pdf.composer.DocumentComposer;
 import me.chenqiang.pdf.composer.TableComposer;
 import me.chenqiang.pdf.xml.context.AttributeNames;
-import me.chenqiang.pdf.xml.context.AttributeRegistry;
 import me.chenqiang.pdf.xml.context.AttributeValueParser;
 import me.chenqiang.pdf.xml.context.TemplateContext;
 
@@ -40,15 +38,21 @@ public class TableHandler extends BasicTemplateElementHandler<TableComposer, Tab
 		this.tplTbl = new TableComposer();
 		Element current = elementPath.getCurrent();		
 		
-		for(String name : LAYOUT_ATTRS) {
-			String value = current.attributeValue(name);
-			if(value != null) {
-				UnitValue [] widths = new AttributeValueParser(name, value).getUnitValueArray();
-				if(widths != null && widths.length > 0) {
-					this.tplTbl.setColumns(widths);
-				}
+		String value;
+		value = current.attributeValue(AttributeNames.COLUMNS);
+		if(value != null) {
+			Integer columns = new AttributeValueParser(AttributeNames.WIDTHS, value).getInteger();
+			if(columns != null) {
+				this.tplTbl.setColumns(columns);
 			}
 		}
+		value = current.attributeValue(AttributeNames.WIDTHS);
+		if(value != null) {
+			UnitValue [] widths = new AttributeValueParser(AttributeNames.WIDTHS, value).getUnitValueArray();
+			if(widths != null && widths.length > 0) {
+				this.tplTbl.setColumns(widths);
+			}
+		}	
 		
 		elementPath.addHandler("header", new TableRowHander(this.context, this.tplTbl, Table::addHeaderCell));
 		elementPath.addHandler("body", new TableRowHander(this.context, this.tplTbl, Table::addCell));

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 public class BeanUtilEvaluator implements ParameterEvaluator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BeanUtilEvaluator.class);
-	public static final Pattern VARIABLE = Pattern.compile("(?<!\\\\)\\$\\{\\s*([\\p{L}\\d\\.\\(\\)\\[\\]]+)\\s*\\}");
+	public static final Pattern VARIABLE = Pattern.compile("(?<!\\\\)\\$\\{\\s*([\\p{L}_\\d\\.\\(\\)\\[\\]]+)\\s*\\}");
 	
 	@Override
 	public String evaluate(Map<String, Object> params, String text) {
@@ -36,6 +36,9 @@ public class BeanUtilEvaluator implements ParameterEvaluator {
 
 	@Override
 	public Object getProperty(Map<String, Object> params, String text) {
+		if(text == null) {
+			return null;
+		}
 		Matcher m = VARIABLE.matcher(text.trim());
 		if(m.matches()) {
 			try {

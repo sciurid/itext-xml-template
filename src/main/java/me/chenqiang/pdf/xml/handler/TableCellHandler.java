@@ -13,6 +13,8 @@ import org.dom4j.Node;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 
+import me.chenqiang.pdf.composer.ForEachComposer;
+import me.chenqiang.pdf.composer.IfComposer;
 import me.chenqiang.pdf.composer.StringComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
 import me.chenqiang.pdf.composer.TableComposer;
@@ -29,6 +31,19 @@ public class TableCellHandler extends BasicTemplateElementHandler<TableCellCompo
 	
 	public TableCellHandler(TemplateContext context, TableComposer tplTbl, BiConsumer<Table, Cell> appender, List<String []> attributes) {
 		super(context, tplTbl::append);
+		this.appender = appender;
+		this.attributes = attributes;
+	}
+	
+	public TableCellHandler(TemplateContext context, ForEachComposer foreach, BiConsumer<Table, Cell> appender, List<String []> attributes) {
+		super(context, foreach::append);
+		this.appender = appender;
+		this.attributes = attributes;
+	}
+
+	public TableCellHandler(TemplateContext context, IfComposer conditional, BiConsumer<Table, Cell> appender,
+			List<String[]> attributes) {
+		super(context, conditional::append);
 		this.appender = appender;
 		this.attributes = attributes;
 	}
@@ -96,6 +111,9 @@ public class TableCellHandler extends BasicTemplateElementHandler<TableCellCompo
 		new ImageHandler(this.context, this.tplCell).register(elementPath);
 		new BarcodeHandler(this.context, this.tplCell).register(elementPath);
 		new DivHandler(this.context, this.tplCell).register(elementPath);
+		
+
+		new ForEachHandler(this.context, this.tplCell::append).register(elementPath);
 	}
 	
 	

@@ -13,6 +13,8 @@ import com.itextpdf.layout.element.Div;
 
 import me.chenqiang.pdf.composer.DivComposer;
 import me.chenqiang.pdf.composer.DocumentComposer;
+import me.chenqiang.pdf.composer.ForEachComposer;
+import me.chenqiang.pdf.composer.IfComposer;
 import me.chenqiang.pdf.composer.ParagraphComposer;
 import me.chenqiang.pdf.composer.StringComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
@@ -32,6 +34,14 @@ public class DivHandler extends BasicTemplateElementHandler<DivComposer, Div> {
 	
 	public DivHandler(TemplateContext context, ParagraphComposer tplPara) {
 		super(context, tplPara::append);
+	}
+	
+	public DivHandler(TemplateContext context, ForEachComposer foreach) {
+		super(context, foreach::append);
+	}
+	
+	public DivHandler(TemplateContext context, IfComposer foreach) {
+		super(context, foreach::append);
 	}
 
 	@Override
@@ -69,6 +79,9 @@ public class DivHandler extends BasicTemplateElementHandler<DivComposer, Div> {
 		new ImageHandler(this.context, this.tplDiv).register(elementPath);
 		new BarcodeHandler(this.context, this.tplDiv).register(elementPath);
 		new ParagraphHandler(this.context, this.tplDiv).register(elementPath);
+		
+		new ForEachHandler(this.context, this.tplDiv::append).register(elementPath);
+		new IfHandler(this.context, this.tplDiv::append).register(elementPath);
 	}
 
 	public static List<String> getElementNames() {

@@ -13,6 +13,8 @@ import com.itextpdf.layout.element.Paragraph;
 
 import me.chenqiang.pdf.composer.DivComposer;
 import me.chenqiang.pdf.composer.DocumentComposer;
+import me.chenqiang.pdf.composer.ForEachComposer;
+import me.chenqiang.pdf.composer.IfComposer;
 import me.chenqiang.pdf.composer.ParagraphComposer;
 import me.chenqiang.pdf.composer.StringComposer;
 import me.chenqiang.pdf.composer.TableCellComposer;
@@ -33,6 +35,14 @@ public class ParagraphHandler extends BasicTemplateElementHandler<ParagraphCompo
 	
 	public ParagraphHandler(TemplateContext context, DivComposer tplDiv) {
 		super(context, tplDiv::append);
+	}
+	
+	public ParagraphHandler(TemplateContext context, ForEachComposer foreach) {
+		super(context, foreach::append);
+	}
+	
+	public ParagraphHandler(TemplateContext context, IfComposer foreach) {
+		super(context, foreach::append);
 	}
 
 	@Override
@@ -72,6 +82,9 @@ public class ParagraphHandler extends BasicTemplateElementHandler<ParagraphCompo
 		new BarcodeHandler(this.context, this.tplPara).register(elementPath);
 		new DivHandler(this.context, this.tplPara).register(elementPath);
 		new LineReturnHandler(this.tplPara).register(elementPath);
+		
+		new ForEachHandler(this.context, this.tplPara::append).register(elementPath);	
+		new IfHandler(this.context, this.tplPara::append).register(elementPath);
 	}
 	
 	@Override

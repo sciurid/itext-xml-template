@@ -94,4 +94,8 @@ public interface AttributeNames {
 	public static final String TEXT_RISE = "text-rise";
 	public static final String TEXT_SKEW = "text-skew";
 	public static final String TEXT_HORIZONTAL_SCALING = "text-horizontal-scaling";
+	
+	public static final String ITEMS = "items";
+	public static final String VAR = "var";
+	public static final String TEST = "test";
 }
