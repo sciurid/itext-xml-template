@@ -11,8 +11,8 @@ import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.property.AreaBreakType;
 
 import me.chenqiang.pdf.DocumentContext;
-import me.chenqiang.pdf.component.DocumentComponent;
-import me.chenqiang.pdf.component.PdfElementComposer;
+import me.chenqiang.pdf.sax.composer.component.DocumentComponent;
+import me.chenqiang.pdf.sax.composer.component.PdfElementComposer;
 
 public abstract class AreaBreakComposer implements PdfElementComposer<AreaBreak, AreaBreakComposer>, DocumentComponent {
 	protected String id;

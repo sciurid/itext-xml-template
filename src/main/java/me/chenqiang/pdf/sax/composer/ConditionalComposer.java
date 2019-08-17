@@ -13,12 +13,12 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 
 import me.chenqiang.pdf.DocumentContext;
-import me.chenqiang.pdf.component.DivComponent;
-import me.chenqiang.pdf.component.DocumentComponent;
-import me.chenqiang.pdf.component.ParagraphComponent;
-import me.chenqiang.pdf.component.PdfElementComposer;
-import me.chenqiang.pdf.component.TableCellComponent;
-import me.chenqiang.pdf.component.TableComponent;
+import me.chenqiang.pdf.sax.composer.component.DivComponent;
+import me.chenqiang.pdf.sax.composer.component.DocumentComponent;
+import me.chenqiang.pdf.sax.composer.component.ParagraphComponent;
+import me.chenqiang.pdf.sax.composer.component.PdfElementComposer;
+import me.chenqiang.pdf.sax.composer.component.TableCellComponent;
+import me.chenqiang.pdf.sax.composer.component.TableComponent;
 
 public abstract class ConditionalComposer 
 implements DocumentComponent, ParagraphComponent, TableComponent, DivComponent, TableCellComponent {

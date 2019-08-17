@@ -10,8 +10,8 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 
 import me.chenqiang.pdf.DocumentContext;
-import me.chenqiang.pdf.component.TableCellComponent;
-import me.chenqiang.pdf.component.TableComponent;
+import me.chenqiang.pdf.sax.composer.component.TableCellComponent;
+import me.chenqiang.pdf.sax.composer.component.TableComponent;
 
 public class TableCellComposer extends BasicElementComposer<Cell, TableCellComposer>
 implements TableComponent, Iterable<TableCellComponent>

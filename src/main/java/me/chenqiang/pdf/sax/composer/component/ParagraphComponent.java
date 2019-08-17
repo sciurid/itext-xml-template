@@ -1,4 +1,4 @@
-package me.chenqiang.pdf.component;
+package me.chenqiang.pdf.sax.composer.component;
 
 import com.itextpdf.layout.element.Paragraph;
 

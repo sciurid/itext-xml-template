@@ -9,10 +9,10 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 
 import me.chenqiang.pdf.DocumentContext;
-import me.chenqiang.pdf.component.DivComponent;
-import me.chenqiang.pdf.component.DocumentComponent;
-import me.chenqiang.pdf.component.ParagraphComponent;
-import me.chenqiang.pdf.component.TableCellComponent;
+import me.chenqiang.pdf.sax.composer.component.DivComponent;
+import me.chenqiang.pdf.sax.composer.component.DocumentComponent;
+import me.chenqiang.pdf.sax.composer.component.ParagraphComponent;
+import me.chenqiang.pdf.sax.composer.component.TableCellComponent;
 
 public abstract class BasicImageComposer<S extends BasicImageComposer<S>>
 		extends BasicElementComposer<Image, S>

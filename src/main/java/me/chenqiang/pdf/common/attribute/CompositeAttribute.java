@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 import com.itextpdf.layout.ElementPropertyContainer;
 import com.itextpdf.layout.borders.Border;
 
-import me.chenqiang.pdf.component.PdfElementComposer;
+import me.chenqiang.pdf.sax.composer.component.PdfElementComposer;
 
 public class CompositeAttribute {
 	protected FontColorAttribute fontColor = null;

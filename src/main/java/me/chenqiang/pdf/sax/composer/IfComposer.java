@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.function.Consumer;
 
 import me.chenqiang.pdf.DocumentContext;
-import me.chenqiang.pdf.component.PdfElementComposer;
+import me.chenqiang.pdf.sax.composer.component.PdfElementComposer;
 
 public class IfComposer extends ConditionalComposer {
 	protected String testName;

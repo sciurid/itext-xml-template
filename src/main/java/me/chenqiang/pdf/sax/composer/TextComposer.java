@@ -6,9 +6,9 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 
 import me.chenqiang.pdf.DocumentContext;
-import me.chenqiang.pdf.component.DivComponent;
-import me.chenqiang.pdf.component.ParagraphComponent;
-import me.chenqiang.pdf.component.TableCellComponent;
+import me.chenqiang.pdf.sax.composer.component.DivComponent;
+import me.chenqiang.pdf.sax.composer.component.ParagraphComponent;
+import me.chenqiang.pdf.sax.composer.component.TableCellComponent;
 
 public class TextComposer extends BasicElementComposer<Text, TextComposer>
 		implements ParagraphComponent, TableCellComponent, DivComponent {

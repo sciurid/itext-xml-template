@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.layout.ElementPropertyContainer;
 
-import me.chenqiang.pdf.component.PdfElementComposer;
+import me.chenqiang.pdf.sax.composer.component.PdfElementComposer;
 
 public final class AttributeUtils {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AttributeUtils.class);

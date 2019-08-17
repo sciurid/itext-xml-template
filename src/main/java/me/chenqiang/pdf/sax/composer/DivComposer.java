@@ -15,10 +15,10 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 
 import me.chenqiang.pdf.DocumentContext;
-import me.chenqiang.pdf.component.DivComponent;
-import me.chenqiang.pdf.component.DocumentComponent;
-import me.chenqiang.pdf.component.ParagraphComponent;
-import me.chenqiang.pdf.component.TableCellComponent;
+import me.chenqiang.pdf.sax.composer.component.DivComponent;
+import me.chenqiang.pdf.sax.composer.component.DocumentComponent;
+import me.chenqiang.pdf.sax.composer.component.ParagraphComponent;
+import me.chenqiang.pdf.sax.composer.component.TableCellComponent;
 
 public final class DivComposer extends BasicElementComposer<Div, DivComposer>
 		implements DocumentComponent, TableCellComponent, ParagraphComponent, Iterable<DivComponent> {

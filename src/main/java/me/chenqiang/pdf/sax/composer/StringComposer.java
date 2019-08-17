@@ -5,9 +5,9 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 
 import me.chenqiang.pdf.DocumentContext;
-import me.chenqiang.pdf.component.DivComponent;
-import me.chenqiang.pdf.component.ParagraphComponent;
-import me.chenqiang.pdf.component.TableCellComponent;
+import me.chenqiang.pdf.sax.composer.component.DivComponent;
+import me.chenqiang.pdf.sax.composer.component.ParagraphComponent;
+import me.chenqiang.pdf.sax.composer.component.TableCellComponent;
 
 public class StringComposer implements ParagraphComponent, TableCellComponent, DivComponent {
 	protected final String text;	

@@ -18,8 +18,8 @@ import com.itextpdf.layout.ElementPropertyContainer;
 import me.chenqiang.pdf.common.attribute.AttributeNames;
 import me.chenqiang.pdf.common.attribute.AttributeRegistry;
 import me.chenqiang.pdf.common.attribute.AttributeUtils;
-import me.chenqiang.pdf.component.PdfElementComposer;
 import me.chenqiang.pdf.sax.TemplateContext;
+import me.chenqiang.pdf.sax.composer.component.PdfElementComposer;
 
 public abstract class BasicTemplateElementHandler<T extends PdfElementComposer<E, T>, E extends ElementPropertyContainer<E>>
 		implements ElementHandler {

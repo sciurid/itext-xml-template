@@ -17,7 +17,7 @@ import com.itextpdf.layout.Document;
 
 import me.chenqiang.pdf.DocumentContext;
 import me.chenqiang.pdf.common.attribute.PaperLayout;
-import me.chenqiang.pdf.component.DocumentComponent;
+import me.chenqiang.pdf.sax.composer.component.DocumentComponent;
 
 public class DocumentComposer extends BasicElementComposer<Document, DocumentComposer>
 		implements Iterable<DocumentComponent> {

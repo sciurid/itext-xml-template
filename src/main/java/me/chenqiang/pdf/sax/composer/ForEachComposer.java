@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import me.chenqiang.pdf.DocumentContext;
 import me.chenqiang.pdf.DocumentContext.Scope;
-import me.chenqiang.pdf.component.PdfElementComposer;
+import me.chenqiang.pdf.sax.composer.component.PdfElementComposer;
 
 public class ForEachComposer extends ConditionalComposer {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ForEachComposer.class);

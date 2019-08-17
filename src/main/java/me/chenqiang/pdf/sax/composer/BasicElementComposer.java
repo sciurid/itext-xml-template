@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.function.Consumer;
 
 import me.chenqiang.pdf.DocumentContext;
-import me.chenqiang.pdf.component.PdfElementComposer;
+import me.chenqiang.pdf.sax.composer.component.PdfElementComposer;
 
 public abstract class BasicElementComposer<T, S extends BasicElementComposer<T, S>>
 implements PdfElementComposer<T, S> {

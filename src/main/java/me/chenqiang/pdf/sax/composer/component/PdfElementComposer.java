@@ -1,4 +1,4 @@
-package me.chenqiang.pdf.component;
+package me.chenqiang.pdf.sax.composer.component;
 
 import java.util.Collection;
 import java.util.function.Consumer;

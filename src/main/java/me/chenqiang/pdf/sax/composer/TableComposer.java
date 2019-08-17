@@ -15,8 +15,8 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.UnitValue;
 
 import me.chenqiang.pdf.DocumentContext;
-import me.chenqiang.pdf.component.DocumentComponent;
-import me.chenqiang.pdf.component.TableComponent;
+import me.chenqiang.pdf.sax.composer.component.DocumentComponent;
+import me.chenqiang.pdf.sax.composer.component.TableComponent;
 
 public class TableComposer extends BasicElementComposer<Table, TableComposer>
 		implements DocumentComponent, Iterable<TableComponent> {
